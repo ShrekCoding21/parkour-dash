@@ -1,0 +1,26 @@
+
+{"controls": {
+    "players": {
+        
+        "player1": {
+            "left": "K_a",
+            "right": "K_d",
+            "jump": "K_w",
+            "slide": "K_s",
+            "powerup": "K_LSHIFT",
+            "pause": "K_ESCAPE"
+        },
+
+        "player2": {
+            "left": "K_LEFT",
+            "right": "K_RIGHT",
+            "jump": "K_UP",
+            "slide": "K_DOWN",
+            "powerup": "K_RSHIFT",
+            "pause": "K_ESCAPE"
+        }
+
+
+    }
+
+}}
