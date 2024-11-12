@@ -17,19 +17,9 @@ TSA Video game design competition code for RLC.
 
 # ----- End formatting example -----
 
-# expected output (11/11)
+# Expected output (11/11)
 
 Two green rectangles that can be controlled to go left and right using a and d or left arrow and right arrow while falling under force of gravity.
-
-# *player_controls.JSON* (11/11)
-
-1) Stores information for keys to be used by players
-
-# Future updates (player_controls.json)
-
-1) Include any new keys to be used by players in the game
-
-# *parkour_dash.py*
 
 # Features necessary for checkpoint 1
 
@@ -50,6 +40,21 @@ Two green rectangles that can be controlled to go left and right using a and d o
 7) Character appearance selection
 8) Sliding button
 9) Platforms
+
+# Next steps
+
+1) Add demo platform (11/12 - 11/16)
+2) Add powerups (after rest of checkpoint 1 submission is ready)
+
+# *player_controls.JSON* (11/11)
+
+1) Stores information for keys to be used by players
+
+# Future updates (player_controls.json)
+
+1) Include any new keys to be used by players in the game
+
+# *parkour_dash.py*
 
 # Names function (11/11)
 
