@@ -73,6 +73,16 @@ Two green rectangles that can be controlled to go left and right using a and d o
 2) Handles player collisions with enemies
 3) Handles player collisions with powerups
 
+# Load_animations function (not implemented yet; 11/12)
+
+1) Maps each spritesheet to an name (Ex: Idle, running, jumping)
+2) Returns names for rest of program to utilize
+
+# Update_animations function (not implemented yet; 11/12)
+
+1) Consistently runs checks on the player
+2) Runs animations based on current player actions
+
 # Jump function (11/11)
 
 1) Tells program what the player does when it jumps

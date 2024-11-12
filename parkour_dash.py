@@ -71,6 +71,12 @@ class Player(): # add pygame.sprite.Sprite as argument for player class when add
     def collisions(self):
         pass
     
+    def load_animations(self):
+        pass
+
+    def update_animations(self):
+        pass
+
     def jump(self):
         "Tells program how to handle jumping"
         if self.on_ground:
