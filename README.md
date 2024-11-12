@@ -44,7 +44,8 @@ Two green rectangles that can be controlled to go left and right using a and d o
 # Next steps
 
 1) Add demo platform (11/12 - 11/16)
-2) Add powerups (after rest of checkpoint 1 submission is ready)
+2) Set up website to host video game
+3) Add powerups (after rest of checkpoint 1 submission is ready)
 
 # *player_controls.JSON* (11/11)
 
