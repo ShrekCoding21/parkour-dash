@@ -34,7 +34,7 @@ async def load_json_file(filepath):
 class Player():
     """Defines attributes of each of the 2 players in the game"""
 
-    def __init__(self, player_name, position, controls): # initializes the class
+    def __init__(self, player_name, position, controls, color): # initializes the class
         super().__init__()
         self.player_name = player_name # defines which player is which using name function (since there are 2 players)
         self.position = pygame.Vector2(position) # defines where the player spawns in (position variable is a tuple)
@@ -54,7 +54,7 @@ class Player():
 
         self.width = 32
         self.height = 64
-        self.color = (0, 255, 0)
+        self.color = color
 
     def names(self):
         """Allows user to choose their name (used to identify player)"""
@@ -139,8 +139,8 @@ async def main():
     player1_controls = keys_data['controls']['players']['player1']
     player2_controls = keys_data['controls']['players']['player2']
 
-    player1 = Player(player_name="Player 1", position=(100, 100), controls=player1_controls)
-    player2 = Player(player_name="Player 2", position=(200, 100), controls=player2_controls)
+    player1 = Player(player_name="Player 1", position=(100, 100), controls=player1_controls, color=(0, 255, 0))
+    player2 = Player(player_name="Player 2", position=(200, 100), controls=player2_controls, color=(0, 0, 255))
 
     running = True
     while running:
