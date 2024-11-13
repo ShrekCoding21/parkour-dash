@@ -126,6 +126,12 @@ class Player():
         self.position.x += self.velocity.x * delta_time
         self.position.y += self.velocity.y * delta_time
 
+class Platform():
+    pass
+
+class Powerups():
+    pass
+
 async def main():
     # Load JSON control data asynchronously
     keys_data = await load_json_file('player_controls.json')
