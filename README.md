@@ -17,9 +17,10 @@ TSA Video game design competition code for RLC.
 
 # ----- End formatting example -----
 
-# Expected output (11/11)
+# Expected output (11/12)
 
-Two green rectangles that can be controlled to go left and right using a and d or left arrow and right arrow while falling under force of gravity.
+Two green rectangles that can be controlled to go left and right using a and d or left arrow and right arrow while falling under force of gravity
+Works either by running locally or by running on localhost:8000 dev server (server can be started using command, "pygbag main.py"; make sure to run "pip install pygbag" before trying test server)
 
 # Features necessary for checkpoint 1
 
