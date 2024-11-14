@@ -48,15 +48,11 @@ Works either by running locally or by running on localhost:8000 dev server (serv
 2) Set up website to host video game
 3) Add powerups (after rest of checkpoint 1 submission is ready)
 
-# *player_controls.JSON* (11/11)
-
-1) Stores information for keys to be used by players
-
-# Future updates (player_controls.json)
-
-1) Include any new keys to be used by players in the game
-
 # *parkour_dash.py*
+
+# load_json_file
+
+1) Defines how python should open player_controls.JSON (based on opening locally or as website)
 
 # Names function (11/11)
 
@@ -134,3 +130,16 @@ Works either by running locally or by running on localhost:8000 dev server (serv
 # Rect function (11/11)
 
 1) Defines properties of player (hitbox size and position)
+
+# *Useful resources*
+
+Complete python introduction course (very useful): https://www.youtube.com/playlist?list=PLeo1K3hjS3uv5U-Lmlnucd7gqF-3ehIh0
+What is asyncio: https://youtu.be/Qb9s3UiMSTA?si=aUc02pHfXq4Ukhqs
+How to come up with & create sprites (Adobe Photoshop): https://youtu.be/mBt3UuLJx9Y?si=M1b8WCtHLIM0PtI3
+How to animate sprites (Adobe Photoshop): https://youtu.be/q2IxC0odOkU?si=dNo0REHtTp1Pw5KX
+How to use sprite sheets in python: https://youtu.be/ePiMYe7JpJo?si=yzEy5BQZCaBM3CbN
+How to deploy code to web (WebAssembly): https://youtu.be/q25i2CCNvis?si=PJp0aLba8GXqc6_v
+General tips on coding: https://www.youtube.com/@CodeAesthetic
+
+
+
