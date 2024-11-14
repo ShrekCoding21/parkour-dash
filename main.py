@@ -1,6 +1,7 @@
 import pygame
 import asyncio
 import json
+import datetime
 import os
 
 WEB_ENVIRONMENT = False
@@ -93,7 +94,7 @@ class Player():
             self.on_ground = False
 
     def handle_controls(self, keys):
-
+        
         if keys[self.controls['left']]:
             self.velocity.x = -25
         elif keys[self.controls['right']]:
