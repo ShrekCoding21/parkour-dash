@@ -52,9 +52,8 @@ class Platform():
         if self.is_moving:
             self.posiiton += self.direction * self.speed * dt
             if self.position.distance_to(self.start_position) > self.movement_range.length():
-                self.direction *= -1
+                self.direction *= 1
             self.current_frame = (self.current_frame + 1) % self.frame_count
-
     def draw(self, screen):
         if self.animation_frames:
             frame = self.animation_frames[self.current_frame]

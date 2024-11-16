@@ -9,8 +9,9 @@ class Player():
         self.position = pygame.Vector2(position)
         self.velocity = pygame.Vector2(0, 0)
         self.on_ground = False
-        self.jump_strength = 200
+        self.jump_strength = 750
         self.speed = 150
+        self.gravity = 50
         # self.is_sliding = False
         self.controls = {action: getattr(pygame, key) for action, key in controls.items()}
         # self.animations = self.load_animations()
@@ -119,7 +120,7 @@ class Player():
 
     def gravity_and_motion(self, delta_time):
 
-        GRAVITY = 4
+        GRAVITY = self.gravity
         if not self.on_ground:
             self.velocity.y += GRAVITY
         self.position.x += self.velocity.x * delta_time
