@@ -10,7 +10,7 @@ class Player():
         self.velocity = pygame.Vector2(0, 0)
         self.on_ground = False
         self.jump_strength = 750
-        self.speed = 150
+        self.speed = 250
         self.gravity = 50
         # self.is_sliding = False
         self.controls = {action: getattr(pygame, key) for action, key in controls.items()}
@@ -55,31 +55,29 @@ class Player():
         self.on_ground = False
 
         for platform in platforms:
-            platform_rect = pygame.Rect(platform.position.x, platform.position.y, platform.width, platform.height)
+            platform_rect = pygame.Rect(platform.position.x, platform.position.y, platform.dimensions[0], platform.dimensions[1])
 
             if player_rect.colliderect(platform_rect):
+                overlap_x = min(player_rect.right - platform_rect.left, platform_rect.right - player_rect.left)
+                overlap_y = min(player_rect.bottom - platform_rect.top, platform_rect.bottom - player_rect.top)
 
-                if self.velocity.y > 0:
-                    self.position.y = platform_rect.top - self.height
-                    self.velocity.y = 0
-                    self.on_ground = True
-                elif self.velocity.y < 0:
-                    self.position.y = platform_rect.bottom
-                    self.velocity.y = 0
-
-                player_rect = self.rect
-
-        for platform in platforms:
-                platform_rect = pygame.Rect(platform.position.x, platform.position.y, platform.width, platform.height)
-                
-                if player_rect.colliderect(platform_rect):
-
+                if overlap_x < overlap_y:
                     if self.velocity.x > 0:
                         self.position.x = platform_rect.left - self.width
                     elif self.velocity.x < 0:
                         self.position.x = platform_rect.right
+                    self.velocity.x = 0
 
-                    player_rect = self.rect
+                else:
+                    if self.velocity.y > 0:
+                        self.position.y = platform_rect.top - self.height
+                        self.velocity.y = 0
+                        self.on_ground = True
+                    elif self.velocity.y < 0:
+                        self.position.y = platform_rect.bottom
+                        self.velocity.y = 0
+
+                player_rect = self.rect
     
     def load_animations(self):
         pass
