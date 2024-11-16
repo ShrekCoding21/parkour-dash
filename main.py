@@ -99,6 +99,11 @@ async def main():
 
     platforms = [platform]
 
+    def reload_players():
+            platform.reset()
+            player1.position = pygame.Vector2(100, 100)
+            player2.position = pygame.Vector2(200, 100)
+
     running = True
     while running:
         dt = clock.tick(60) / 1000.0
@@ -107,6 +112,11 @@ async def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            
+            if keys[pygame.K_r]:
+                reload_players()
+
+
 
         dt = clock.get_time() / 1000.0
         platform.update(dt)
