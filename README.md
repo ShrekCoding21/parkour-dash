@@ -44,7 +44,7 @@ Works either by running locally or by running on localhost:8000 dev server (serv
 
 # Next steps
 
-1) Add demo platform (11/12 - 11/16)
+1) Create scrolling level
 2) Set up website to host video game
 3) Add powerups (after rest of checkpoint 1 submission is ready)
 
