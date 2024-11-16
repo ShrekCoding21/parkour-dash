@@ -32,7 +32,7 @@ async def load_json_file(filepath):
 class Platform():
     
 
-    def __init__(self, position, is_moving, movement_range, speed, direction, image, width, height):
+    def __init__(self, position, image, is_moving, movement_range, speed, direction, image_path, width, height):
 
         self.start_position = pygame.Vector2(position)
         self.position = pygame.Vector2(position)
@@ -43,8 +43,9 @@ class Platform():
         self.current_frame = 0
         self.frame_count = len(self.animation_frames)
         self.direction = direction
+        self.image_path = image_path
         self.image = image
-        self.color = (255, 255, 255)
+        self.color = (156, 185, 39)
         self.width, self.height = width, height
 
     def update(self, dt):
@@ -59,18 +60,17 @@ class Platform():
             frame = self.animation_frames[self.current_frame]
             screen.blit(frame, self.position)
         else:
-            pygame.draw.rect(screen, self.image, (*self.position, self.width, self.height))
+            pygame.draw.rect(screen, self.color, (*self.position, self.width, self.height))
     
     def set_image(self, image_path):
-
-        if image_path != None:
+        if image_path is not None:
             image = pygame.image.load(image_path)
             self.animation_frames = [image]
             self.frame_count = len(self.animation_frames)
         else:
-            image = self.color
-        
-        return image
+            self.animation_frames = []
+            self.frame_count = 0
+
     
     def set_animation_frames(self, image_paths):
         self.animation_frames = [pygame.image.load(path) for path in image_paths]
@@ -94,9 +94,11 @@ async def main():
     player1_controls = keys_data['controls']['players']['player1']
     player2_controls = keys_data['controls']['players']['player2']
 
-    platform = Platform(position=(100, 400), is_moving = False, width=200, height=50, speed=100, direction=pygame.Vector2(1, 0), image=None, movement_range=pygame.Vector2(300, 0))
+    platform = Platform(position=(100, 400), is_moving = False, image_path=None, width=200, height=50, speed=100, direction=pygame.Vector2(1, 0), image=None, movement_range=pygame.Vector2(300, 0))
     player1 = Player(player_name="Player 1", position=(100, 100), controls=player1_controls, color=(0, 255, 0))
     player2 = Player(player_name="Player 2", position=(200, 100), controls=player2_controls, color=(0, 0, 255))
+
+    platforms = [platform]
 
     running = True
     while running:
@@ -111,7 +113,9 @@ async def main():
         platform.update(dt)
 
         player1.update(dt, keys)
+        player1.collisions(platforms)
         player2.update(dt, keys)
+        player2.collisions(platforms)
 
         screen.fill((0, 0, 0))
         platform.draw(screen)
