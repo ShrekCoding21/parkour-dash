@@ -68,12 +68,17 @@ class Player():
 
                 player_rect = self.rect
 
-                if self.velocity.x > 0:
-                    self.position.x = platform_rect.left - self.width
-                elif self.velocity.x < 0:
-                    self.position.x = platform_rect.right
+        for platform in platforms:
+                platform_rect = pygame.Rect(platform.position.x, platform.position.y, platform.width, platform.height)
                 
-                break
+                if player_rect.colliderect(platform_rect):
+
+                    if self.velocity.x > 0:
+                        self.position.x = platform_rect.left - self.width
+                    elif self.velocity.x < 0:
+                        self.position.x = platform_rect.right
+
+                    player_rect = self.rect
     
     def load_animations(self):
         pass
