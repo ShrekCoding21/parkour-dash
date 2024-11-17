@@ -7,8 +7,7 @@
             "right": "K_d",
             "jump": "K_w",
             "slide": "K_s",
-            "powerup": "K_LSHIFT",
-            "pause": "K_ESCAPE"
+            "powerup": "K_LSHIFT"
         },
 
         "player2": {
@@ -16,9 +15,7 @@
             "right": "K_RIGHT",
             "jump": "K_UP",
             "slide": "K_DOWN",
-            "powerup": "K_RSHIFT",
-            "pause": "K_ESCAPE"
-            
+            "powerup": "K_RSHIFT"
         }
 
 

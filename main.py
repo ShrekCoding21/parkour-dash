@@ -1,7 +1,7 @@
 import pygame
 import asyncio
 import json
-import datetime
+import time
 from Player.player import Player
 
 WEB_ENVIRONMENT = False
@@ -126,8 +126,39 @@ async def main():
             player2.velocity = pygame.Vector2(0, 0)
             player1.on_ground = False
             player2.on_ground = False
+        
+    def pause_game():
+        pause = True
+
+        player1_saved_velocity = player1.velocity.copy()
+        player2_saved_velocity = player2.velocity.copy()
+
+        while pause:
+
+            print("game paused")
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                    pause = False
+
+            font = pygame.font.SysFont(None, 55)
+            text = font.render('Paused', True, (35, 35, 35))
+            screen.blit(text, (window_size[0]//2 - text.get_width()//2, window_size[1]//2 - text.get_height()//2))
+            pygame.display.flip()
+
+            clock.tick(10)
+
+        player1.velocity = player1_saved_velocity
+        player2.velocity = player2_saved_velocity
+
 
     running = True
+    paused = False
+
     while running:
         dt = clock.tick(60) / 1000.0
         keys = pygame.key.get_pressed()
@@ -136,24 +167,29 @@ async def main():
             if event.type == pygame.QUIT:
                 running = False
             
-            if keys[pygame.K_r]:
+            elif keys[pygame.K_r]:
                 reload_players()
 
+            elif keys[pygame.K_ESCAPE]:
+                paused = True
 
+        if paused:
+            pause_game()
+            paused = False
 
-        dt = clock.get_time() / 1000.0
-        platform1.update(dt)
+        if not paused:
 
-        player1.update(dt, keys)
-        player1.collisions(platforms)
-        player2.update(dt, keys)
-        player2.collisions(platforms)
+            platform1.update(dt)
+            player1.update(dt, keys)
+            player1.collisions(platforms)
+            player2.update(dt, keys)
+            player2.collisions(platforms)
 
-        screen.fill((0, 0, 0))
-        platform1.draw(screen)
-        player1.draw(screen)
-        player2.draw(screen)
-        pygame.display.flip()
+            screen.fill((0, 0, 0))
+            platform1.draw(screen)
+            player1.draw(screen)
+            player2.draw(screen)
+            pygame.display.flip()
 
         await asyncio.sleep(0)
 
