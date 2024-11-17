@@ -97,13 +97,14 @@ async def main():
     player2_controls = keys_data['controls']['players']['player2']
     
     platform_data = platforms_data['platforms']['levels']['demo_level']['starting-platform']
-    
+
     platform_dimensions = (platform_data['width'], platform_data['height'])
     platform_position = (platform_data['x-position'], platform_data['y-position'])
     platform_direction = (platform_data['x-direction'], platform_data['y-direction'])
     platform_movement_range = (platform_data['x-movement_range'], platform_data['y-movement_range'])
 
     platform1 = Platform(
+        name = "starting-platform",
         position=platform_position,
         is_moving = platform_data['is_moving'],
         image_path=platform_data['image_path'],
