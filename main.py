@@ -104,7 +104,6 @@ async def main():
     platform_movement_range = (platform_data['x-movement_range'], platform_data['y-movement_range'])
 
     platform1 = Platform(
-        name = "starting-platform",
         position=platform_position,
         is_moving = platform_data['is_moving'],
         image_path=platform_data['image_path'],
