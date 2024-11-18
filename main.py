@@ -120,22 +120,16 @@ async def main():
 
     def reload_players():
             platform1.reset()
-            player1.position = pygame.Vector2(100, 100)
-            player2.position = pygame.Vector2(200, 100)
-            player1.velocity = pygame.Vector2(0, 0)
-            player2.velocity = pygame.Vector2(0, 0)
-            player1.on_ground = False
-            player2.on_ground = False
+            player1.reload(position=(100, 100))
+            player2.reload(position=(200, 100))
         
     def pause_game():
         pause = True
 
-        player1_saved_velocity = player1.velocity.copy()
-        player2_saved_velocity = player2.velocity.copy()
+        player1_saved_momentum = player1.momentum
+        player2_saved_momentum = player2.momentum
 
         while pause:
-
-            print("game paused")
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -152,8 +146,8 @@ async def main():
 
             clock.tick(10)
 
-        player1.velocity = player1_saved_velocity
-        player2.velocity = player2_saved_velocity
+        player1.momentum = player1_saved_momentum
+        player2.momentum = player2_saved_momentum
 
 
     running = True

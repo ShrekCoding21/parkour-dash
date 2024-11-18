@@ -6,7 +6,7 @@
             "starting-platform": {
                 "x-position": 100,
                 "y-position": 400,
-                "width": 200,
+                "width": 500,
                 "height": 50,
                 "is_moving": "False",
                 "speed": 0,
