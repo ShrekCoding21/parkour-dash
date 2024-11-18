@@ -15,7 +15,10 @@
                 "image_path": "None",
                 "image": "None",
                 "x-movement_range": 0,
-                "y-movement_range": 0
+                "y-movement_range": 0,
+                "R-color": 128,
+                "G-color": 193,
+                "B-color": 78
             },
 
             "moving_platform": {
@@ -30,7 +33,10 @@
                 "image_path": "None",
                 "image": "None",
                 "x-movement_range": 200,
-                "y-movement_range": 0
+                "y-movement_range": 0,
+                "R-color": 143,
+                "G-color": 78,
+                "B-color": 193
             }
             
         }

@@ -3,7 +3,7 @@ import pygame
 class Platform():
     
 
-    def __init__(self, position, image, is_moving, movement_range, speed, direction, image_path, dimensions):
+    def __init__(self, position, image, is_moving, movement_range, speed, direction, image_path, dimensions, color):
 
         self.start_position = pygame.Vector2(position)
         self.position = pygame.Vector2(position)
@@ -16,7 +16,7 @@ class Platform():
         self.direction = pygame.Vector2(direction)
         self.image_path = image_path
         self.image = image
-        self.color = (156, 185, 39)
+        self.color = color
         self.dimensions = dimensions
 
     def update(self, dt):
@@ -32,7 +32,8 @@ class Platform():
             frame = self.animation_frames[self.current_frame]
             screen.blit(frame, self.position)
         else:
-            pygame.draw.rect(screen, self.color, (*self.position, self.dimensions[0], self.dimensions[1]))
+            if self.is_moving:
+                pygame.draw.rect(screen, self.color, (*self.position, self.dimensions[0], self.dimensions[1]))
     
     def set_image(self, image_path):
         if image_path is not None:

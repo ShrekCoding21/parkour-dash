@@ -40,6 +40,7 @@ def load_platforms(platform_data, level_name):
         platform_position = (platform_data['x-position'], platform_data['y-position'])
         platform_direction = (platform_data['x-direction'], platform_data['y-direction'])
         platform_movement_range = (platform_data['x-movement_range'], platform_data['y-movement_range'])
+        platform_color = (platform_data['R-color'], platform_data['G-color'], platform_data['B-color'])
 
         platform = Platform(
             position=platform_position,
@@ -49,7 +50,8 @@ def load_platforms(platform_data, level_name):
             speed=platform_data['speed'],
             direction=platform_direction,
             image=platform_data['image'],
-            movement_range=platform_movement_range
+            movement_range=platform_movement_range,
+            color = platform_color
         )
             
         platforms.append(platform)
