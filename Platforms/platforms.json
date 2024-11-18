@@ -20,16 +20,16 @@
 
             "moving_platform": {
                 "x-position": 200,
-                "y-position": 350,
-                "width": 100,
-                "height": 20,
+                "y-position": 375,
+                "width": 50,
+                "height": 10,
                 "is_moving": "True",
-                "speed": 50,
+                "speed": 250,
                 "x-direction": 1,
                 "y-direction": 0,
                 "image_path": "None",
                 "image": "None",
-                "x-movement_range": 100,
+                "x-movement_range": 200,
                 "y-movement_range": 0
             }
             
