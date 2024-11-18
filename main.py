@@ -40,7 +40,6 @@ def load_platforms(platform_data, level_name):
         platform_position = (platform_data['x-position'], platform_data['y-position'])
         platform_direction = (platform_data['x-direction'], platform_data['y-direction'])
         platform_movement_range = (platform_data['x-movement_range'], platform_data['y-movement_range'])
-        platform_color = (platform_data['R-color'], platform_data['G-color'], platform_data['B-color'])
 
         platform = Platform(
             position=platform_position,
@@ -51,7 +50,7 @@ def load_platforms(platform_data, level_name):
             direction=platform_direction,
             image=platform_data['image'],
             movement_range=platform_movement_range,
-            color = platform_color
+            color = platform_data['color']
         )
             
         platforms.append(platform)
@@ -72,8 +71,8 @@ async def main():
     level_name = 'demo_level'
     platforms = load_platforms(platforms_data, level_name)
 
-    player1 = Player(player_name="Player 1", position=(100, 100), controls=player1_controls, color=(0, 255, 0))
-    player2 = Player(player_name="Player 2", position=(200, 100), controls=player2_controls, color=(0, 0, 255))
+    player1 = Player(player_name="Player 1", position=(100, 100), controls=player1_controls, color=("#9EBA01"))
+    player2 = Player(player_name="Player 2", position=(200, 100), controls=player2_controls, color=("#1D01BA"))
 
     def reload_players():
             platform.reset()
