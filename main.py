@@ -129,4 +129,4 @@ async def main():
 # Run the main function
 asyncio.run(main())
 
-"""if you read this you are gay"""
+"""if you read this you are nice"""
