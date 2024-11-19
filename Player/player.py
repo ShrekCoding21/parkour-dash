@@ -12,10 +12,11 @@ class Player():
         self.position = pygame.Vector2(position)
         self.velocity = pygame.Vector2(0, 0)
         self.on_ground = False
-        self.jump_strength = 750
+        self.on_platform = None
+        self.jump_strength = 575
         self.speed = 250
-        self.acceleration = 1500
-        self.deceleration = 9000
+        self.acceleration = 2000
+        self.deceleration = 10000
         self.gravity = 50
         self.mass = 1
         # self.is_sliding = False
@@ -59,6 +60,7 @@ class Player():
     def collisions(self, platforms):
         player_rect = self.rect
         self.on_ground = False
+        tolerance = 5
 
         for platform in platforms:
             platform_rect = pygame.Rect(platform.position.x, platform.position.y, platform.dimensions[0], platform.dimensions[1])
@@ -68,18 +70,32 @@ class Player():
                 overlap_y = min(player_rect.bottom - platform_rect.top, platform_rect.bottom - player_rect.top)
 
                 if overlap_x < overlap_y:
+                    
                     if self.velocity.x > 0:
                         self.position.x = platform_rect.left - self.width
+                    
                     elif self.velocity.x < 0:
                         self.position.x = platform_rect.right
+                    
+                    else:
+                        
+                        if platform.direction.x == 1 and platform.previous_direction.x == 1:
+                            self.position.x = platform_rect.right
+                        
+                        elif platform.direction.x == -1 and platform.previous_direction.x == -1:
+                            self.position.x = platform_rect.left - self.width
+                        
                     self.velocity.x = 0
 
                 else:
-                    if self.velocity.y > 0:
+                    
+                    if self.velocity.y > 0: # player is falling
                         self.position.y = platform_rect.top - self.height
                         self.velocity.y = 0
                         self.on_ground = True
-                    elif self.velocity.y < 0:
+                        self.on_platform = platform
+                    
+                    elif self.velocity.y < 0 and platform_rect.bottom - player_rect.top <= tolerance: # player is jumping
                         self.position.y = platform_rect.bottom
                         self.velocity.y = 0
 
@@ -99,6 +115,9 @@ class Player():
         if self.on_ground:
             self.velocity.y = -self.jump_strength / self.mass
             self.on_ground = False
+
+            if self.on_platform:
+                self.on_platform = None
 
     def handle_controls(self, keys, delta_time):
         
@@ -127,6 +146,11 @@ class Player():
 
         self.gravity_and_motion(delta_time)
         self.handle_controls(keys, delta_time)
+
+        if self.on_platform and self.on_platform.is_moving:
+            self.position.x += self.on_platform.velocity.x * delta_time
+        
+        self.position += self.velocity * delta_time
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)

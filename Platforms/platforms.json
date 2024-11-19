@@ -20,17 +20,17 @@
             },
 
             "moving_platform": {
-                "x-position": 200,
+                "x-position": 325,
                 "y-position": 375,
                 "width": 50,
                 "height": 10,
                 "is_moving": "True",
                 "speed": 250,
-                "x-direction": 1,
+                "x-direction": -1,
                 "y-direction": 0,
                 "image_path": "None",
                 "image": "None",
-                "x-movement_range": 200,
+                "x-movement_range": 230,
                 "y-movement_range": 0,
                 "color": "#8F4EC1"
             }

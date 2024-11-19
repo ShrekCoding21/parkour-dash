@@ -14,13 +14,17 @@ class Platform():
         self.current_frame = 0
         self.frame_count = len(self.animation_frames)
         self.direction = pygame.Vector2(direction)
+        self.previous_direction = self.direction.copy()
         self.image_path = image_path
         self.image = image
         self.color = color
         self.dimensions = dimensions
+        self.velocity = pygame.Vector2(0, 0)
 
     def update(self, dt):
         if self.is_moving:
+            self.velocity = self.direction * self.speed
+            self.previous_direction = self.direction.copy()
             self.position += self.direction * self.speed * dt
             if self.position.distance_to(self.start_position) > self.movement_range.length():
                 self.direction *= -1
