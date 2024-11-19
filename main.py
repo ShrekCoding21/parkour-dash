@@ -1,8 +1,9 @@
 import pygame
 import asyncio
 import json
-import datetime
+import time
 from Player.player import Player
+from Platforms.platform import Platform
 
 WEB_ENVIRONMENT = False
 try:
@@ -22,66 +23,39 @@ async def load_json_file(filepath):
     if WEB_ENVIRONMENT:
         # Load file using pygbag.fs in a web environment
         with pygbag.fs.open(filepath, 'r') as key_map:
-            keys_data = json.load(key_map)
+            return json.load(key_map)
     else:
         # Load file normally in a local environment
         with open(filepath, 'r') as key_map:
             keys_data = json.load(key_map)
     return keys_data
-
-class Platform():
     
+def load_platforms(platform_data, level_name):
 
-    def __init__(self, position, image, is_moving, movement_range, speed, direction, image_path, width, height):
+    platforms = []
+    level_data = platform_data['platforms']['levels'][level_name]
 
-        self.start_position = pygame.Vector2(position)
-        self.position = pygame.Vector2(position)
-        self.is_moving = is_moving
-        self.movement_range = pygame.Vector2(movement_range)
-        self.speed = speed
-        self.animation_frames = []
-        self.current_frame = 0
-        self.frame_count = len(self.animation_frames)
-        self.direction = direction
-        self.image_path = image_path
-        self.image = image
-        self.color = (156, 185, 39)
-        self.width, self.height = width, height
+    for platform_name, platform_data in level_data.items():
+        platform_dimensions = (platform_data['width'], platform_data['height'])
+        platform_position = (platform_data['x-position'], platform_data['y-position'])
+        platform_direction = (platform_data['x-direction'], platform_data['y-direction'])
+        platform_movement_range = (platform_data['x-movement_range'], platform_data['y-movement_range'])
 
-    def update(self, dt):
-        if self.is_moving:
-            self.posiiton += self.direction * self.speed * dt
-            if self.position.distance_to(self.start_position) > self.movement_range.length():
-                self.direction *= 1
-            self.current_frame = (self.current_frame + 1) % self.frame_count
-    def draw(self, screen):
-        if self.animation_frames:
-            frame = self.animation_frames[self.current_frame]
-            screen.blit(frame, self.position)
-        else:
-            pygame.draw.rect(screen, self.color, (*self.position, self.width, self.height))
-    
-    def set_image(self, image_path):
-        if image_path is not None:
-            image = pygame.image.load(image_path)
-            self.animation_frames = [image]
-            self.frame_count = len(self.animation_frames)
-        else:
-            self.animation_frames = []
-            self.frame_count = 0
+        platform = Platform(
+            position=platform_position,
+            is_moving = platform_data['is_moving'],
+            image_path=platform_data['image_path'],
+            dimensions=platform_dimensions,
+            speed=platform_data['speed'],
+            direction=platform_direction,
+            image=platform_data['image'],
+            movement_range=platform_movement_range,
+            color = platform_data['color']
+        )
+            
+        platforms.append(platform)
 
-    
-    def set_animation_frames(self, image_paths):
-        self.animation_frames = [pygame.image.load(path) for path in image_paths]
-        frame_count = len(self.animation_frames)
-
-    def reset(self):
-        self.position = pygame.Vector2(self.start_position)
-        self.current_frame = 0
-    
-
-
-    
+    return platforms
 
 class Powerups():
     pass
@@ -89,17 +63,53 @@ class Powerups():
 async def main():
 
     keys_data = await load_json_file('player/player_controls.json')
+    platforms_data = await load_json_file('Platforms/platforms.json')
 
     player1_controls = keys_data['controls']['players']['player1']
     player2_controls = keys_data['controls']['players']['player2']
 
-    platform = Platform(position=(100, 400), is_moving = False, image_path=None, width=200, height=50, speed=100, direction=pygame.Vector2(1, 0), image=None, movement_range=pygame.Vector2(300, 0))
-    player1 = Player(player_name="Player 1", position=(100, 100), controls=player1_controls, color=(0, 255, 0))
-    player2 = Player(player_name="Player 2", position=(200, 100), controls=player2_controls, color=(0, 0, 255))
+    level_name = 'demo_level'
+    platforms = load_platforms(platforms_data, level_name)
 
-    platforms = [platform]
+    player1 = Player(player_name="Player 1", position=(100, 100), controls=player1_controls, color=("#9EBA01"))
+    player2 = Player(player_name="Player 2", position=(200, 100), controls=player2_controls, color=("#1D01BA"))
+
+    def reload_players():
+            platform.reset()
+            player1.reload(position=(100, 100))
+            player2.reload(position=(200, 100))
+        
+    def pause_game():
+        nonlocal paused
+        pause = True
+
+        player1_saved_momentum = player1.momentum
+        player2_saved_momentum = player2.momentum
+
+        while pause:
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                    pause = False
+
+            font = pygame.font.SysFont(None, 55)
+            text = font.render('Paused', True, (35, 35, 35))
+            screen.blit(text, (window_size[0]//2 - text.get_width()//2, window_size[1]//2 - text.get_height()//2))
+            pygame.display.flip()
+
+            clock.tick(10)
+
+        player1.momentum = player1_saved_momentum
+        player2.momentum = player2_saved_momentum
+
 
     running = True
+    paused = False
+
     while running:
         dt = clock.tick(60) / 1000.0
         keys = pygame.key.get_pressed()
@@ -107,20 +117,34 @@ async def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            
+            elif keys[pygame.K_r]:
+                reload_players()
 
-        dt = clock.get_time() / 1000.0
-        platform.update(dt)
+            elif keys[pygame.K_ESCAPE]:
+                paused = True
 
-        player1.update(dt, keys)
-        player1.collisions(platforms)
-        player2.update(dt, keys)
-        player2.collisions(platforms)
+        if paused:
+            pause_game()
+            paused = False
 
-        screen.fill((0, 0, 0))
-        platform.draw(screen)
-        player1.draw(screen)
-        player2.draw(screen)
-        pygame.display.flip()
+        if not paused:
+            for platform in platforms:
+                platform.update(dt)
+
+            player1.update(dt, keys)
+            player1.collisions(platforms)
+
+            player2.update(dt, keys)
+            player2.collisions(platforms)
+
+            screen.fill((0, 0, 0))
+            for platform in platforms:
+                platform.draw(screen)
+
+            player1.draw(screen)
+            player2.draw(screen)
+            pygame.display.flip()
 
         await asyncio.sleep(0)
 

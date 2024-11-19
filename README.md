@@ -28,7 +28,7 @@ Works either by running locally or by running on localhost:8000 dev server (serv
 2) Gravity and physics
 3) Player hitboxes
 4) Platforms
-5) Scrolling demo level
+5) Scrolling demo level (not done)
 
 # Extra features for checkpoint 1 (optional)
 
@@ -36,103 +36,37 @@ Works either by running locally or by running on localhost:8000 dev server (serv
 2) Object sprites and animations
 3) Powerups
 4) Unique name creation
-5) Pause button
 6) Title screen
 7) Character appearance selection
 8) Sliding button
-9) Platforms
 
 # Next steps
 
-1) Add demo platform (11/12 - 11/16)
+1) Create scrolling level
 2) Set up website to host video game
-3) Add powerups (after rest of checkpoint 1 submission is ready)
 
-# *parkour_dash.py*
+# *Player Class (11/19)*
 
-# load_json_file
+# Names function (not used yet)
 
-1) Defines how python should open player_controls.JSON (based on opening locally or as website)
+1) Defines player_names and player_ids as user defined variables
+2) Allows users to input variables (input method will be changed in future)
+3) Returns player_names and player_ids to let python identify the players and apply powerups and effects to them
 
-# Names function (11/11)
+# Collisions function
 
-1) Gets player names & stores in list (player_names)
-2) Creates player id for each player and stores in list (player_ids)
-3) Uses basic validation with if statements to ensure name isn't empty and <21 characters
+1) Initializes local variable from platforms class that returns platform position (bottom left corner) and dimensions; allows game to know where platforms are
+2) Uses if statements to handle player collision with the platforms
+    1) overlap_x & overlap_y: Defines how vertically & horizantally close the player & platforms are to eachother
+    2) If player experiences horizontal collision with platform: player goes to either left or right of platform depending on direction of travel, if the platform collides with the player, then player moves to whichever side platform is traveling towards. Previous direction attribute prevents player from teleporting when platform switches direction
+    3) If player experiences vertical collision with platform: if player is falling while on a platform, they are placed above platform to not clip through the platform and stay on top of it. If player is trying to jump while colliding with platform, if the distance between platform and player is less than 5 (they are very close to eachother), game lets player jump over platform, otherwise they collide with top of platform and fall back down.
+    4) Player velocity is set to 0 after each statement so that player doesn't continue moving with the platform 
+    
 
-# Future updates (names function)
-
-1) Will contain way for players to choose a skin as well
-2) Messages will be different probably
-
-# Collisions function (not implemented yet; 11/11)
-
-1) Handles player collisions with platforms
-2) Handles player collisions with enemies
-3) Handles player collisions with powerups
-
-# Load_animations function (not implemented yet; 11/12)
-
-1) Maps each spritesheet to an name (Ex: Idle, running, jumping)
-2) Returns names for rest of program to utilize
-
-# Update_animations function (not implemented yet; 11/12)
-
-1) Consistently runs checks on the player
-2) Runs animations based on current player actions
-
-# Jump function (11/11)
-
-1) Tells program what the player does when it jumps
-2) Tells program when player can and is jumping (when on ground and pressing jump key)
-
-# Future updates (jump function)
-
-1) Tell code to run jump animation (when it exists)
-
-# Handle_controls function (11/11)
-
-1) Uses key map from player_controls.JSON
-2) Defines what player should do if certain keys are pressed (for left, right, and jump)
-
-# Future updates (handle_controls function)
-
-1) Define what sliding does and when it should be done
-
-# Gravity_and_motion function (11/11)
-
-1) Initializes gravitational constant (0.5 for now)
-2) Tells program when to apply gravity (when not on ground)
-3) Defines where player position should be based on velocity and elapsed time
-
-# Future updates (gravity_and_motion function)
-
-1) Change gravitational constant in the future based on preferences
-
-# Update function (11/11)
-
-1) Ensures program is continuously responding to keypresses (by running handle_controls function)
-2) Ensures program continuously runs physics calculations (by running gravity_and_motion function)
-
-# Future updates (update function)
-
-1) Ensure program continuously responds to collisions (using future collisions function)
-
-# Draw function (11/11)
-
-1) Creates rectangle (demo player) based on position and dimension variables defined in player instance and init function respectively
-
-# Future updates (draw function)
-
-1) Draw an animated sprite (character) rather than placeholder rectangle
-2) Use screen.blit function to reduce code in main game loop
-
-# Rect function (11/11)
-
-1) Defines properties of player (hitbox size and position)
 
 # *Useful resources*
 
+karthik has a big forehead lololol
 Complete python introduction course (very useful): https://www.youtube.com/playlist?list=PLeo1K3hjS3uv5U-Lmlnucd7gqF-3ehIh0
 What is asyncio: https://youtu.be/Qb9s3UiMSTA?si=aUc02pHfXq4Ukhqs
 How to come up with & create sprites (Adobe Photoshop): https://youtu.be/mBt3UuLJx9Y?si=M1b8WCtHLIM0PtI3
