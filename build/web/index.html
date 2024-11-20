@@ -247,8 +247,11 @@ config = {
 }
 
 </script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Major+Mono+Display&display=swap" rel="stylesheet">
 
-    <title>parkour-dash</title>
+    <title>Parkour Dash</title>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -265,23 +268,47 @@ config = {
     <link rel="icon" type="image/png" href="favicon.png" sizes="16x16">
 
     <style>
+        .full-screen-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    
+    width: 65%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size:
+ calc(10vw + 20px); /* Adjust font size as needed */
+ font-family: "Major Mono Display", monospace;
+  font-weight: 500;
+  font-style: normal; /* Choose a suitable font */
+    color: #399cd4b9; /* Text color */
+}
+
         #status {
             display: inline-block;
             vertical-align: top;
             margin-top: 20px;
             margin-left: 30px;
             font-weight: bold;
-            color: rgb(120, 120, 120);
+            color: powderblue;
         }
 
         #progress {
             height: 20px;
             width: 300px;
         }
+        .major-mono-display-regular {
+  font-family: "Major Mono Display", monospace;
+  font-weight: 400;
+  font-style: normal;
+}
+
 
         div.emscripten { text-align: center; }
-        div.emscripten_border { border: 1px solid black; }
-        div.thick_border { border: 4px solid black; }
+        div.emscripten_border { border: 1px solid powderblue; }
+        div.thick_border { border: 4px solid powderblue; }
 
         /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
         /* average size of droid screen 470dp x 320dp  */
@@ -354,7 +381,11 @@ config = {
             <progress value="0" max="100" id="progress"></progress>
         </div>
     </div>
-
+    <div class="full-screen-text">
+        Parkour 
+        <br> 
+         Dash 
+    </div>
 
     <canvas class="emscripten" id="canvas"
 width="1px"
@@ -394,7 +425,7 @@ height="1px"
 width="470px" height="90%"
 allowtransparency="true"
 style="z-index: 10;"
-style="background: #FFFFFF;"
+style="background: #000000;"
 frameborder="1"
                 allowfullscreen="true"
                 webkitallowfullscreen="true"
