@@ -199,17 +199,16 @@ class Player():
         self.velocity = pygame.Vector2(0, 0)
         self.on_ground = False
 
-import pygame
-
 class Platform():
     
 
-    def __init__(self, position, image, is_moving, movement_range, speed, direction, image_path, dimensions, color):
+    def __init__(self, position, image, is_moving, movement_ranges, speed, direction, image_path, dimensions, color):
 
         self.start_position = pygame.Vector2(position)
         self.position = pygame.Vector2(position)
         self.is_moving = is_moving
-        self.movement_range = pygame.Vector2(movement_range)
+        self.movement_ranges = [pygame.Vector2(point) for point in movement_ranges]
+        self.current_index = 0
         self.speed = speed
         self.animation_frames = []
         self.current_frame = 0
@@ -227,8 +226,14 @@ class Platform():
             self.velocity = self.direction * self.speed
             self.previous_direction = self.direction.copy()
             self.position += self.direction * self.speed * dt
-            if self.position.distance_to(self.start_position) > self.movement_range.length():
-                self.direction *= -1
+            
+            target_position = self.movement_ranges[self.self.current_index]
+            if self.position.distance_to(target_position) < self.speed * dt:
+                self.current_index = (self.current_index + 1) % len(self.movement_ranges)
+                self.position = self.movement_ranges[self.current_index]
+                next_index = (self.current_index + 1) % len(self.movement_ranges)
+                self.direction = (self.movement_ranges[next_index] - self.position).normalize()
+        
         if self.frame_count > 0:    
             self.current_frame = (self.current_frame + 1) % self.frame_count
 
@@ -268,9 +273,11 @@ def load_platforms(platform_data, level_name):
         platform_dimensions = (platform_data['width'], platform_data['height'])
         platform_position = (platform_data['x-position'], platform_data['y-position'])
         platform_direction = (platform_data['x-direction'], platform_data['y-direction'])
-        platform_movement_range = (platform_data['x-movement_range'], platform_data['y-movement_range'])
+        platform_movement_range_min = (platform_data['x-movement_ranges-min'], platform_data['y-movement_ranges-min'])
+        platform_movement_range_max = (platform_data['x-movement_ranges-max'], platform_data['y-movement_ranges-max'])
 
         platform = Platform(
+
             position=platform_position,
             is_moving = platform_data['is_moving'],
             image_path=platform_data['image_path'],
@@ -278,7 +285,7 @@ def load_platforms(platform_data, level_name):
             speed=platform_data['speed'],
             direction=platform_direction,
             image=platform_data['image'],
-            movement_range=platform_movement_range,
+            movement_ranges= [platform_movement_range_min, platform_movement_range_max],
             color = platform_data['color']
         )
             
