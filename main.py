@@ -17,7 +17,7 @@ window_size = (800, 600)
 screen = pygame.display.set_mode(window_size)
 clock = pygame.time.Clock()
 
-pygame.display.set_caption("Karthikeya Abhimanyu Ainapurapu")
+pygame.display.set_caption("Parkour Dash")
 
 async def load_json_file(filepath):
     if WEB_ENVIRONMENT:
@@ -41,8 +41,8 @@ class Player():
         self.on_ground = False
         self.on_platform = None
         self.jump_strength = 575
-        self.speed = 250
-        self.acceleration = 2000
+        self.speed = 125
+        self.acceleration = 5000
         self.deceleration = 10000
         self.gravity = 50
         self.mass = 1
