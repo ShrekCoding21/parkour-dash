@@ -291,8 +291,8 @@ class Powerups():
 
 def pause_game(screen, clock, window_size):
 
-    font = pygame.font.SysFont(None, 55)
-    text = font.render('Paused', True, (255, 255, 255))
+    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 55)
+    text = font.render('Paused', True, ('#399cd4b9'))
     text_rect = text.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
         
     screen.blit(text, text_rect)
