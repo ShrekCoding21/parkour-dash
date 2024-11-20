@@ -13,7 +13,7 @@ except ImportError:
     pass  # We're not running in a web environment
 
 pygame.init()
-window_size = (800, 600)
+window_size = (1000, 700)
 screen = pygame.display.set_mode(window_size)
 clock = pygame.time.Clock()
 
@@ -320,11 +320,11 @@ async def main():
     level_name = 'demo_level'
     platforms = load_platforms(platforms_data, level_name)
 
-    player1 = Player(player_name="Player 1", position=(100, 100), controls=player1_controls, color=("#9EBA01"))
-    player2 = Player(player_name="Player 2", position=(200, 100), controls=player2_controls, color=("#1D01BA"))
+    player1 = Player(player_name="Player 1", position=(50, 100), controls=player1_controls, color=("#9EBA01"))
+    player2 = Player(player_name="Player 2", position=(50, 100), controls=player2_controls, color=("#1D01BA"))
 
     players = [player1, player2]
-    reset_positions = [(100, 100), (200, 100)]
+    reset_positions = [(50, 100), (50, 100)]
 
     running = True
     paused = False
@@ -341,9 +341,9 @@ async def main():
                 
                 if event.key == pygame.K_r:
                     reload_players(players, platforms, reset_positions)
-                elif event.key == pygame.K_ESCAPE:
+                elif event.key == pygame.K_p:
                     paused = True
-                elif paused and event.key == pygame.K_RETURN:
+                elif paused and event.key == pygame.K_u:
                     paused = False
 
         if paused:
