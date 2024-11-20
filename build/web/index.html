@@ -168,7 +168,7 @@ async def custom_site():
     if not platform.window.MM.UME:
 
         # now make a prompt
-        fnt = pygame.sysfont.SysFont("freesans",  uy(80) )
+        fnt = pygame.font.Font("freesans",  uy(80) )
         prompt = fnt.render("Ready to start !", True, "blue")
         pg_bar(track.len)
         screen.blit(prompt, ( marginx+ ux(80), marginy - uy(10) ) )
@@ -270,10 +270,10 @@ config = {
     <style>
         .full-screen-text {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 10px;
+    left: 10%;
     
-    width: 65%;
+    width: 80%;
     height: 100%;
     display: flex;
     justify-content: center;
@@ -284,6 +284,7 @@ config = {
   font-weight: 500;
   font-style: normal; /* Choose a suitable font */
     color: #399cd4b9; /* Text color */
+    z-index: 10;
 }
 
         #status {
@@ -315,17 +316,17 @@ config = {
         canvas.emscripten {
             border: 0px none;
             background-color: transparent;
-            width: 100%;
+            width: 80%;
             height: 100%;
             z-index: 5;
 
             padding: 0;
             margin: 0 auto;
 
-            position: absolute;
-            top: 0;
+            position: relative;
+            top: 10%;
             bottom: 0;
-            left: 0;
+            left: 10%;
             right: 0;
         }
 
@@ -387,16 +388,6 @@ config = {
          Dash 
     </div>
 
-    <canvas class="emscripten" id="canvas"
-width="1px"
-height="1px"
-    oncontextmenu="event.preventDefault()" tabindex=1>
-    </canvas>
-
-    <div id=html></div>
-
-    <div id=crt  class=bottomright >
-
         <div id="system" hidden>
             <div class="button-container">
                 <button id="aiostop" disabled>AIO ⏏︎</button>
@@ -444,6 +435,14 @@ frameborder="1"
     <div id="dlg" hidden>
         <input type="file" id="dlg_multifile" multiple accept="image/*">
         <label for="dlg_multifile">Select files</label>
+    </div>
+    
+    <div id="game-container" style="position: absolute; bottom: 0; width: 100%; text-align: center;">
+        <canvas class="emscripten" id="canvas"
+            width="1px"
+            height="1px"
+            oncontextmenu="event.preventDefault()" tabindex=1>
+        </canvas>
     </div>
 
     <div id="pyconsole">
