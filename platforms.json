@@ -25,12 +25,12 @@
                 "width": 180,
                 "height": 35,
                 "is_moving": "True",
-                "speed": 200,
+                "speed": 175,
                 "x-direction": 1,
                 "y-direction": 0,
                 "image_path": "None",
                 "image": "None",
-                "x-movement_range": 181,
+                "x-movement_range": 240,
                 "y-movement_range": 0,
                 "color": "#80C14E"
             },
@@ -46,8 +46,8 @@
                 "y-direction": -1,
                 "image_path": "None",
                 "image": "None",
-                "x-movement_range": 450,
-                "y-movement_range": 280,
+                "x-movement_range": 550,
+                "y-movement_range": 123,
                 "color": "#8F4EC1"
             },
 
@@ -65,23 +65,6 @@
                 "x-movement_range": 0,
                 "y-movement_range": 0,
                 "color": "#a9db8f"
-            },
-
-
-            "moving_platform": {
-                "x-position": 325,
-                "y-position": 375,
-                "width": 50,
-                "height": 10,
-                "is_moving": "True",
-                "speed": 250,
-                "x-direction": -1,
-                "y-direction": 0,
-                "image_path": "None",
-                "image": "None",
-                "x-movement_range": 230,
-                "y-movement_range": 0,
-                "color": "#8F4EC1"
             }
             
         }

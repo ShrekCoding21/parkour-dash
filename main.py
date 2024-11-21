@@ -206,8 +206,8 @@ class Platform():
 
     def __init__(self, position, image, is_moving, movement_range, speed, direction, image_path, dimensions, color):
 
-        self.start_position = pygame.Vector2(position)
         self.position = pygame.Vector2(position)
+        self.start_position = pygame.Vector2(position)
         self.is_moving = is_moving
         self.movement_range = pygame.Vector2(movement_range)
         self.speed = speed
@@ -224,13 +224,25 @@ class Platform():
         self.velocity = pygame.Vector2(0, 0)
 
     def update(self, dt):
+        print(self.movement_range.x)
+        print(self.start_position.x)
+        print(self.speed)
+        
         if self.is_moving:
+            
+            print(self.movement_range.x)
+            print(self.start_position.x)
+            print(self.speed)
 
-            self.velocity = self.direction * self.speed
+            self.velocity.x = (self.movement_range.x - self.start_position.x) / self.speed
+            self.velocity.y = (self.movement_range.y - self.start_position.y) / self.speed
+
             self.previous_direction = self.direction.copy()
             self.position += self.direction * self.speed * dt
+            
             if self.position.distance_to(self.start_position) > self.movement_range.length() or self.position.x < self.start_position.x:
                 self.direction *= -1
+        
         if self.frame_count > 0:    
             self.current_frame = (self.current_frame + 1) % self.frame_count
 
