@@ -13,7 +13,7 @@ except ImportError:
     pass  # We're not running in a web environment
 
 pygame.init()
-window_size = (800, 600)
+window_size = (1000, 700)
 screen = pygame.display.set_mode(window_size)
 clock = pygame.time.Clock()
 
@@ -199,16 +199,17 @@ class Player():
         self.velocity = pygame.Vector2(0, 0)
         self.on_ground = False
 
+import pygame
+
 class Platform():
     
 
-    def __init__(self, position, image, is_moving, movement_ranges, speed, direction, image_path, dimensions, color):
+    def __init__(self, position, image, is_moving, movement_range, speed, direction, image_path, dimensions, color):
 
         self.start_position = pygame.Vector2(position)
         self.position = pygame.Vector2(position)
         self.is_moving = is_moving
-        self.movement_ranges = [pygame.Vector2(point) for point in movement_ranges]
-        self.current_index = 0
+        self.movement_range = pygame.Vector2(movement_range)
         self.speed = speed
         self.animation_frames = []
         self.current_frame = 0
@@ -226,14 +227,8 @@ class Platform():
             self.velocity = self.direction * self.speed
             self.previous_direction = self.direction.copy()
             self.position += self.direction * self.speed * dt
-            
-            target_position = self.movement_ranges[self.self.current_index]
-            if self.position.distance_to(target_position) < self.speed * dt:
-                self.current_index = (self.current_index + 1) % len(self.movement_ranges)
-                self.position = self.movement_ranges[self.current_index]
-                next_index = (self.current_index + 1) % len(self.movement_ranges)
-                self.direction = (self.movement_ranges[next_index] - self.position).normalize()
-        
+            if self.position.distance_to(self.start_position) > self.movement_range.length():
+                self.direction *= -1
         if self.frame_count > 0:    
             self.current_frame = (self.current_frame + 1) % self.frame_count
 
@@ -273,11 +268,9 @@ def load_platforms(platform_data, level_name):
         platform_dimensions = (platform_data['width'], platform_data['height'])
         platform_position = (platform_data['x-position'], platform_data['y-position'])
         platform_direction = (platform_data['x-direction'], platform_data['y-direction'])
-        platform_movement_range_min = (platform_data['x-movement_ranges-min'], platform_data['y-movement_ranges-min'])
-        platform_movement_range_max = (platform_data['x-movement_ranges-max'], platform_data['y-movement_ranges-max'])
+        platform_movement_range = (platform_data['x-movement_range'], platform_data['y-movement_range'])
 
         platform = Platform(
-
             position=platform_position,
             is_moving = platform_data['is_moving'],
             image_path=platform_data['image_path'],
@@ -285,7 +278,7 @@ def load_platforms(platform_data, level_name):
             speed=platform_data['speed'],
             direction=platform_direction,
             image=platform_data['image'],
-            movement_ranges= [platform_movement_range_min, platform_movement_range_max],
+            movement_range=platform_movement_range,
             color = platform_data['color']
         )
             
@@ -327,11 +320,11 @@ async def main():
     level_name = 'demo_level'
     platforms = load_platforms(platforms_data, level_name)
 
-    player1 = Player(player_name="Player 1", position=(100, 100), controls=player1_controls, color=("#9EBA01"))
-    player2 = Player(player_name="Player 2", position=(200, 100), controls=player2_controls, color=("#1D01BA"))
+    player1 = Player(player_name="Player 1", position=(50, 100), controls=player1_controls, color=("#9EBA01"))
+    player2 = Player(player_name="Player 2", position=(50, 100), controls=player2_controls, color=("#1D01BA"))
 
     players = [player1, player2]
-    reset_positions = [(100, 100), (200, 100)]
+    reset_positions = [(50, 100), (50, 100)]
 
     running = True
     paused = False
@@ -348,9 +341,9 @@ async def main():
                 
                 if event.key == pygame.K_r:
                     reload_players(players, platforms, reset_positions)
-                elif event.key == pygame.K_ESCAPE:
+                elif event.key == pygame.K_p:
                     paused = True
-                elif paused and event.key == pygame.K_RETURN:
+                elif paused and event.key == pygame.K_u:
                     paused = False
 
         if paused:
