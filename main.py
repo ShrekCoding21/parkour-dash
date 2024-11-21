@@ -40,8 +40,8 @@ class Player():
         self.velocity = pygame.Vector2(0, 0)
         self.on_ground = False
         self.on_platform = None
-        self.jump_strength = 575
-        self.speed = 125
+        self.jump_strength = 600
+        self.speed = 200
         self.acceleration = 5000
         self.deceleration = 10000
         self.gravity = 50
@@ -320,11 +320,11 @@ async def main():
     level_name = 'demo_level'
     platforms = load_platforms(platforms_data, level_name)
 
-    player1 = Player(player_name="Player 1", position=(50, 100), controls=player1_controls, color=("#9EBA01"))
-    player2 = Player(player_name="Player 2", position=(50, 100), controls=player2_controls, color=("#1D01BA"))
+    player1 = Player(player_name="Player 1", position=(910, 610), controls=player1_controls, color=("#9EBA01"))
+    player2 = Player(player_name="Player 2", position=(910, 610), controls=player2_controls, color=("#1D01BA"))
 
     players = [player1, player2]
-    reset_positions = [(50, 100), (50, 100)]
+    reset_positions = [(910, 610), (910, 610)]
 
     running = True
     paused = False
