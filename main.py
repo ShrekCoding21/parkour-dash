@@ -199,8 +199,6 @@ class Player():
         self.velocity = pygame.Vector2(0, 0)
         self.on_ground = False
 
-import pygame
-
 class Platform():
     
 
@@ -224,23 +222,18 @@ class Platform():
         self.velocity = pygame.Vector2(0, 0)
 
     def update(self, dt):
-        print(self.movement_range.x)
-        print(self.start_position.x)
-        print(self.speed)
         
-        if self.is_moving:
+        if self.is_moving == 'True':
             
-            print(self.movement_range.x)
-            print(self.start_position.x)
-            print(self.speed)
+            movement = pygame.Vector2(
+                self.direction.x * self.movement_range.x / self.speed,
+                self.direction.y * self.movement_range.y / self.speed
+            )
 
-            self.velocity.x = (self.movement_range.x - self.start_position.x) / self.speed
-            self.velocity.y = (self.movement_range.y - self.start_position.y) / self.speed
-
-            self.previous_direction = self.direction.copy()
-            self.position += self.direction * self.speed * dt
+            self.velocity = movement * self.speed
+            self.position += movement * dt * self.speed
             
-            if self.position.distance_to(self.start_position) > self.movement_range.length() or self.position.x < self.start_position.x:
+            if self.position.distance_to(self.start_position) > self.movement_range.length() or self.position.x < self.start_position.x or self.position.y > self.start_position.y:
                 self.direction *= -1
         
         if self.frame_count > 0:    
@@ -307,7 +300,7 @@ class Powerups():
 def pause_game(screen, clock, window_size):
 
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 55)
-    text = font.render('Paused', True, ('#399cd4b9'))
+    text = font.render('Paused', True, ('#3a800b'))
     text_rect = text.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
         
     screen.blit(text, text_rect)
