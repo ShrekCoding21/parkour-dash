@@ -20,8 +20,8 @@
             },
 
             "moving-platform1": {
-                "x-position": 300,
-                "y-position": 610,
+                "x-position": 182,
+                "y-position":660,
                 "width": 180,
                 "height": 35,
                 "is_moving": "True",
@@ -30,24 +30,24 @@
                 "y-direction": 0,
                 "image_path": "None",
                 "image": "None",
-                "x-movement_range": 120,
+                "x-movement_range": 181,
                 "y-movement_range": 0,
                 "color": "#80C14E"
             },
 
             "moving-platform2": {
-                "x-position": 351,
-                "y-position": 450,
+                "x-position": 95,
+                "y-position": 635,
                 "width": 75,
                 "height": 29,
                 "is_moving": "True",
                 "speed": 200,
-                "x-direction": -1,
-                "y-direction": 1,
+                "x-direction": 1,
+                "y-direction": -1,
                 "image_path": "None",
                 "image": "None",
-                "x-movement_range": 276,
-                "y-movement_range": 124,
+                "x-movement_range": 450,
+                "y-movement_range": 280,
                 "color": "#8F4EC1"
             },
 

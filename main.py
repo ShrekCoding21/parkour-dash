@@ -215,6 +215,7 @@ class Platform():
         self.current_frame = 0
         self.frame_count = len(self.animation_frames)
         self.direction = pygame.Vector2(direction)
+        self.start_direction = self.direction.copy()
         self.previous_direction = self.direction.copy()
         self.image_path = image_path
         self.image = image
@@ -224,10 +225,11 @@ class Platform():
 
     def update(self, dt):
         if self.is_moving:
+
             self.velocity = self.direction * self.speed
             self.previous_direction = self.direction.copy()
             self.position += self.direction * self.speed * dt
-            if self.position.distance_to(self.start_position) > self.movement_range.length():
+            if self.position.distance_to(self.start_position) > self.movement_range.length() or self.position.x < self.start_position.x:
                 self.direction *= -1
         if self.frame_count > 0:    
             self.current_frame = (self.current_frame + 1) % self.frame_count
@@ -256,6 +258,7 @@ class Platform():
 
     def reset(self):
         self.position = pygame.Vector2(self.start_position)
+        self.direction = pygame.Vector2(self.start_direction)
         self.current_frame = 0
 
     
