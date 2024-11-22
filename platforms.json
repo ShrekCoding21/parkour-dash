@@ -75,7 +75,7 @@
                 "is_moving": "True",
                 "speed": 50,
                 "x-direction": 0,
-                "y-direction": 1,
+                "y-direction": -1,
                 "image_path": "None",
                 "image": "None",
                 "x-movement_range": 0,
@@ -141,7 +141,6 @@
                 "x-direction": 0,
                 "y-direction": 0,
                 "image_path": "finish-line.png",
-                "image": "finish-line.png",
                 "x-movement_range": 0,
                 "y-movement_range": 0,
                 "color": "#ffffff"

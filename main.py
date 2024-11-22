@@ -179,7 +179,7 @@ class Player():
 class Platform():
     
 
-    def __init__(self, position, image, is_moving, movement_range, speed, direction, image_path, dimensions, color):
+    def __init__(self, position, is_moving, movement_range, speed, direction, image_path, dimensions, color):
 
         self.position = pygame.Vector2(position)
         self.start_position = pygame.Vector2(position)
@@ -193,10 +193,15 @@ class Platform():
         self.start_direction = self.direction.copy()
         self.previous_direction = self.direction.copy()
         self.image_path = image_path
-        self.image = image
         self.color = color
         self.dimensions = dimensions
         self.velocity = pygame.Vector2(0, 0)
+        
+        try:
+            self.image = pygame.image.load(image_path).convert_alpha() if image_path else None
+        except FileNotFoundError:
+            self.image = None
+
 
     def update(self, dt):
         
@@ -217,21 +222,16 @@ class Platform():
             self.current_frame = (self.current_frame + 1) % self.frame_count
 
     def draw(self, screen):
-        if self.animation_frames:
-            frame = self.animation_frames[self.current_frame]
-            screen.blit(frame, self.position)
+        if self.image:
+            screen.blit(self.image, self.position)
         else:
-            if self.is_moving:
-                pygame.draw.rect(screen, self.color, (*self.position, self.dimensions[0], self.dimensions[1]))
+            pygame.draw.rect(screen, self.color, (*self.position, self.dimensions[0], self.dimensions[1]))
     
     def set_image(self, image_path):
         if image_path is not None:
-            image = pygame.image.load(image_path)
-            self.animation_frames = [image]
-            self.frame_count = len(self.animation_frames)
+            self.image = pygame.image.load(image_path)
         else:
-            self.animation_frames = []
-            self.frame_count = 0
+            self.image = None
 
     
     def set_animation_frames(self, image_paths):
@@ -262,7 +262,6 @@ def load_platforms(platform_data, level_name):
             dimensions=platform_dimensions,
             speed=platform_data['speed'],
             direction=platform_direction,
-            image=platform_data['image'],
             movement_range=platform_movement_range,
             color = platform_data['color']
         )
@@ -278,12 +277,12 @@ def freeze_game(screen, clock, window_size, paused, game_finished, best_player, 
 
     if paused:
         text1 = "Paused"
-        text2 = None
+        text2 = "press (u) to unpause"
         f_size = 55
 
     if game_finished:
-        text1 = f'Player {best_player} wins!'
-        text2 = 'Press (r) to restart game'
+        text1 = f'player {best_player} wins!'
+        text2 = 'press (r) to restart game'
         f_size = 35
 
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', f_size)
@@ -340,7 +339,6 @@ async def main():
     for platform in platforms:
         if platform.position == pygame.Vector2(30, 100):
             finish_line = platform
-            print(finish_line)
 
     while running:
         dt = clock.tick(60) / 1000.0
