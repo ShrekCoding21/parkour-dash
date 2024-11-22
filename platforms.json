@@ -41,7 +41,7 @@
                 "width": 75,
                 "height": 30,
                 "is_moving": "True",
-                "speed": 100,
+                "speed": 50,
                 "x-direction": 1,
                 "y-direction": -1,
                 "image_path": "None",
