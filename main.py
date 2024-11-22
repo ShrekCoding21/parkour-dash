@@ -33,9 +33,9 @@ async def load_json_file(filepath):
 class Player():
 
 
-    def __init__(self, player_name, position, controls, color):
+    def __init__(self, position, controls, color, player_id):
         super().__init__()
-        self.player_name = player_name
+        self.id = player_id
         self.position = pygame.Vector2(position)
         self.velocity = pygame.Vector2(0, 0)
         self.on_ground = False
@@ -60,29 +60,6 @@ class Player():
         self.width = 32
         self.height = 64
         self.color = color
-
-    def names(self):
-
-        player_names = []
-        player_ids = []
-        for id_num in range(2): 
-            player_num = id_num + 1
-            invalid = True
-
-            while invalid:
-                player_name = input(f"Player {player_num}, please enter your name")
-
-                if player_name != '' and len(player_name) < 21:
-                    if player_name not in player_names:
-                        player_ids.append(f'player{player_num}')
-                        player_names.append(player_name)
-                        invalid = False
-                    else:
-                        print("That name is already being used, please choose a different one.")
-                else:
-                    print("Invalid name. Please choose a name smaller than 21 characters and not blank.")
-      
-        return player_names, player_ids
     
     def collisions(self, platforms):
         player_rect = self.rect
@@ -297,13 +274,31 @@ def load_platforms(platform_data, level_name):
 class Powerups():
     pass
 
-def pause_game(screen, clock, window_size):
+def freeze_game(screen, clock, window_size, paused, game_finished, best_player, text_color):
 
-    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 55)
-    text = font.render('Paused', True, ('#3a800b'))
-    text_rect = text.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
-        
-    screen.blit(text, text_rect)
+    if paused:
+        text1 = "Paused"
+        text2 = None
+        f_size = 55
+
+    if game_finished:
+        text1 = f'Player {best_player} wins!'
+        text2 = 'Press (r) to restart game'
+        f_size = 35
+
+    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', f_size)
+    texts = [text1, text2]
+    
+    
+
+    offset = 30
+
+    for text in texts:        
+        printtext = font.render(text, True, (text_color))
+        text_rect = printtext.get_rect(center=(window_size[0] // 2, window_size[1] // 2 - offset))
+        screen.blit(printtext, text_rect)
+        offset = -offset
+
     pygame.display.flip()
 
     clock.tick(10)
@@ -329,23 +324,37 @@ async def main():
     level_name = 'demo_level'
     platforms = load_platforms(platforms_data, level_name)
 
-    player1 = Player(player_name="Player 1", position=(910, 610), controls=player1_controls, color=("#9EBA01"))
-    player2 = Player(player_name="Player 2", position=(910, 610), controls=player2_controls, color=("#1D01BA"))
+    player1 = Player(player_id=1, position=(910, 610), controls=player1_controls, color=("#9EBA01"))
+    player2 = Player(player_id=2, position=(910, 610), controls=player2_controls, color=("#2276c9"))
 
     players = [player1, player2]
     reset_positions = [(910, 610), (910, 610)]
 
     running = True
     paused = False
+    finish_line = None
+    game_finished = False
+    best_player = None
+    text_color = ("#71d6f5")
+
+    for platform in platforms:
+        if platform.position == pygame.Vector2(30, 100):
+            finish_line = platform
+            print(finish_line)
 
     while running:
         dt = clock.tick(60) / 1000.0
         keys = pygame.key.get_pressed()
 
         for player in players:
+
             if player.position.y > 800:
                 player.reload(position=(910, 610))
 
+            if player.on_platform == finish_line:
+                best_player = player.id
+                game_finished = True
+                text_color = player.color
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -355,11 +364,14 @@ async def main():
                 
                 if event.key == pygame.K_r:
                     reload_players(players, platforms, reset_positions)
+                    best_player = None
+                    game_finished = False
+                    text_color = ("#71d6f5")
                 
                 if event.key == pygame.K_p:
                     paused = True
                 
-                elif paused:
+                elif paused or game_finished:
 
                     if event.key == pygame.K_u:
                         paused = False
@@ -367,12 +379,15 @@ async def main():
                     elif event.key == pygame.K_r:
                         reload_players(players, platforms, reset_positions)
                         paused = False
+                        game_finished = False
+                        best_player = None
+                        text_color = ("#71d6f5")
 
-        if paused:
+        if paused or game_finished:
 
-            pause_game(screen, clock, window_size)
+            freeze_game(screen, clock, window_size, paused, game_finished, best_player, text_color)
 
-        if not paused:
+        if not paused and not game_finished:
             
             for platform in platforms:
                 platform.update(dt)

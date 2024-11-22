@@ -131,7 +131,7 @@
                 "color": "#6b45e6"
             },
 
-            "finish-platform": {
+            "finish-line": {
                 "x-position": 30,
                 "y-position": 100,
                 "width": 150,
@@ -140,8 +140,8 @@
                 "speed": 0,
                 "x-direction": 0,
                 "y-direction": 0,
-                "image_path": "None",
-                "image": "None",
+                "image_path": "finish-line.png",
+                "image": "finish-line.png",
                 "x-movement_range": 0,
                 "y-movement_range": 0,
                 "color": "#ffffff"
