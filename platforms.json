@@ -51,7 +51,7 @@
                 "color": "#00821e"
             },
 
-            "transition-platform1": {
+            "transition-platform": {
                 "x-position": 640,
                 "y-position": 400,
                 "width": 290,
@@ -69,7 +69,7 @@
 
             "vertical-platform1": {
                 "x-position": 700,
-                "y-position": 420,
+                "y-position": 395,
                 "width": 100,
                 "height": 20,
                 "is_moving": "True",

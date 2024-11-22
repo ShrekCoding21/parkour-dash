@@ -308,6 +308,7 @@ def pause_game(screen, clock, window_size):
 
     clock.tick(10)
 
+
 def reload_players(players, platforms, reset_positions):
         
         for platform in platforms:
@@ -341,6 +342,11 @@ async def main():
         dt = clock.tick(60) / 1000.0
         keys = pygame.key.get_pressed()
 
+        for player in players:
+            if player.position.y > 800:
+                player.reload(position=(910, 610))
+
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -349,10 +355,18 @@ async def main():
                 
                 if event.key == pygame.K_r:
                     reload_players(players, platforms, reset_positions)
-                elif event.key == pygame.K_p:
+                
+                if event.key == pygame.K_p:
                     paused = True
-                elif paused and event.key == pygame.K_u:
-                    paused = False
+                
+                elif paused:
+
+                    if event.key == pygame.K_u:
+                        paused = False
+                    
+                    elif event.key == pygame.K_r:
+                        reload_players(players, platforms, reset_positions)
+                        paused = False
 
         if paused:
 
