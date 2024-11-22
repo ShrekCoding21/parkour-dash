@@ -277,7 +277,7 @@ def freeze_game(screen, clock, window_size, paused, game_finished, best_player, 
 
     if paused:
         text1 = "Paused"
-        text2 = "press (u) to unpause"
+        text2 = None
         f_size = 55
 
     if game_finished:
@@ -310,6 +310,47 @@ def reload_players(players, platforms, reset_positions):
 
         for player, position in zip(players, reset_positions):
             player.reload(position)
+
+def display_controls():
+            
+            font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 20)
+
+            controls_left1 = ('a: left')
+            controls_right1 = ('d: right')
+            controls_up1 = ('w: jump')
+
+            controls_left2 = ('left-arrow: left')
+            controls_right2 = ('right-arrow: right')
+            controls_up2 = ('up-arrow: up')
+
+            controls_pause = ('p: game pause')
+            controls_unpause = ('u: game unpause')
+            controls_reload = ('r: game reload')
+
+            p1_controls = [controls_left1, controls_right1, controls_up1]
+            p2_controls = [controls_left2, controls_right2, controls_up2]
+            general_controls = [controls_pause, controls_unpause, controls_reload]
+
+            x_position = 20
+            vertical_displacement = 150
+            for p1_control in p1_controls:
+                print_p1_controls = font.render(p1_control, True, ("#9EBA01"))
+                p1_control_rect = print_p1_controls.get_rect(topleft=(x_position, vertical_displacement))
+                screen.blit(print_p1_controls, p1_control_rect)
+                vertical_displacement += 30
+
+            for p2_control in p2_controls:
+                print_p2_controls = font.render(p2_control, True, ("#2276c9"))
+                p2_control_rect = print_p2_controls.get_rect(topleft=(x_position, vertical_displacement))
+                screen.blit(print_p2_controls, p2_control_rect)
+                vertical_displacement += 30
+
+            for general_control in general_controls:
+                print_general_controls = font.render(general_control, True, ("#ffffff"))
+                general_control_rect = print_general_controls.get_rect(topleft=(x_position, vertical_displacement))
+                screen.blit(print_general_controls, general_control_rect)
+                vertical_displacement += 30
+            
 
 
 async def main():
@@ -401,6 +442,8 @@ async def main():
 
             for player in players:
                 player.draw(screen)
+
+            display_controls()
 
             pygame.display.flip()
 
