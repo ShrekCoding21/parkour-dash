@@ -247,6 +247,9 @@ config = {
 }
 
 </script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Major+Mono+Display&display=swap" rel="stylesheet">
 
     <title>parkour-dash</title>
     <meta charset="UTF-8">
@@ -265,18 +268,30 @@ config = {
     <link rel="icon" type="image/png" href="favicon.png" sizes="16x16">
 
     <style>
-        #status {
-            display: inline-block;
-            vertical-align: top;
-            margin-top: 20px;
-            margin-left: 30px;
-            font-weight: bold;
-            color: rgb(120, 120, 120);
+        .full-screen-text {
+            font-family: "Major Mono Display", monospace;
+            font-weight: 500;
+            font-style: normal;
+            color: #399cd4b9;
+            z-index: 10;
+        }
+            #status {
+                display: inline-block;
+                vertical-align: top;
+                margin-top: 20px;
+                margin-left: 30px;
+                font-weight: bold;
+                color: powderblue;
         }
 
         #progress {
             height: 20px;
             width: 300px;
+        }
+        .major-mono-display-regular {
+            font-family: "Major Mono Display", monospace;
+            font-weight: 400;
+            font-style: normal;
         }
 
         div.emscripten { text-align: center; }
@@ -353,6 +368,12 @@ config = {
         <div class="emscripten">
             <progress value="0" max="100" id="progress"></progress>
         </div>
+    </div>
+
+    <div class="full-screen-text">
+        Parkour 
+        <br> 
+         Dash 
     </div>
 
 
