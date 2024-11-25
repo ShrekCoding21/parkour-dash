@@ -34,7 +34,7 @@ class Player():
     def collisions(self, platforms):
         player_rect = self.rect
         self.on_ground = False
-        tolerance = 2
+        tolerance = 10
 
         for platform in platforms:
             platform_rect = pygame.Rect(platform.position.x, platform.position.y, platform.dimensions[0], platform.dimensions[1])
@@ -43,37 +43,34 @@ class Player():
                 overlap_x = min(player_rect.right - platform_rect.left, platform_rect.right - player_rect.left)
                 overlap_y = min(player_rect.bottom - platform_rect.top, platform_rect.bottom - player_rect.top)
 
-                if overlap_x < overlap_y:
+                if overlap_x < overlap_y:  # Horizontal collision
                     
-                    if self.velocity.x > 0:
-                        self.position.x = platform_rect.left - self.width
+                    if self.velocity.x > 0 and player_rect.left < platform_rect.left:  # Moving right into platform
+
+                        self.position.x = platform_rect.left - self.width - 5
                     
-                    elif self.velocity.x < 0:
-                        self.position.x = platform_rect.right
-                    
+                    elif self.velocity.x < 0 and player_rect.right > platform_rect.right:  # Moving left into platform
+                        self.position.x = platform_rect.right + 5
+
                     else:
-                        
-                        if platform.direction.x == 1 and platform.previous_direction.x == 1:
-                            self.position.x = platform_rect.right
-                        
-                        elif platform.direction.x == -1 and platform.previous_direction.x == -1:
-                            self.position.x = platform_rect.left - self.width
-                        
+                        pass
+                    
                     self.velocity.x = 0
 
-                else:
+                else:  # Vertical collision
                     
-                    if self.velocity.y > 0: # player is falling
+                    if self.velocity.y > 0:  # Falling
                         self.position.y = platform_rect.top - self.height
                         self.velocity.y = 0
                         self.on_ground = True
                         self.on_platform = platform
                     
-                    elif self.velocity.y < 0 and platform_rect.bottom - player_rect.top <= tolerance: # player is jumping
-                        self.position.y = platform_rect.bottom
+                    elif self.velocity.y < 0 and platform_rect.bottom - player_rect.top <= tolerance:  # Jumping
+                        self.position.y = platform_rect.bottom + 3
                         self.velocity.y = 0
 
-                player_rect = self.rect
+            player_rect = self.rect
+
     
     def load_animations(self):
         pass
