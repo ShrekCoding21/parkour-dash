@@ -59,7 +59,7 @@ def load_platforms(platform_data, level_name):
 class Powerups():
     pass
 
-def freeze_game(screen, clock, window_size, paused, game_finished, best_player, text_color):
+def freeze_game(screen, clock, window_size, paused, game_finished, best_player_num, text_color):
 
     if paused:
         text1 = "Paused"
@@ -67,7 +67,7 @@ def freeze_game(screen, clock, window_size, paused, game_finished, best_player, 
         f_size = 55
 
     if game_finished:
-        text1 = f'player {best_player} wins!'
+        text1 = f'player {best_player_num} wins!'
         text2 = 'press (r) to restart game'
         f_size = 35
 
@@ -174,7 +174,7 @@ async def main():
     paused = False
     finish_line = None
     game_finished = False
-    best_player = None
+    best_player_num = None
     text_color = ("#71d6f5")
 
     for platform in platforms:
@@ -192,7 +192,7 @@ async def main():
                 player.reload(position=(910, 610))
 
             if player.on_platform == finish_line:
-                best_player = player.id
+                best_player_num = player.id
                 game_finished = True
                 text_color = player.color
 
@@ -204,7 +204,7 @@ async def main():
                 
                 if event.key == pygame.K_r:
                     reload_players(players, platforms, reset_positions)
-                    best_player = None
+                    best_player_num = None
                     game_finished = False
                     text_color = ("#71d6f5")
                 
@@ -220,12 +220,12 @@ async def main():
                         reload_players(players, platforms, reset_positions)
                         paused = False
                         game_finished = False
-                        best_player = None
+                        best_player_num = None
                         text_color = ("#71d6f5")
 
         if paused or game_finished:
 
-            freeze_game(screen, clock, window_size, paused, game_finished, best_player, text_color)
+            freeze_game(screen, clock, window_size, paused, game_finished, best_player_num, text_color)
 
         if not paused and not game_finished:
 
