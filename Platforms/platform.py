@@ -32,18 +32,12 @@ class Platform():
         if self.is_moving == 'True':
             
             movement = pygame.Vector2(
-                self.direction.x * self.movement_range.x / self.speed,
-                self.direction.y * self.movement_range.y / self.speed
-            )
+                self.direction.x * self.movement_range.x,
+                self.direction.y * self.movement_range.y
+            ).normalize() * self.speed
 
-            if self.is_moving == 'True' and self.direction.x != 0 and self.direction.y != 0:
-                print(self.direction.x)
-                print(self.movement_range.x)
-                print(self.speed)
-                print(movement.x)
-
-            self.velocity = movement * self.speed
-            self.position += movement * dt * self.speed
+            self.velocity = movement
+            self.position += self.velocity * dt
             
             if self.position.distance_to(self.start_position) > self.movement_range.length() or self.position.x < self.start_position.x or self.position.y > self.start_position.y:
                 self.direction *= -1
