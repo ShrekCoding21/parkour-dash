@@ -36,6 +36,12 @@ class Platform():
                 self.direction.y * self.movement_range.y / self.speed
             )
 
+            if self.is_moving == 'True' and self.direction.x != 0 and self.direction.y != 0:
+                print(self.direction.x)
+                print(self.movement_range.x)
+                print(self.speed)
+                print(movement.x)
+
             self.velocity = movement * self.speed
             self.position += movement * dt * self.speed
             

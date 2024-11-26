@@ -51,9 +51,6 @@ class Player():
                     
                     elif self.velocity.x < 0 and player_rect.right > platform_rect.right:  # Moving left into platform
                         self.position.x = platform_rect.right + 5
-
-                    else:
-                        pass
                     
                     self.velocity.x = 0
 
