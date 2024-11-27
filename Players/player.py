@@ -16,7 +16,9 @@ class Player():
         self.deceleration = 10000
         self.gravity = 50
         self.mass = 1
-        # self.is_sliding = False
+        self.facing = 0
+        self.is_sliding = False
+        self.slide_direction = 0
         self.controls = {action: getattr(pygame, key) for action, key in controls.items()}
         # self.animations = self.load_animations()
         # self.current_animation = self.animations["idle"]
@@ -27,8 +29,7 @@ class Player():
 
         "temp variables until we can add player sprites"
 
-        self.width = 32
-        self.height = 64
+        self.width, self.height = 32, 64
         self.color = color
     
     def collisions(self, platforms):
@@ -87,6 +88,12 @@ class Player():
             if self.on_platform:
                 self.on_platform = None
 
+    def slide(self):
+        if self.on_ground and not self.is_sliding:
+            self.is_sliding - True
+            self.start_slide = self.position.x
+    
+
     def handle_controls(self, keys, delta_time):
         
         ACCELERATION = self.acceleration * delta_time
@@ -94,11 +101,22 @@ class Player():
 
         if keys[self.controls['left']]:
             self.velocity.x -= ACCELERATION
+            self.facing = -1
+
+            if self.slide_direction == 1:
+                self.is_sliding = False
+                self.width, self.height = 32, 64
+        
         elif keys[self.controls['right']]:
             self.velocity.x += ACCELERATION
+            self.facing = 1
+
+            if self.slide_direction == -1:
+                self.is_sliding = False
+                self.width, self.height = 32, 64
         else:
             
-            if self.on_ground:
+            if self.on_ground and not self.is_sliding:
                 if self.velocity.x > 0:
                     self.velocity.x = max(0, self.velocity.x - DECELERATION)
                 elif self.velocity.x < 0:
@@ -107,8 +125,30 @@ class Player():
         MAX_SPEED = self.speed
         self.velocity.x = max(-MAX_SPEED, min(MAX_SPEED, self.velocity.x))
 
-        if keys[self.controls['jump']] and self.on_ground:
-            self.jump()
+        if self.on_ground:
+
+            if keys[self.controls['jump']]:
+                self.jump()
+            
+            if keys[self.controls['slide']] and not self.is_sliding and self.facing != 0:
+                self.start_slide = self.position.x
+                self.is_sliding = True
+                self.slide_direction = self.facing
+                self.width, self.height = 64, 32
+
+        if self.is_sliding:
+            distance_slid = abs(self.position.x - self.start_slide)
+
+            if distance_slid < 250:
+                self.velocity.x = (self.slide_direction * self.speed) * 1.75
+
+            else:
+
+                self.width, self.height = 32, 64
+                if self.on_ground:
+
+                    self.is_sliding = False
+                    self.velocity.x = 0
 
     def update(self, delta_time, keys):
 
@@ -138,4 +178,6 @@ class Player():
     def reload(self, position):
         self.position = pygame.Vector2(position)
         self.velocity = pygame.Vector2(0, 0)
+        self.is_sliding = False
         self.on_ground = False
+        self.width, self.height = 32, 64

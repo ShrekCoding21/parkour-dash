@@ -29,6 +29,8 @@ async def load_json_file(filepath):
         with open(filepath, 'r') as key_map:
             keys_data = json.load(key_map)
     return keys_data
+
+"""copy changes below this line into main.py"""
     
 def load_platforms(platform_data, level_name):
 
@@ -104,13 +106,15 @@ def display_controls():
     p1_controls = [
         'a: left',
         'd: right',
-        'w: jump'
+        'w: jump',
+        's: slide'
         ]
     
     p2_controls = [
         'left-arrow: left',
         'right-arrow: right',
-        'up-arrow: up'
+        'up-arrow: up',
+        'down-arrow: slide'
         ]
     
     general_controls = [

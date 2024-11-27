@@ -27,7 +27,11 @@ async def load_json_file(filepath):
             keys_data = json.load(key_map)
     return keys_data
 
-import pygame
+
+
+"""player.py code goes here"""
+
+
 
 class Player():
 
@@ -45,7 +49,9 @@ class Player():
         self.deceleration = 10000
         self.gravity = 50
         self.mass = 1
-        # self.is_sliding = False
+        self.facing = 0
+        self.is_sliding = False
+        self.slide_direction = 0
         self.controls = {action: getattr(pygame, key) for action, key in controls.items()}
         # self.animations = self.load_animations()
         # self.current_animation = self.animations["idle"]
@@ -56,8 +62,7 @@ class Player():
 
         "temp variables until we can add player sprites"
 
-        self.width = 32
-        self.height = 64
+        self.width, self.height = 32, 64
         self.color = color
     
     def collisions(self, platforms):
@@ -80,9 +85,6 @@ class Player():
                     
                     elif self.velocity.x < 0 and player_rect.right > platform_rect.right:  # Moving left into platform
                         self.position.x = platform_rect.right + 5
-
-                    else:
-                        pass
                     
                     self.velocity.x = 0
 
@@ -119,6 +121,12 @@ class Player():
             if self.on_platform:
                 self.on_platform = None
 
+    def slide(self):
+        if self.on_ground and not self.is_sliding:
+            self.is_sliding - True
+            self.start_slide = self.position.x
+    
+
     def handle_controls(self, keys, delta_time):
         
         ACCELERATION = self.acceleration * delta_time
@@ -126,11 +134,22 @@ class Player():
 
         if keys[self.controls['left']]:
             self.velocity.x -= ACCELERATION
+            self.facing = -1
+
+            if self.slide_direction == 1:
+                self.is_sliding = False
+                self.width, self.height = 32, 64
+        
         elif keys[self.controls['right']]:
             self.velocity.x += ACCELERATION
+            self.facing = 1
+
+            if self.slide_direction == -1:
+                self.is_sliding = False
+                self.width, self.height = 32, 64
         else:
             
-            if self.on_ground:
+            if self.on_ground and not self.is_sliding:
                 if self.velocity.x > 0:
                     self.velocity.x = max(0, self.velocity.x - DECELERATION)
                 elif self.velocity.x < 0:
@@ -139,8 +158,30 @@ class Player():
         MAX_SPEED = self.speed
         self.velocity.x = max(-MAX_SPEED, min(MAX_SPEED, self.velocity.x))
 
-        if keys[self.controls['jump']] and self.on_ground:
-            self.jump()
+        if self.on_ground:
+
+            if keys[self.controls['jump']]:
+                self.jump()
+            
+            if keys[self.controls['slide']] and not self.is_sliding and self.facing != 0:
+                self.start_slide = self.position.x
+                self.is_sliding = True
+                self.slide_direction = self.facing
+                self.width, self.height = 64, 32
+
+        if self.is_sliding:
+            distance_slid = abs(self.position.x - self.start_slide)
+
+            if distance_slid < 250:
+                self.velocity.x = (self.slide_direction * self.speed) * 1.75
+
+            else:
+
+                self.width, self.height = 32, 64
+                if self.on_ground:
+
+                    self.is_sliding = False
+                    self.velocity.x = 0
 
     def update(self, delta_time, keys):
 
@@ -170,7 +211,14 @@ class Player():
     def reload(self, position):
         self.position = pygame.Vector2(position)
         self.velocity = pygame.Vector2(0, 0)
+        self.is_sliding = False
         self.on_ground = False
+        self.width, self.height = 32, 64
+
+
+
+"""platform.py code goes here"""
+
 
 
 class Platform():
@@ -205,12 +253,12 @@ class Platform():
         if self.is_moving == 'True':
             
             movement = pygame.Vector2(
-                self.direction.x * self.movement_range.x / self.speed,
-                self.direction.y * self.movement_range.y / self.speed
-            )
+                self.direction.x * self.movement_range.x,
+                self.direction.y * self.movement_range.y
+            ).normalize() * self.speed
 
-            self.velocity = movement * self.speed
-            self.position += movement * dt * self.speed
+            self.velocity = movement
+            self.position += self.velocity * dt
             
             if self.position.distance_to(self.start_position) > self.movement_range.length() or self.position.x < self.start_position.x or self.position.y > self.start_position.y:
                 self.direction *= -1
@@ -239,6 +287,9 @@ class Platform():
         self.position = pygame.Vector2(self.start_position)
         self.direction = pygame.Vector2(self.start_direction)
         self.current_frame = 0
+
+class Powerups():
+    pass
 
 def load_platforms(platform_data, level_name):
 
@@ -269,7 +320,13 @@ def load_platforms(platform_data, level_name):
 class Powerups():
     pass
 
-def freeze_game(screen, clock, window_size, paused, game_finished, best_player, text_color):
+
+
+"""parkour-dash.py code goes here"""
+
+
+
+def freeze_game(screen, clock, window_size, paused, game_finished, best_player_num, text_color):
 
     if paused:
         text1 = "Paused"
@@ -277,7 +334,7 @@ def freeze_game(screen, clock, window_size, paused, game_finished, best_player, 
         f_size = 55
 
     if game_finished:
-        text1 = f'player {best_player} wins!'
+        text1 = f'player {best_player_num} wins!'
         text2 = 'press (r) to restart game'
         f_size = 35
 
@@ -314,13 +371,15 @@ def display_controls():
     p1_controls = [
         'a: left',
         'd: right',
-        'w: jump'
+        'w: jump',
+        's: slide'
         ]
     
     p2_controls = [
         'left-arrow: left',
         'right-arrow: right',
-        'up-arrow: up'
+        'up-arrow: up',
+        'down-arrow: slide'
         ]
     
     general_controls = [
@@ -384,7 +443,7 @@ async def main():
     paused = False
     finish_line = None
     game_finished = False
-    best_player = None
+    best_player_num = None
     text_color = ("#71d6f5")
 
     for platform in platforms:
@@ -402,7 +461,7 @@ async def main():
                 player.reload(position=(910, 610))
 
             if player.on_platform == finish_line:
-                best_player = player.id
+                best_player_num = player.id
                 game_finished = True
                 text_color = player.color
 
@@ -414,7 +473,7 @@ async def main():
                 
                 if event.key == pygame.K_r:
                     reload_players(players, platforms, reset_positions)
-                    best_player = None
+                    best_player_num = None
                     game_finished = False
                     text_color = ("#71d6f5")
                 
@@ -430,12 +489,12 @@ async def main():
                         reload_players(players, platforms, reset_positions)
                         paused = False
                         game_finished = False
-                        best_player = None
+                        best_player_num = None
                         text_color = ("#71d6f5")
 
         if paused or game_finished:
 
-            freeze_game(screen, clock, window_size, paused, game_finished, best_player, text_color)
+            freeze_game(screen, clock, window_size, paused, game_finished, best_player_num, text_color)
 
         if not paused and not game_finished:
 
