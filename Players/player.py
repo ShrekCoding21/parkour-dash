@@ -179,5 +179,6 @@ class Player():
         self.position = pygame.Vector2(position)
         self.velocity = pygame.Vector2(0, 0)
         self.is_sliding = False
+        self.facing = 0
         self.on_ground = False
         self.width, self.height = 32, 64

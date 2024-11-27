@@ -32,10 +32,40 @@ async def load_json_file(filepath):
 
 """copy changes below this line into main.py"""
     
+class Camera():
+    
+    def __init__(self, width, height):
+        self.camera_rect = pygame.Rect(0, 0, width, height)
+        self.width = width
+        self.height = height
+
+    def apply(self, obj):
+
+        if isinstance(obj, Player):
+            return obj.rect.move(-self.camera_rect.topleft[0], -self.camera_rect.topleft[1])
+        elif isinstance(obj, Platform):
+            return pygame.Rect(
+                obj.position.x - self.camera_rect.topleft[0],
+                obj.position.y - self.camera_rect.topleft[1],
+                obj.dimensions[0],
+                obj.dimensions[1]
+            )
+        return obj
+    
+    def update(self, player):
+
+        x = player.position.x - (self.width // 2) + 500
+        y = player.position.y - self.height // 2
+
+        x = max(0, min(x, self.width - window_size[0]))
+        y = max(0, min(y, self.height - window_size[0]))
+
+        self.camera_rect = pygame.Rect(x, y, self.width, self.height)
+
 def load_platforms(platform_data, level_name):
 
     platforms = []
-    level_data = platform_data['platforms']['levels'][level_name]
+    level_data = platform_data[level_name]['platforms']
 
     for platform_name, platform_data in level_data.items():
         platform_dimensions = (platform_data['width'], platform_data['height'])
@@ -58,9 +88,6 @@ def load_platforms(platform_data, level_name):
 
     return platforms
 
-class Powerups():
-    pass
-
 def freeze_game(screen, clock, window_size, paused, game_finished, best_player_num, text_color):
 
     if paused:
@@ -75,9 +102,6 @@ def freeze_game(screen, clock, window_size, paused, game_finished, best_player_n
 
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', f_size)
     texts = [text1, text2]
-    
-    
-
     offset = 30
 
     for text in texts:        
@@ -158,13 +182,14 @@ def update_game_logic(delta_time, players, platforms, keys):
 async def main():
 
     keys_data = await load_json_file('Players/player_controls.json')
-    platforms_data = await load_json_file('Platforms/platforms.json')
+    levels_data = await load_json_file('Levels/demo_level.json')
 
     player1_controls = keys_data['controls']['players']['player1']
     player2_controls = keys_data['controls']['players']['player2']
 
     level_name = 'demo_level'
-    platforms = load_platforms(platforms_data, level_name)
+    level_type = levels_data[level_name]['level_type']
+    platforms = load_platforms(levels_data, level_name)
 
     player1 = Player(player_id=1, position=(910, 610), controls=player1_controls, color=("#9EBA01"))
     player2 = Player(player_id=2, position=(910, 610), controls=player2_controls, color=("#2276c9"))
@@ -184,6 +209,12 @@ async def main():
     for platform in platforms:
         if platform.position == pygame.Vector2(30, 100):
             finish_line = platform
+
+    if level_type == 'scrolling':
+        camera = Camera(width=2000, height=700)
+    
+    elif level_type == 'escape':
+        camera = Camera(width=1000, height=700)
 
     while running:
         dt = clock.tick(60) / 1000.0
@@ -237,13 +268,21 @@ async def main():
                 update_game_logic(fixed_delta_time, players, platforms, keys)
                 accumulator -= fixed_delta_time
 
+                camera.update(player1)
+
             screen.fill((0, 0, 0))
             
             for platform in platforms:
-                platform.draw(screen)
+                
+                if platform.image:  # If the platform has an image
+                    screen.blit(platform.image, camera.apply(platform))
+                
+                else:  # Fallback to solid color if no image
+                    pygame.draw.rect(screen, platform.color, camera.apply(platform))
 
             for player in players:
-                player.draw(screen)
+                player_rect = camera.apply(player)
+                pygame.draw.rect(screen, player.color, player_rect)
 
             display_controls()
 
