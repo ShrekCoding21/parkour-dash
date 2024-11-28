@@ -3,8 +3,9 @@ import pygame
 class Platform():
     
 
-    def __init__(self, position, is_moving, movement_range, speed, direction, image_path, dimensions, color):
+    def __init__(self, name, position, is_moving, movement_range, speed, direction, image_path, dimensions, color):
 
+        self.name = name
         self.position = pygame.Vector2(position)
         self.start_position = pygame.Vector2(position)
         self.is_moving = is_moving

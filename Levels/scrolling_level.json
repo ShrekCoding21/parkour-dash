@@ -1,0 +1,56 @@
+
+{"scrolling_level": {
+        
+    "level_type": "scrolling",
+
+    "platforms": {
+
+        "starting-platform": {
+            "x-position": 730,
+            "y-position": 660,
+            "width": 3020,
+            "height": 40,
+            "is_moving": "False",
+            "speed": 0,
+            "x-direction": 0,
+            "y-direction": 0,
+            "image_path": "None",
+            "image": "None",
+            "x-movement_range": 0,
+            "y-movement_range": 0,
+            "color": "#94e0a8"
+        },
+
+        "ducking-platform": {
+            "x-position": 1400,
+            "y-position": 580,
+            "width": 150,
+            "height": 30,
+            "is_moving": "False",
+            "speed": 0,
+            "x-direction": 0,
+            "y-direction": 0,
+            "image_path": "None",
+            "image": "None",
+            "x-movement_range": 0,
+            "y-movement_range": 0,
+            "color": "#6932a8"
+        },
+
+        "finish-line": {
+            "x-position": 2800,
+            "y-position": 570,
+            "width": 150,
+            "height": 30,
+            "is_moving": "False",
+            "speed": 0,
+            "x-direction": 0,
+            "y-direction": 0,
+            "image_path": "Platforms/finish-line.png",
+            "x-movement_range": 0,
+            "y-movement_range": 0,
+            "color": "#ffffff"
+        }
+    }
+}
+}
