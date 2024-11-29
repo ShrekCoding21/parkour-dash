@@ -180,6 +180,9 @@ def get_start_and_finish(platforms):
         if platform.name == "starting-platform":
             spawn_point = (platform.position.x + (platform.dimensions[0] / 2), platform.position.y - platform.dimensions[1])
 
+        if platform.name == "introduce-jumping":
+            intro_to_jumping = platform
+
         if platform.name == f"checkpoint{num}":
             next_checkpoints.append(platform)
             num += 1
@@ -187,7 +190,7 @@ def get_start_and_finish(platforms):
         if platform.name == "finish-line":
             finish_line = platform
 
-    return spawn_point, next_checkpoints, finish_line
+    return spawn_point, intro_to_jumping, next_checkpoints, finish_line
 
 def render_game_objects(platforms, players, camera):
 
@@ -202,6 +205,13 @@ def render_game_objects(platforms, players, camera):
     for player in players:
         player_rect = camera.apply(player)
         pygame.draw.rect(screen, player.color, player_rect)
+
+def update_tutorial(players, platforms, introduce_jumping):
+
+    for player in players:
+        
+        if player.on_platform == introduce_jumping:
+            print("INTRODUCE JUMPING")
 
 
 async def main():
@@ -218,7 +228,7 @@ async def main():
     level_type = levels_data[level_name]['level_type']
     platforms = load_platforms(levels_data, level_name)
 
-    OG_spawn_point, next_checkpoints, finish_line = get_start_and_finish(platforms)
+    OG_spawn_point, introduce_jumping, next_checkpoints, finish_line = get_start_and_finish(platforms)
 
 
     player1 = Player(player_id=1, position=OG_spawn_point, controls=player1_controls, color=("#9EBA01"))
@@ -251,10 +261,13 @@ async def main():
         accumulator += dt
         keys = pygame.key.get_pressed()
 
+        if level_name == 'scrolling_level':
+            update_tutorial(players, platforms, introduce_jumping)
+
         for player in players:
 
             if player.position.y > level_height + 100:
-                reload_map(players, platforms, reset_positions)
+                player.reload(spawn_point)
 
             if player.on_platform == finish_line:
                 best_player_num = player.id
