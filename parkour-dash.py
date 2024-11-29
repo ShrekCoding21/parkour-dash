@@ -170,7 +170,7 @@ def update_game_logic(delta_time, players, platforms, keys):
     for platform in platforms:
         platform.update(delta_time)
 
-def get_start_and_finish(platforms):
+def get_start_and_finish(platforms, level_name):
 
     next_checkpoints = list()
     num = 1
@@ -180,15 +180,20 @@ def get_start_and_finish(platforms):
         if platform.name == "starting-platform":
             spawn_point = (platform.position.x + (platform.dimensions[0] / 2), platform.position.y - platform.dimensions[1])
 
-        if platform.name == "introduce-jumping":
-            intro_to_jumping = platform
-
         if platform.name == f"checkpoint{num}":
             next_checkpoints.append(platform)
             num += 1
 
         if platform.name == "finish-line":
             finish_line = platform
+
+        if level_name == "scrolling_level":
+            
+            if platform.name == "introduce-jumping":
+                intro_to_jumping = platform
+        
+        else:
+            intro_to_jumping = None
 
     return spawn_point, intro_to_jumping, next_checkpoints, finish_line
 
@@ -218,7 +223,7 @@ async def main():
 
     keys_data = await load_json_file('Players/player_controls.json')
     
-    level_name = 'scrolling_level'  # Select either scrolling_level or demo_level
+    level_name = 'demo_level'  # Select either scrolling_level or demo_level
 
     levels_data = await load_json_file(f'Levels/{level_name}.json')
 
@@ -228,7 +233,7 @@ async def main():
     level_type = levels_data[level_name]['level_type']
     platforms = load_platforms(levels_data, level_name)
 
-    OG_spawn_point, introduce_jumping, next_checkpoints, finish_line = get_start_and_finish(platforms)
+    OG_spawn_point, introduce_jumping, next_checkpoints, finish_line = get_start_and_finish(platforms, level_name)
 
 
     player1 = Player(player_id=1, position=OG_spawn_point, controls=player1_controls, color=("#9EBA01"))
