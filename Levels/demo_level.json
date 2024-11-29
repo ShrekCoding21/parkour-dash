@@ -11,13 +11,6 @@
             "width": 220,
             "height": 40,
             "is_moving": "False",
-            "speed": 0,
-            "x-direction": 0,
-            "y-direction": 0,
-            "image_path": "None",
-            "image": "None",
-            "x-movement_range": 0,
-            "y-movement_range": 0,
             "color": "#94e0a8"
         },
 
@@ -30,8 +23,6 @@
             "speed": 125,
             "x-direction": 1,
             "y-direction": 0,
-            "image_path": "None",
-            "image": "None",
             "x-movement_range": 120,
             "y-movement_range": 0,
             "color": "#80C14E"
@@ -46,8 +37,6 @@
             "speed": 500,
             "x-direction": 1,
             "y-direction": -1,
-            "image_path": "None",
-            "image": "None",
             "x-movement_range": 400,
             "y-movement_range": 220,
             "color": "#00821e"
@@ -59,13 +48,6 @@
             "width": 290,
             "height": 45,
             "is_moving": "False",
-            "speed": 0,
-            "x-direction": 0,
-            "y-direction": 0,
-            "image_path": "None",
-            "image": "None",
-            "x-movement_range": 0,
-            "y-movement_range": 0,
             "color": "#a9db8f"
         },
 
@@ -78,8 +60,6 @@
             "speed": 155,
             "x-direction": 0,
             "y-direction": -1,
-            "image_path": "None",
-            "image": "None",
             "x-movement_range": 0,
             "y-movement_range": 190,
             "color": "#e7ed8e"
@@ -91,13 +71,6 @@
             "width": 50,
             "height": 20,
             "is_moving": "False",
-            "speed": 0,
-            "x-direction": 0,
-            "y-direction": 0,
-            "image_path": "None",
-            "image": "None",
-            "x-movement_range": 0,
-            "y-movement_range": 0,
             "color": "#459be6"
         },
 
@@ -107,13 +80,6 @@
             "width": 50,
             "height": 20,
             "is_moving": "False",
-            "speed": 0,
-            "x-direction": 0,
-            "y-direction": 0,
-            "image_path": "None",
-            "image": "None",
-            "x-movement_range": 0,
-            "y-movement_range": 0,
             "color": "#4550e6"
         },
 
@@ -123,13 +89,6 @@
             "width": 50,
             "height": 20,
             "is_moving": "False",
-            "speed": 0,
-            "x-direction": 0,
-            "y-direction": 0,
-            "image_path": "None",
-            "image": "None",
-            "x-movement_range": 0,
-            "y-movement_range": 0,
             "color": "#6b45e6"
         },
 
@@ -139,12 +98,7 @@
             "width": 150,
             "height": 30,
             "is_moving": "False",
-            "speed": 0,
-            "x-direction": 0,
-            "y-direction": 0,
             "image_path": "Platforms/finish-line.png",
-            "x-movement_range": 0,
-            "y-movement_range": 0,
             "color": "#ffffff"
 
         }

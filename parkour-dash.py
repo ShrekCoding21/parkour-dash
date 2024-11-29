@@ -44,19 +44,33 @@ def load_platforms(platform_data, level_name):
     for platform_name, platform_data in level_data.items():
         platform_dimensions = (platform_data['width'], platform_data['height'])
         platform_position = (platform_data['x-position'], platform_data['y-position'])
-        platform_direction = (platform_data['x-direction'], platform_data['y-direction'])
-        platform_movement_range = (platform_data['x-movement_range'], platform_data['y-movement_range'])
+        
+        if platform_data['is_moving'] == 'True':
+            platform_speed = platform_data['speed']
+            platform_direction = (platform_data['x-direction'], platform_data['y-direction'])
+            platform_movement_range = (platform_data['x-movement_range'], platform_data['y-movement_range'])
 
+        else:
+            platform_speed, platform_direction, platform_movement_range = 0, (0, 0), (0, 0)
+
+        if 'image_path' in platform_data:
+            platform_image_path = platform_data['image_path']
+        
+        else:
+            platform_image_path = None
+            
+
+        
 
         platform = Platform(
             name = platform_names[list_item],
-            position=platform_position,
+            position = platform_position,
             is_moving = platform_data['is_moving'],
-            image_path=platform_data['image_path'],
-            dimensions=platform_dimensions,
-            speed=platform_data['speed'],
-            direction=platform_direction,
-            movement_range=platform_movement_range,
+            image_path = platform_image_path,
+            dimensions = platform_dimensions,
+            speed = platform_speed,
+            direction = platform_direction,
+            movement_range = platform_movement_range,
             color = platform_data['color']
         )
  
@@ -158,15 +172,22 @@ def update_game_logic(delta_time, players, platforms, keys):
 
 def get_start_and_finish(platforms):
 
+    next_checkpoints = list()
+    num = 1
+
     for platform in platforms:
 
         if platform.name == "starting-platform":
-            spawn_point = (platform.position.x + 150, platform.position.y - platform.dimensions[1])
+            spawn_point = (platform.position.x + (platform.dimensions[0] / 2), platform.position.y - platform.dimensions[1])
+
+        if platform.name == f"checkpoint{num}":
+            next_checkpoints.append(platform)
+            num += 1
 
         if platform.name == "finish-line":
             finish_line = platform
 
-    return spawn_point, finish_line
+    return spawn_point, next_checkpoints, finish_line
 
 def render_game_objects(platforms, players, camera):
 
@@ -187,7 +208,7 @@ async def main():
 
     keys_data = await load_json_file('Players/player_controls.json')
     
-    level_name = 'demo_level'  # Select either scrolling_level or demo_level
+    level_name = 'scrolling_level'  # Select either scrolling_level or demo_level
 
     levels_data = await load_json_file(f'Levels/{level_name}.json')
 
@@ -197,13 +218,25 @@ async def main():
     level_type = levels_data[level_name]['level_type']
     platforms = load_platforms(levels_data, level_name)
 
-    spawn_point, finish_line = get_start_and_finish(platforms)
+    OG_spawn_point, next_checkpoints, finish_line = get_start_and_finish(platforms)
 
-    player1 = Player(player_id=1, position=spawn_point, controls=player1_controls, color=("#9EBA01"))
-    player2 = Player(player_id=2, position=spawn_point, controls=player2_controls, color=("#2276c9"))
+
+    player1 = Player(player_id=1, position=OG_spawn_point, controls=player1_controls, color=("#9EBA01"))
+    player2 = Player(player_id=2, position=OG_spawn_point, controls=player2_controls, color=("#2276c9"))
 
     players = [player1, player2]
+    spawn_point = OG_spawn_point
     reset_positions = [spawn_point, spawn_point]
+    checkpoint_increment = 0
+    
+    if level_type == 'scrolling':
+        next_checkpoint = next_checkpoints[checkpoint_increment]
+        level_width, level_height = levels_data[level_name]['camera_width'], levels_data[level_name]['camera_height']
+        camera = Camera(width=level_width, height=level_height, window_size=window_size)
+
+    elif level_type == 'escape':
+        level_width, level_height = 1000, 700
+        camera = Camera(width=level_width, height=level_height, window_size=window_size)
 
     running = True
     fixed_delta_time = 1 / 60
@@ -213,12 +246,6 @@ async def main():
     best_player_num = None
     text_color = ("#71d6f5")
 
-    if level_type == 'scrolling':
-        camera = Camera(width=3000, height=700, window_size=window_size)
-    
-    elif level_type == 'escape':
-        camera = Camera(width=1000, height=700, window_size=window_size)
-
     while running:
         dt = clock.tick(60) / 1000.0
         accumulator += dt
@@ -226,13 +253,33 @@ async def main():
 
         for player in players:
 
-            if player.position.y > 800:
-                player.reload(spawn_point)
+            if player.position.y > level_height + 100:
+                reload_map(players, platforms, reset_positions)
 
             if player.on_platform == finish_line:
                 best_player_num = player.id
                 game_finished = True
                 text_color = player.color
+                checkpoint_increment = 0
+                spawn_point = OG_spawn_point
+                reset_positions = [spawn_point, spawn_point]
+
+                for platform in next_checkpoints:
+                    platform.color = "#9ff084"
+                
+                if level_type == 'scrolling':
+                    spawn_point = OG_spawn_point
+                    reset_positions = [spawn_point, spawn_point]
+                    next_checkpoint = next_checkpoints[checkpoint_increment]    
+
+            if level_type == 'scrolling' and player.on_platform == next_checkpoint:
+                spawn_point = (next_checkpoint.position.x + (next_checkpoint.dimensions[0] / 2), next_checkpoint.start_position.y - next_checkpoint.dimensions[1])
+                next_checkpoint.color = "#228700"
+                reset_positions = [spawn_point, spawn_point]
+                
+                if checkpoint_increment < len(next_checkpoints) - 1:
+                    checkpoint_increment += 1
+                    next_checkpoint = next_checkpoints[checkpoint_increment]
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

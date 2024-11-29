@@ -2,53 +2,169 @@
 {"scrolling_level": {
         
     "level_type": "scrolling",
+    "camera_width": 3000,
+    "camera_height": 3000,
 
     "platforms": {
 
         "starting-platform": {
             "x-position": 730,
-            "y-position": 660,
-            "width": 3020,
+            "y-position": 300,
+            "width": 100,
             "height": 40,
             "is_moving": "False",
-            "speed": 0,
-            "x-direction": 0,
-            "y-direction": 0,
-            "image_path": "None",
-            "image": "None",
-            "x-movement_range": 0,
-            "y-movement_range": 0,
+            "color": "#94e0a8"
+        },
+        
+        "base-platform1": {
+            "x-position": 730,
+            "y-position": 300,
+            "width": 500,
+            "height": 40,
+            "is_moving": "False",
             "color": "#94e0a8"
         },
 
-        "ducking-platform": {
-            "x-position": 1400,
-            "y-position": 580,
+        "jump-platform1": {
+            "x-position": 1360,
+            "y-position": 290,
             "width": 150,
             "height": 30,
             "is_moving": "False",
-            "speed": 0,
-            "x-direction": 0,
-            "y-direction": 0,
-            "image_path": "None",
-            "image": "None",
-            "x-movement_range": 0,
-            "y-movement_range": 0,
             "color": "#6932a8"
+        },
+
+        "jump-platform2": {
+            "x-position": 1640,
+            "y-position": 290,
+            "width": 150,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#4632a8"
+        },
+
+        "moving-platform1": {
+            "x-position": 1900,
+            "y-position": 290,
+            "width": 150,
+            "height": 30,
+            "is_moving": "True",
+            "speed": 150,
+            "x-direction": 1,
+            "y-direction": 0,
+            "x-movement_range": 300,
+            "y-movement_range": 0,
+            "color": "#11519e"
+        },
+
+        "jump-platform3": {
+            "x-position": 2450,
+            "y-position": 290,
+            "width": 150,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#116b9e"
+        },
+
+        "checkpoint1": {
+            "x-position": 2730,
+            "y-position": 790,
+            "width": 100,
+            "height": 30,
+            "is_moving": "True",
+            "speed": 200,
+            "x-direction": 0,
+            "y-direction": 1,
+            "x-movement_range": 0,
+            "y-movement_range": 500,
+            "color": "#9ff084"
+        },
+
+
+
+
+
+
+        "jump-platform4": {
+            "x-position": 2420,
+            "y-position": 790,
+            "width": 150,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#96c748"
+        },
+
+        "jump-platform5": {
+            "x-position": 2130,
+            "y-position": 800,
+            "width": 150,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#96c748"
+        },
+
+        "jump-platform6": {
+            "x-position": 1840,
+            "y-position": 810,
+            "width": 150,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#96c748"
+        },
+
+        "moving-platform2": {
+            "x-position": 1220,
+            "y-position": 820,
+            "width": 150,
+            "height": 30,
+            "is_moving": "True",
+            "speed": 200,
+            "x-direction": -1,
+            "y-direction": 0,
+            "x-movement_range": 380,
+            "y-movement_range": 0,
+            "color": "#11519e"
+        },
+
+        "moving-platform3": {
+            "x-position": 160,
+            "y-position": 1120,
+            "width": 150,
+            "height": 30,
+            "is_moving": "True",
+            "speed": 242,
+            "x-direction": -1,
+            "y-direction": 1,
+            "x-movement_range": 920,
+            "y-movement_range": 300,
+            "color": "#11519e"
+        },
+
+        "checkpoint2": {
+            "x-position": 390,
+            "y-position": 1250,
+            "width": 200,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#9ff084"
+        },
+
+        "main-platform": {
+            "x-position": 390,
+            "y-position": 1280,
+            "width": 2900,
+            "height": 400,
+            "is_moving": "False",
+            "color": "#9ff084"
         },
 
         "finish-line": {
             "x-position": 2800,
-            "y-position": 570,
+            "y-position": 2570,
             "width": 150,
             "height": 30,
             "is_moving": "False",
-            "speed": 0,
-            "x-direction": 0,
-            "y-direction": 0,
             "image_path": "Platforms/finish-line.png",
-            "x-movement_range": 0,
-            "y-movement_range": 0,
             "color": "#ffffff"
         }
     }
