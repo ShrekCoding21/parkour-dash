@@ -4,6 +4,7 @@ import json
 import time
 from Players.player import Player
 from Platforms.platform import Platform
+from camera import Camera
 
 WEB_ENVIRONMENT = False
 try:
@@ -31,11 +32,14 @@ async def load_json_file(filepath):
     return keys_data
 
 """copy changes below this line into main.py"""
-    
+
 def load_platforms(platform_data, level_name):
 
     platforms = []
-    level_data = platform_data['platforms']['levels'][level_name]
+    platform_names = []
+    level_data = platform_data[level_name]['platforms']
+    platform_names = list(level_data.keys())
+    list_item = 0
 
     for platform_name, platform_data in level_data.items():
         platform_dimensions = (platform_data['width'], platform_data['height'])
@@ -43,7 +47,9 @@ def load_platforms(platform_data, level_name):
         platform_direction = (platform_data['x-direction'], platform_data['y-direction'])
         platform_movement_range = (platform_data['x-movement_range'], platform_data['y-movement_range'])
 
+
         platform = Platform(
+            name = platform_names[list_item],
             position=platform_position,
             is_moving = platform_data['is_moving'],
             image_path=platform_data['image_path'],
@@ -53,13 +59,12 @@ def load_platforms(platform_data, level_name):
             movement_range=platform_movement_range,
             color = platform_data['color']
         )
-            
+ 
         platforms.append(platform)
+        list_item += 1
+
 
     return platforms
-
-class Powerups():
-    pass
 
 def freeze_game(screen, clock, window_size, paused, game_finished, best_player_num, text_color):
 
@@ -75,9 +80,6 @@ def freeze_game(screen, clock, window_size, paused, game_finished, best_player_n
 
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', f_size)
     texts = [text1, text2]
-    
-    
-
     offset = 30
 
     for text in texts:        
@@ -91,7 +93,7 @@ def freeze_game(screen, clock, window_size, paused, game_finished, best_player_n
     clock.tick(10)
 
 
-def reload_players(players, platforms, reset_positions):
+def reload_map(players, platforms, reset_positions):
         
         for platform in platforms:
             platform.reset()
@@ -154,36 +156,68 @@ def update_game_logic(delta_time, players, platforms, keys):
     for platform in platforms:
         platform.update(delta_time)
 
+def get_start_and_finish(platforms):
+
+    for platform in platforms:
+
+        if platform.name == "starting-platform":
+            spawn_point = (platform.position.x + 150, platform.position.y - platform.dimensions[1])
+
+        if platform.name == "finish-line":
+            finish_line = platform
+
+    return spawn_point, finish_line
+
+def render_game_objects(platforms, players, camera):
+
+    for platform in platforms:
+                
+                if platform.image:  # If the platform has an image
+                    screen.blit(platform.image, camera.apply(platform))
+                
+                else:  # Fallback to solid color if no image
+                    pygame.draw.rect(screen, platform.color, camera.apply(platform))
+
+    for player in players:
+        player_rect = camera.apply(player)
+        pygame.draw.rect(screen, player.color, player_rect)
+
 
 async def main():
 
     keys_data = await load_json_file('Players/player_controls.json')
-    platforms_data = await load_json_file('Platforms/platforms.json')
+    
+    level_name = 'demo_level'  # Select either scrolling_level or demo_level
+
+    levels_data = await load_json_file(f'Levels/{level_name}.json')
 
     player1_controls = keys_data['controls']['players']['player1']
     player2_controls = keys_data['controls']['players']['player2']
 
-    level_name = 'demo_level'
-    platforms = load_platforms(platforms_data, level_name)
+    level_type = levels_data[level_name]['level_type']
+    platforms = load_platforms(levels_data, level_name)
 
-    player1 = Player(player_id=1, position=(910, 610), controls=player1_controls, color=("#9EBA01"))
-    player2 = Player(player_id=2, position=(910, 610), controls=player2_controls, color=("#2276c9"))
+    spawn_point, finish_line = get_start_and_finish(platforms)
+
+    player1 = Player(player_id=1, position=spawn_point, controls=player1_controls, color=("#9EBA01"))
+    player2 = Player(player_id=2, position=spawn_point, controls=player2_controls, color=("#2276c9"))
 
     players = [player1, player2]
-    reset_positions = [(910, 610), (910, 610)]
+    reset_positions = [spawn_point, spawn_point]
 
     running = True
     fixed_delta_time = 1 / 60
     accumulator = 0
     paused = False
-    finish_line = None
     game_finished = False
     best_player_num = None
     text_color = ("#71d6f5")
 
-    for platform in platforms:
-        if platform.position == pygame.Vector2(30, 100):
-            finish_line = platform
+    if level_type == 'scrolling':
+        camera = Camera(width=3000, height=700, window_size=window_size)
+    
+    elif level_type == 'escape':
+        camera = Camera(width=1000, height=700, window_size=window_size)
 
     while running:
         dt = clock.tick(60) / 1000.0
@@ -193,7 +227,7 @@ async def main():
         for player in players:
 
             if player.position.y > 800:
-                player.reload(position=(910, 610))
+                player.reload(spawn_point)
 
             if player.on_platform == finish_line:
                 best_player_num = player.id
@@ -207,7 +241,7 @@ async def main():
             elif event.type == pygame.KEYDOWN:
                 
                 if event.key == pygame.K_r:
-                    reload_players(players, platforms, reset_positions)
+                    reload_map(players, platforms, reset_positions)
                     best_player_num = None
                     game_finished = False
                     text_color = ("#71d6f5")
@@ -221,7 +255,7 @@ async def main():
                         paused = False
                     
                     elif event.key == pygame.K_r:
-                        reload_players(players, platforms, reset_positions)
+                        reload_map(players, platforms, reset_positions)
                         paused = False
                         game_finished = False
                         best_player_num = None
@@ -236,14 +270,11 @@ async def main():
             while accumulator >= fixed_delta_time:
                 update_game_logic(fixed_delta_time, players, platforms, keys)
                 accumulator -= fixed_delta_time
+                camera.update(player1)
 
             screen.fill((0, 0, 0))
             
-            for platform in platforms:
-                platform.draw(screen)
-
-            for player in players:
-                player.draw(screen)
+            render_game_objects(platforms, players, camera)
 
             display_controls()
 

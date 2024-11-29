@@ -19,6 +19,7 @@ class Player():
         self.facing = 0
         self.is_sliding = False
         self.slide_direction = 0
+        self.slide_distance = 300
         self.controls = {action: getattr(pygame, key) for action, key in controls.items()}
         # self.animations = self.load_animations()
         # self.current_animation = self.animations["idle"]
@@ -139,7 +140,7 @@ class Player():
         if self.is_sliding:
             distance_slid = abs(self.position.x - self.start_slide)
 
-            if distance_slid < 250:
+            if distance_slid < self.slide_distance:
                 self.velocity.x = (self.slide_direction * self.speed) * 1.75
 
             else:
@@ -179,5 +180,6 @@ class Player():
         self.position = pygame.Vector2(position)
         self.velocity = pygame.Vector2(0, 0)
         self.is_sliding = False
+        self.facing = 0
         self.on_ground = False
         self.width, self.height = 32, 64
