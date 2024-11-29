@@ -164,8 +164,35 @@
         "main-platform": {
             "x-position": 390,
             "y-position": 1500,
-            "width": 2900,
+            "width": 1010,
             "height": 550,
+            "is_moving": "False",
+            "color": "#9ff084"
+        },
+
+        "elevated-platform": {
+            "x-position": 900,
+            "y-position": 1470,
+            "width": 500,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#9ff084"
+        },
+
+        "introduce-sliding": {
+            "x-position": 1400,
+            "y-position": 1590,
+            "width": 1200,
+            "height": 460,
+            "is_moving": "False",
+            "color": "#9ff084"
+        },
+
+        "obstacle1": {
+            "x-position": 1600,
+            "y-position": 652,
+            "width": 60,
+            "height": 900,
             "is_moving": "False",
             "color": "#9ff084"
         },

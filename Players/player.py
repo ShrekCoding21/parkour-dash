@@ -17,6 +17,8 @@ class Player():
         self.gravity = 50
         self.mass = 1
         self.facing = 0
+        self.can_jump = True
+        self.can_slide = True
         self.is_sliding = False
         self.slide_direction = 0
         self.slide_distance = 300
@@ -59,12 +61,14 @@ class Player():
                 else:  # Vertical collision
                     
                     if self.velocity.y > 0:  # Falling
+                        
                         self.position.y = platform_rect.top - self.height
                         self.velocity.y = 0
                         self.on_ground = True
                         self.on_platform = platform
                     
                     elif self.velocity.y < 0 and platform_rect.bottom - player_rect.top <= tolerance:  # Jumping
+                        print("hi")
                         self.position.y = platform_rect.bottom + 3
                         self.velocity.y = 0
 
@@ -128,14 +132,15 @@ class Player():
 
         if self.on_ground:
 
-            if keys[self.controls['jump']]:
+            if keys[self.controls['jump']] and self.can_jump:
                 self.jump()
             
-            if keys[self.controls['slide']] and not self.is_sliding and self.facing != 0:
+            if keys[self.controls['slide']] and not self.is_sliding and self.facing != 0 and self.can_slide:
+                
+                self.width, self.height = 64, 32
                 self.start_slide = self.position.x
                 self.is_sliding = True
                 self.slide_direction = self.facing
-                self.width, self.height = 64, 32
 
         if self.is_sliding:
             distance_slid = abs(self.position.x - self.start_slide)

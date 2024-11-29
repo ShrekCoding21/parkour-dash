@@ -115,30 +115,61 @@ def reload_map(players, platforms, reset_positions):
         for player, position in zip(players, reset_positions):
             player.reload(position)
 
-def display_controls():
-       
+def display_controls(level_name, players, introduce_jumping, introduced_controls_state):
+    
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25)
 
-    p1_controls = [
-        'a: left',
-        'd: right',
-        'w: jump',
-        's: slide'
+    if not introduced_controls_state["introduced_jumping"]:
+        
+        p1_controls = [
+            'a: left',
+            'd: right'
+        ]
+
+        p2_controls = [
+            '←: left',
+            '→: right'
         ]
     
-    p2_controls = [
-        'left-arrow: left',
-        'right-arrow: right',
-        'up-arrow: up',
-        'down-arrow: slide'
+    elif not introduced_controls_state["introduced_sliding"] and introduced_controls_state["introduced_jumping"]:
+
+        p1_controls = [
+            'a: left',
+            'd: right',
+            'w: jump'
         ]
-    
+
+        p2_controls = [
+            '←: left',
+            '→: right',
+            '↑: jump'
+        ]
+        
+
+    else:
+
+        p1_controls = [
+            'a: left',
+            'd: right',
+            'w: jump',
+            's: slide'
+            ]
+        
+        p2_controls = [
+            '←: left',
+            '→: right',
+            '↑: up',
+            '↓: slide'
+            ]
+        
     general_controls = [
         'p: game pause',
         'u: game unpause',
         'r: game reload'
         ]
 
+        
+        
     x_position = 20
     vertical_displacement = 150
     for p1_control in p1_controls:
@@ -191,11 +222,14 @@ def get_start_and_finish(platforms, level_name):
             
             if platform.name == "introduce-jumping":
                 intro_to_jumping = platform
+
+            if platform.name == "introduce-sliding":
+                intro_to_sliding = platform
         
         else:
-            intro_to_jumping = None
+            intro_to_jumping, intro_to_sliding = None, None
 
-    return spawn_point, intro_to_jumping, next_checkpoints, finish_line
+    return spawn_point, intro_to_jumping, intro_to_sliding, next_checkpoints, finish_line
 
 def render_game_objects(platforms, players, camera):
 
@@ -211,12 +245,20 @@ def render_game_objects(platforms, players, camera):
         player_rect = camera.apply(player)
         pygame.draw.rect(screen, player.color, player_rect)
 
-def update_tutorial(players, platforms, introduce_jumping):
+def update_tutorial_controls(players, platforms, introduce_jumping, introduce_sliding, introduced_controls_state):
+    """Allow players to use new controls when reaching new section and tell display_controls function to display new controls"""
 
     for player in players:
         
-        if player.on_platform == introduce_jumping:
-            print("INTRODUCE JUMPING")
+        if player.on_platform == introduce_jumping and not introduced_controls_state["introduced_jumping"]:
+
+            player.can_jump = True
+            introduced_controls_state["introduced_jumping"] = True
+
+        if player.on_platform == introduce_sliding and not introduced_controls_state["introduced_sliding"]:
+
+            player.can_slide = True
+            introduced_controls_state["introduced_sliding"] = True
 
 
 async def main():
@@ -233,7 +275,7 @@ async def main():
     level_type = levels_data[level_name]['level_type']
     platforms = load_platforms(levels_data, level_name)
 
-    OG_spawn_point, introduce_jumping, next_checkpoints, finish_line = get_start_and_finish(platforms, level_name)
+    OG_spawn_point, introduce_jumping, introduce_sliding, next_checkpoints, finish_line = get_start_and_finish(platforms, level_name)
 
 
     player1 = Player(player_id=1, position=OG_spawn_point, controls=player1_controls, color=("#9EBA01"))
@@ -248,10 +290,15 @@ async def main():
         next_checkpoint = next_checkpoints[checkpoint_increment]
         level_width, level_height = levels_data[level_name]['camera_width'], levels_data[level_name]['camera_height']
         camera = Camera(width=level_width, height=level_height, window_size=window_size)
+        introduced_controls_state = {"introduced_jumping": False, "introduced_sliding": False}
+        
+        for player in players:
+            player.can_jump, player.can_slide = False, False
 
-    elif level_type == 'escape':
+    else:
         level_width, level_height = 1000, 700
         camera = Camera(width=level_width, height=level_height, window_size=window_size)
+        introduced_controls_state = {"introduced_jumping": True, "introduced_sliding": True}
 
     running = True
     fixed_delta_time = 1 / 60
@@ -267,7 +314,7 @@ async def main():
         keys = pygame.key.get_pressed()
 
         if level_name == 'scrolling_level':
-            update_tutorial(players, platforms, introduce_jumping)
+            update_tutorial_controls(players, platforms, introduce_jumping, introduce_sliding, introduced_controls_state)
 
         for player in players:
 
@@ -288,7 +335,11 @@ async def main():
                 if level_type == 'scrolling':
                     spawn_point = OG_spawn_point
                     reset_positions = [spawn_point, spawn_point]
-                    next_checkpoint = next_checkpoints[checkpoint_increment]    
+                    next_checkpoint = next_checkpoints[checkpoint_increment]
+                    introduced_controls_state = {"introduced_jumping": False, "introduced_sliding": False}
+                    
+                    for player in players:
+                        player.can_jump, player.can_slide = False, False    
 
             if level_type == 'scrolling' and player.on_platform == next_checkpoint:
                 spawn_point = (next_checkpoint.position.x + (next_checkpoint.dimensions[0] / 2), next_checkpoint.start_position.y - next_checkpoint.dimensions[1])
@@ -341,7 +392,7 @@ async def main():
             
             render_game_objects(platforms, players, camera)
 
-            display_controls()
+            display_controls(level_name, players, introduce_jumping, introduced_controls_state)
 
             pygame.display.flip()
 
