@@ -234,16 +234,32 @@ def get_start_and_finish(platforms, level_name):
 def render_game_objects(platforms, players, camera):
 
     for platform in platforms:
+        
+        platform_rect = camera.apply(platform)
                 
-                if platform.image:  # If the platform has an image
-                    screen.blit(platform.image, camera.apply(platform))
-                
-                else:  # Fallback to solid color if no image
-                    pygame.draw.rect(screen, platform.color, camera.apply(platform))
+        if platform.image:  # If the platform has an image
+            
+            scaled_image = pygame.transform.scale(
+                platform.image,
+                (int(platform_rect.width), int(platform_rect.height))
+
+            )
+            
+            screen.blit(scaled_image, platform_rect)
+        
+        else:  # Fallback to solid color if no image
+            pygame.draw.rect(screen, platform.color, platform_rect)
 
     for player in players:
+
         player_rect = camera.apply(player)
-        pygame.draw.rect(screen, player.color, player_rect)
+        scaled_rect = pygame.Rect(
+            player_rect.x,
+            player_rect.y,
+            int(player_rect.width),
+            int(player_rect.height)
+        )
+        pygame.draw.rect(screen, player.color, scaled_rect)
 
 def update_tutorial_controls(players, platforms, introduce_jumping, introduce_sliding, introduced_controls_state):
     """Allow players to use new controls when reaching new section and tell display_controls function to display new controls"""
@@ -251,21 +267,25 @@ def update_tutorial_controls(players, platforms, introduce_jumping, introduce_sl
     for player in players:
         
         if player.on_platform == introduce_jumping and not introduced_controls_state["introduced_jumping"]:
-
-            player.can_jump = True
             introduced_controls_state["introduced_jumping"] = True
 
-        if player.on_platform == introduce_sliding and not introduced_controls_state["introduced_sliding"]:
-
-            player.can_slide = True
+        elif player.on_platform == introduce_sliding and not introduced_controls_state["introduced_sliding"]:
             introduced_controls_state["introduced_sliding"] = True
+
+    if introduced_controls_state["introduced_jumping"]:
+        for player in players:
+            player.can_jump = True
+
+    if introduced_controls_state["introduced_sliding"]:
+        for player in players:
+            player.can_slide = True
 
 
 async def main():
 
     keys_data = await load_json_file('Players/player_controls.json')
     
-    level_name = 'demo_level'  # Select either scrolling_level or demo_level
+    level_name = 'scrolling_level'  # Select either scrolling_level or demo_level
 
     levels_data = await load_json_file(f'Levels/{level_name}.json')
 
@@ -298,6 +318,7 @@ async def main():
     else:
         level_width, level_height = 1000, 700
         camera = Camera(width=level_width, height=level_height, window_size=window_size)
+        camera.is_active = False
         introduced_controls_state = {"introduced_jumping": True, "introduced_sliding": True}
 
     running = True
@@ -386,7 +407,7 @@ async def main():
             while accumulator >= fixed_delta_time:
                 update_game_logic(fixed_delta_time, players, platforms, keys)
                 accumulator -= fixed_delta_time
-                camera.update(player1)
+                camera.update(players)
 
             screen.fill((0, 0, 0))
             

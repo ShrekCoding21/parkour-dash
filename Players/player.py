@@ -51,10 +51,10 @@ class Player():
                     
                     if self.velocity.x > 0 and player_rect.left < platform_rect.left:  # Moving right into platform
 
-                        self.position.x = platform_rect.left - self.width - 5
+                        self.position.x = platform_rect.left - self.width
                     
                     elif self.velocity.x < 0 and player_rect.right > platform_rect.right:  # Moving left into platform
-                        self.position.x = platform_rect.right + 5
+                        self.position.x = platform_rect.right
                     
                     self.velocity.x = 0
 
@@ -68,7 +68,6 @@ class Player():
                         self.on_platform = platform
                     
                     elif self.velocity.y < 0 and platform_rect.bottom - player_rect.top <= tolerance:  # Jumping
-                        print("hi")
                         self.position.y = platform_rect.bottom + 3
                         self.velocity.y = 0
 
@@ -136,7 +135,7 @@ class Player():
                 self.jump()
             
             if keys[self.controls['slide']] and not self.is_sliding and self.facing != 0 and self.can_slide:
-                
+                self.position.y += 32
                 self.width, self.height = 64, 32
                 self.start_slide = self.position.x
                 self.is_sliding = True
@@ -157,7 +156,8 @@ class Player():
                     self.velocity.x = 0
 
     def update(self, delta_time, keys):
-
+        
+        print(self.position.x)
         self.gravity_and_motion(delta_time)
         self.handle_controls(keys, delta_time)
 
