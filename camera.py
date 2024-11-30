@@ -15,25 +15,42 @@ class Camera():
 
     def apply(self, obj):
 
-        if isinstance(obj, Player):
-            rect = obj.rect.copy()
-            rect.x = (rect.x - self.camera_rect.x) * self.zoom
-            rect.y = (rect.y - self.camera_rect.y) * self.zoom
-            rect.width *= self.zoom
-            rect.height *= self.zoom
-            return rect
+        if self.is_active:
+
+            if isinstance(obj, Player):
+                rect = obj.rect.copy()
+                rect.x = (rect.x - self.camera_rect.x) * self.zoom
+                rect.y = (rect.y - self.camera_rect.y) * self.zoom
+                rect.width *= self.zoom
+                rect.height *= self.zoom
+                return rect
+            
+            elif isinstance(obj, Platform):
+                scaled_rect = pygame.Rect(
+                    (obj.position.x - self.camera_rect.x) * self.zoom,
+                    (obj.position.y - self.camera_rect.y) * self.zoom,
+                    obj.dimensions[0] * self.zoom,
+                    obj.dimensions[1] * self.zoom
+                )
+                return scaled_rect
         
-        elif isinstance(obj, Platform):
-            scaled_rect = pygame.Rect(
-                (obj.position.x - self.camera_rect.x) * self.zoom,
-                (obj.position.y - self.camera_rect.y) * self.zoom,
-                obj.dimensions[0] * self.zoom,
-                obj.dimensions[1] * self.zoom
-            )
-            return scaled_rect
+        else:
+
+            if isinstance(obj, Player):
+                return obj.rect.move(-self.camera_rect.topleft[0], -self.camera_rect.topleft[1])
+            
+            elif isinstance(obj, Platform):
+                return pygame.Rect(
+                    obj.position.x - self.camera_rect.topleft[0],
+                    obj.position.y - self.camera_rect.topleft[1],
+                    obj.dimensions[0],
+                    obj.dimensions[1]
+                )
+            
         return obj
+
     
-    def update(self, players):
+    def update(self, players, player):
         
         if self.is_active:
 
@@ -67,4 +84,11 @@ class Camera():
             )
         
         if not self.is_active:
-            pass
+            
+            x = player.position.x - 500
+            y = player.position.y - (self.window_size[1] // 2)
+
+            x = max(0, min(x, self.width - self.window_size[0]))
+            y = max(0, min(y, self.height - self.window_size[0]))
+
+            self.camera_rect = pygame.Rect(x, y, self.width, self.height)

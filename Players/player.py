@@ -109,7 +109,12 @@ class Player():
 
             if self.slide_direction == 1:
                 self.is_sliding = False
+                
+                if self.on_ground:
+                    self.position.y -= 32
+                
                 self.width, self.height = 32, 64
+                self.slide_direction = 0
         
         elif keys[self.controls['right']]:
             self.velocity.x += ACCELERATION
@@ -117,7 +122,12 @@ class Player():
 
             if self.slide_direction == -1:
                 self.is_sliding = False
+                
+                if self.on_ground:
+                    self.position.y -= 32
+                
                 self.width, self.height = 32, 64
+                self.slide_direction = 0
         else:
             
             if self.on_ground and not self.is_sliding:
@@ -147,17 +157,18 @@ class Player():
             if distance_slid < self.slide_distance:
                 self.velocity.x = (self.slide_direction * self.speed) * 1.75
 
-            else:
+            elif self.on_ground and distance_slid > self.slide_distance:
 
                 self.width, self.height = 32, 64
-                if self.on_ground:
+                self.position.y -= 32
+                self.is_sliding = False
+                self.velocity.x = 0
+                
 
-                    self.is_sliding = False
-                    self.velocity.x = 0
+            
 
     def update(self, delta_time, keys):
         
-        print(self.position.x)
         self.gravity_and_motion(delta_time)
         self.handle_controls(keys, delta_time)
 

@@ -115,7 +115,7 @@ def reload_map(players, platforms, reset_positions):
         for player, position in zip(players, reset_positions):
             player.reload(position)
 
-def display_controls(level_name, players, introduce_jumping, introduced_controls_state):
+def display_controls(introduced_controls_state):
     
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25)
 
@@ -131,15 +131,15 @@ def display_controls(level_name, players, introduce_jumping, introduced_controls
             '→: right'
         ]
 
-        p3_controls = [
-            'g: left',
-            'j: right'
-        ]
+        # p3_controls = [
+        #     'g: left',
+        #     'j: right'
+        # ]
 
-        p4_controls = [
-            'k: left',
-            'semicolon: right'
-        ]
+        # p4_controls = [
+        #     'k: left',
+        #     'semicolon: right'
+        # ]
     
     elif not introduced_controls_state["introduced_sliding"] and introduced_controls_state["introduced_jumping"]:
 
@@ -155,17 +155,17 @@ def display_controls(level_name, players, introduce_jumping, introduced_controls
             '↑: jump'
         ]
 
-        p3_controls = [
-            'g: left',
-            'j: right',
-            'y: jump',
-        ]
+        # p3_controls = [
+        #     'g: left',
+        #     'j: right',
+        #     'y: jump',
+        # ]
 
-        p4_controls = [
-            'k: left',
-            'semicolon: right',
-            'o: jump'
-        ]
+        # p4_controls = [
+        #     'k: left',
+        #     'semicolon: right',
+        #     'o: jump'
+        # ]
         
 
     else:
@@ -184,19 +184,19 @@ def display_controls(level_name, players, introduce_jumping, introduced_controls
             '↓: slide'
             ]
         
-        p3_controls = [
-            'g: left',
-            'j: right',
-            'y: jump',
-            'h: slide'
-        ]
+        # p3_controls = [
+        #     'g: left',
+        #     'j: right',
+        #     'y: jump',
+        #     'h: slide'
+        # ]
 
-        p4_controls = [
-            'k: left',
-            'semicolon: right',
-            'o: jump',
-            'l: slide'
-        ]
+        # p4_controls = [
+        #     'k: left',
+        #     'semicolon: right',
+        #     'o: jump',
+        #     'l: slide'
+        # ]
         
     general_controls = [
         'p: game pause',
@@ -229,19 +229,19 @@ def display_controls(level_name, players, introduce_jumping, introduced_controls
         screen.blit(print_general_controls, general_control_rect)
         vertical_displacement += 30
 
-    vertical_displacement = 450
+    # vertical_displacement = 450
 
-    for p3_control in p3_controls:
-        print_p3_controls = font.render(p3_control, True, ("#c7b61a"))
-        p3_control_rect = print_p3_controls.get_rect(topright=(x_position, vertical_displacement))
-        screen.blit(print_p3_controls, p3_control_rect)
-        vertical_displacement += 30
+    # for p3_control in p3_controls:
+    #     print_p3_controls = font.render(p3_control, True, ("#c7b61a"))
+    #     p3_control_rect = print_p3_controls.get_rect(topright=(x_position, vertical_displacement))
+    #     screen.blit(print_p3_controls, p3_control_rect)
+    #     vertical_displacement += 30
 
-    for p4_control in p4_controls:
-        print_p4_controls = font.render(p4_control, True, ("#c7281a"))
-        p4_control_rect = print_p4_controls.get_rect(topright=(x_position, vertical_displacement))
-        screen.blit(print_p4_controls, p4_control_rect)
-        vertical_displacement += 30
+    # for p4_control in p4_controls:
+    #     print_p4_controls = font.render(p4_control, True, ("#c7281a"))
+    #     p4_control_rect = print_p4_controls.get_rect(topright=(x_position, vertical_displacement))
+    #     screen.blit(print_p4_controls, p4_control_rect)
+    #     vertical_displacement += 30
             
 def update_game_logic(delta_time, players, platforms, keys):
 
@@ -252,19 +252,21 @@ def update_game_logic(delta_time, players, platforms, keys):
     for platform in platforms:
         platform.update(delta_time)
 
-def get_start_and_finish(platforms, level_name):
+def get_special_platforms(platforms, level_name):
 
     next_checkpoints = list()
-    num = 1
+    deathforms = list()
+    checkpoint_num = 1
+    deathpoint_num = 1
 
     for platform in platforms:
 
         if platform.name == "starting-platform":
             spawn_point = (platform.position.x + (platform.dimensions[0] / 2), platform.position.y - platform.dimensions[1])
 
-        if platform.name == f"checkpoint{num}":
+        if platform.name == f"checkpoint{checkpoint_num}":
             next_checkpoints.append(platform)
-            num += 1
+            checkpoint_num += 1
 
         if platform.name == "finish-line":
             finish_line = platform
@@ -276,11 +278,15 @@ def get_start_and_finish(platforms, level_name):
 
             if platform.name == "introduce-sliding":
                 intro_to_sliding = platform
+
+            if platform.name == f"death-form{deathpoint_num}":
+                deathforms.append(platform)
+                deathpoint_num += 1
         
         else:
             intro_to_jumping, intro_to_sliding = None, None
 
-    return spawn_point, intro_to_jumping, intro_to_sliding, next_checkpoints, finish_line
+    return spawn_point, intro_to_jumping, intro_to_sliding, deathforms, next_checkpoints, finish_line
 
 def render_game_objects(platforms, players, camera):
 
@@ -336,7 +342,7 @@ async def main():
 
     keys_data = await load_json_file('Players/player_controls.json')
     
-    level_name = 'demo_level'  # Select either scrolling_level or demo_level
+    level_name = 'scrolling_level'  # Select either scrolling_level or demo_level
 
     levels_data = await load_json_file(f'Levels/{level_name}.json')
 
@@ -348,15 +354,15 @@ async def main():
     level_type = levels_data[level_name]['level_type']
     platforms = load_platforms(levels_data, level_name)
 
-    OG_spawn_point, introduce_jumping, introduce_sliding, next_checkpoints, finish_line = get_start_and_finish(platforms, level_name)
+    OG_spawn_point, introduce_jumping, introduce_sliding, death_platforms, next_checkpoints, finish_line = get_special_platforms(platforms, level_name)
 
 
     player1 = Player(player_id=1, position=OG_spawn_point, controls=player1_controls, color=("#9EBA01"))
     player2 = Player(player_id=2, position=OG_spawn_point, controls=player2_controls, color=("#2276c9"))
-    player3 = Player(player_id=3, position=OG_spawn_point, controls=player3_controls, color=("#c7b61a"))
-    player4 = Player(player_id=4, position=OG_spawn_point, controls=player4_controls, color=("#c7281a"))
+    # player3 = Player(player_id=3, position=OG_spawn_point, controls=player3_controls, color=("#c7b61a"))
+    # player4 = Player(player_id=4, position=OG_spawn_point, controls=player4_controls, color=("#c7281a"))
 
-    players = [player1, player2, player3, player4]
+    players = [player1, player2] # add player 3 and 4 back later
     spawn_point = OG_spawn_point
     checkpoint_increment = 0
     reset_positions = []
@@ -368,6 +374,7 @@ async def main():
         next_checkpoint = next_checkpoints[checkpoint_increment]
         level_width, level_height = levels_data[level_name]['camera_width'], levels_data[level_name]['camera_height']
         camera = Camera(width=level_width, height=level_height, window_size=window_size)
+        camera.is_active = False # CHANGE LATER
         introduced_controls_state = {"introduced_jumping": False, "introduced_sliding": False}
         
         for player in players:
@@ -393,12 +400,15 @@ async def main():
         keys = pygame.key.get_pressed()
 
         if level_name == 'scrolling_level':
-            update_tutorial_controls(players, platforms, introduce_jumping, introduce_sliding, introduced_controls_state)
+            update_tutorial_controls(players, introduce_jumping, introduce_sliding, introduced_controls_state)
 
         for player in players:
 
             if player.position.y > level_height + 100:
                 player.reload(spawn_point)
+
+            if player.id == 2:
+                print(player.position)
 
             if player.on_platform == finish_line:
                 best_player_num = player.id
@@ -422,14 +432,19 @@ async def main():
                     for player in players:
                         player.can_jump, player.can_slide = False, False    
 
-            if level_type == 'scrolling' and player.on_platform == next_checkpoint:
-                spawn_point = (next_checkpoint.position.x + (next_checkpoint.dimensions[0] / 2), next_checkpoint.start_position.y - next_checkpoint.dimensions[1])
-                next_checkpoint.color = "#228700"
-                reset_positions = [spawn_point, spawn_point]
-                
-                if checkpoint_increment < len(next_checkpoints) - 1:
-                    checkpoint_increment += 1
-                    next_checkpoint = next_checkpoints[checkpoint_increment]
+            if level_type == 'scrolling':
+
+                if player.on_platform in death_platforms:
+                    player.reload(spawn_point)
+
+                if player.on_platform == next_checkpoint:
+                    spawn_point = (next_checkpoint.position.x + (next_checkpoint.dimensions[0] / 2), next_checkpoint.start_position.y - next_checkpoint.dimensions[1])
+                    next_checkpoint.color = "#228700"
+                    reset_positions = [spawn_point, spawn_point]
+                    
+                    if checkpoint_increment < len(next_checkpoints) - 1:
+                        checkpoint_increment += 1
+                        next_checkpoint = next_checkpoints[checkpoint_increment]
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -467,13 +482,13 @@ async def main():
             while accumulator >= fixed_delta_time:
                 update_game_logic(fixed_delta_time, players, platforms, keys)
                 accumulator -= fixed_delta_time
-                camera.update(players)
+                camera.update(players, player)
 
             screen.fill((0, 0, 0))
             
             render_game_objects(platforms, players, camera)
 
-            display_controls(level_name, players, introduce_jumping, introduced_controls_state)
+            display_controls(introduced_controls_state)
 
             pygame.display.flip()
 
