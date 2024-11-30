@@ -182,7 +182,7 @@
         "introduce-sliding": {
             "x-position": 1270,
             "y-position": 1590,
-            "width": 1330,
+            "width": 872,
             "height": 460,
             "is_moving": "False",
             "color": "#9ff084"
@@ -202,6 +202,15 @@
             "y-position": 1438,
             "width": 150,
             "height": 120,
+            "is_moving": "False",
+            "color": "#9ff084"
+        },
+
+        "introduce-jumpsliding": {
+            "x-position": 2978,
+            "y-position": 1590,
+            "width": 52,
+            "height": 460,
             "is_moving": "False",
             "color": "#9ff084"
         },

@@ -50,8 +50,11 @@ class Player():
         self.gravity = 50
         self.mass = 1
         self.facing = 0
+        self.can_jump = True
+        self.can_slide = True
         self.is_sliding = False
         self.slide_direction = 0
+        self.slide_distance = 300
         self.controls = {action: getattr(pygame, key) for action, key in controls.items()}
         # self.animations = self.load_animations()
         # self.current_animation = self.animations["idle"]
@@ -81,16 +84,17 @@ class Player():
                     
                     if self.velocity.x > 0 and player_rect.left < platform_rect.left:  # Moving right into platform
 
-                        self.position.x = platform_rect.left - self.width - 5
+                        self.position.x = platform_rect.left - self.width
                     
                     elif self.velocity.x < 0 and player_rect.right > platform_rect.right:  # Moving left into platform
-                        self.position.x = platform_rect.right + 5
+                        self.position.x = platform_rect.right
                     
                     self.velocity.x = 0
 
                 else:  # Vertical collision
                     
                     if self.velocity.y > 0:  # Falling
+                        
                         self.position.y = platform_rect.top - self.height
                         self.velocity.y = 0
                         self.on_ground = True
@@ -160,19 +164,20 @@ class Player():
 
         if self.on_ground:
 
-            if keys[self.controls['jump']]:
+            if keys[self.controls['jump']] and self.can_jump:
                 self.jump()
             
-            if keys[self.controls['slide']] and not self.is_sliding and self.facing != 0:
+            if keys[self.controls['slide']] and not self.is_sliding and self.facing != 0 and self.can_slide:
+                self.position.y += 32
+                self.width, self.height = 64, 32
                 self.start_slide = self.position.x
                 self.is_sliding = True
                 self.slide_direction = self.facing
-                self.width, self.height = 64, 32
 
         if self.is_sliding:
             distance_slid = abs(self.position.x - self.start_slide)
 
-            if distance_slid < 250:
+            if distance_slid < self.slide_distance:
                 self.velocity.x = (self.slide_direction * self.speed) * 1.75
 
             else:
@@ -184,7 +189,8 @@ class Player():
                     self.velocity.x = 0
 
     def update(self, delta_time, keys):
-
+        
+        print(self.position.x)
         self.gravity_and_motion(delta_time)
         self.handle_controls(keys, delta_time)
 
@@ -225,8 +231,9 @@ class Player():
 class Platform():
     
 
-    def __init__(self, position, is_moving, movement_range, speed, direction, image_path, dimensions, color):
+    def __init__(self, name, position, is_moving, movement_range, speed, direction, image_path, dimensions, color):
 
+        self.name = name
         self.position = pygame.Vector2(position)
         self.start_position = pygame.Vector2(position)
         self.is_moving = is_moving
@@ -289,59 +296,129 @@ class Platform():
         self.direction = pygame.Vector2(self.start_direction)
         self.current_frame = 0
 
+
+
+"""camera.py goes here"""
+
+
+
 class Camera():
     
-    def __init__(self, width, height):
+    def __init__(self, width, height, window_size):
         self.camera_rect = pygame.Rect(0, 0, width, height)
         self.width = width
         self.height = height
+        self.window_size = window_size
+        self.zoom = 1.0
+        self.margin = 100
+        self.is_active = True
 
     def apply(self, obj):
 
         if isinstance(obj, Player):
-            return obj.rect.move(-self.camera_rect.topleft[0], -self.camera_rect.topleft[1])
+            rect = obj.rect.copy()
+            rect.x = (rect.x - self.camera_rect.x) * self.zoom
+            rect.y = (rect.y - self.camera_rect.y) * self.zoom
+            rect.width *= self.zoom
+            rect.height *= self.zoom
+            return rect
+        
         elif isinstance(obj, Platform):
-            return pygame.Rect(
-                obj.position.x - self.camera_rect.topleft[0],
-                obj.position.y - self.camera_rect.topleft[1],
-                obj.dimensions[0],
-                obj.dimensions[1]
+            scaled_rect = pygame.Rect(
+                (obj.position.x - self.camera_rect.x) * self.zoom,
+                (obj.position.y - self.camera_rect.y) * self.zoom,
+                obj.dimensions[0] * self.zoom,
+                obj.dimensions[1] * self.zoom
             )
+            return scaled_rect
         return obj
     
-    def update(self, player):
+    def update(self, players):
+        
+        if self.is_active:
 
-        x = player.position.x - (self.width // 2) + 500
-        y = player.position.y - self.height // 2
+            min_x = min(player.position.x for player in players)
+            max_x = max(player.position.x for player in players)
+            min_y = min(player.position.y for player in players)
+            max_y = max(player.position.y for player in players)
 
-        x = max(0, min(x, self.width - window_size[0]))
-        y = max(0, min(y, self.height - window_size[0]))
+            min_x -= self.margin
+            max_x += self.margin
+            min_y -= self.margin
+            max_y += self.margin
 
-        self.camera_rect = pygame.Rect(x, y, self.width, self.height)
+            center_x = (min_x + max_x) / 2
+            center_y = (min_y + max_y) / 2
+
+            bounding_width = max_x - min_x
+            bounding_height = max_y - min_y
+            zoom_x = self.window_size[0] / bounding_width
+            zoom_y = self.window_size[1] / bounding_height
+
+            self.zoom = min(zoom_x, zoom_y, 1.0)
+
+            camera_width = self.window_size[0] / self.zoom
+            camera_height = self.window_size[1] / self.zoom
+            self.camera_rect = pygame.Rect(
+                max(0, min(center_x - camera_width / 2, self.width - camera_width)),
+                max(0, min(center_y - camera_height / 2, self.height - camera_height)),
+                camera_width,
+                camera_height
+            )
+        
+        if not self.is_active:
+            pass
+
+
+
+"""parkour-dash.py code goes here"""
+
+
 
 def load_platforms(platform_data, level_name):
 
     platforms = []
+    platform_names = []
     level_data = platform_data[level_name]['platforms']
+    platform_names = list(level_data.keys())
+    list_item = 0
 
     for platform_name, platform_data in level_data.items():
         platform_dimensions = (platform_data['width'], platform_data['height'])
         platform_position = (platform_data['x-position'], platform_data['y-position'])
-        platform_direction = (platform_data['x-direction'], platform_data['y-direction'])
-        platform_movement_range = (platform_data['x-movement_range'], platform_data['y-movement_range'])
+        
+        if platform_data['is_moving'] == 'True':
+            platform_speed = platform_data['speed']
+            platform_direction = (platform_data['x-direction'], platform_data['y-direction'])
+            platform_movement_range = (platform_data['x-movement_range'], platform_data['y-movement_range'])
+
+        else:
+            platform_speed, platform_direction, platform_movement_range = 0, (0, 0), (0, 0)
+
+        if 'image_path' in platform_data:
+            platform_image_path = platform_data['image_path']
+        
+        else:
+            platform_image_path = None
+            
+
+        
 
         platform = Platform(
-            position=platform_position,
+            name = platform_names[list_item],
+            position = platform_position,
             is_moving = platform_data['is_moving'],
-            image_path=platform_data['image_path'],
-            dimensions=platform_dimensions,
-            speed=platform_data['speed'],
-            direction=platform_direction,
-            movement_range=platform_movement_range,
+            image_path = platform_image_path,
+            dimensions = platform_dimensions,
+            speed = platform_speed,
+            direction = platform_direction,
+            movement_range = platform_movement_range,
             color = platform_data['color']
         )
-            
+ 
         platforms.append(platform)
+        list_item += 1
+
 
     return platforms
 
@@ -372,7 +449,7 @@ def freeze_game(screen, clock, window_size, paused, game_finished, best_player_n
     clock.tick(10)
 
 
-def reload_players(players, platforms, reset_positions):
+def reload_map(players, platforms, reset_positions):
         
         for platform in platforms:
             platform.reset()
@@ -380,30 +457,97 @@ def reload_players(players, platforms, reset_positions):
         for player, position in zip(players, reset_positions):
             player.reload(position)
 
-def display_controls():
-       
+def display_controls(level_name, players, introduce_jumping, introduced_controls_state):
+    
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25)
 
-    p1_controls = [
-        'a: left',
-        'd: right',
-        'w: jump',
-        's: slide'
+    if not introduced_controls_state["introduced_jumping"]:
+        
+        p1_controls = [
+            'a: left',
+            'd: right'
+        ]
+
+        p2_controls = [
+            '←: left',
+            '→: right'
+        ]
+
+        p3_controls = [
+            'g: left',
+            'j: right'
+        ]
+
+        p4_controls = [
+            'k: left',
+            'semicolon: right'
         ]
     
-    p2_controls = [
-        'left-arrow: left',
-        'right-arrow: right',
-        'up-arrow: up',
-        'down-arrow: slide'
+    elif not introduced_controls_state["introduced_sliding"] and introduced_controls_state["introduced_jumping"]:
+
+        p1_controls = [
+            'a: left',
+            'd: right',
+            'w: jump'
         ]
-    
+
+        p2_controls = [
+            '←: left',
+            '→: right',
+            '↑: jump'
+        ]
+
+        p3_controls = [
+            'g: left',
+            'j: right',
+            'y: jump',
+        ]
+
+        p4_controls = [
+            'k: left',
+            'semicolon: right',
+            'o: jump'
+        ]
+        
+
+    else:
+
+        p1_controls = [
+            'a: left',
+            'd: right',
+            'w: jump',
+            's: slide'
+            ]
+        
+        p2_controls = [
+            '←: left',
+            '→: right',
+            '↑: up',
+            '↓: slide'
+            ]
+        
+        p3_controls = [
+            'g: left',
+            'j: right',
+            'y: jump',
+            'h: slide'
+        ]
+
+        p4_controls = [
+            'k: left',
+            'semicolon: right',
+            'o: jump',
+            'l: slide'
+        ]
+        
     general_controls = [
         'p: game pause',
         'u: game unpause',
         'r: game reload'
         ]
 
+        
+        
     x_position = 20
     vertical_displacement = 150
     for p1_control in p1_controls:
@@ -420,10 +564,25 @@ def display_controls():
 
     x_position = 990
     vertical_displacement = 10
+
     for general_control in general_controls:
         print_general_controls = font.render(general_control, True, ("#ffffff"))
         general_control_rect = print_general_controls.get_rect(topright=(x_position, vertical_displacement))
         screen.blit(print_general_controls, general_control_rect)
+        vertical_displacement += 30
+
+    vertical_displacement = 450
+
+    for p3_control in p3_controls:
+        print_p3_controls = font.render(p3_control, True, ("#c7b61a"))
+        p3_control_rect = print_p3_controls.get_rect(topright=(x_position, vertical_displacement))
+        screen.blit(print_p3_controls, p3_control_rect)
+        vertical_displacement += 30
+
+    for p4_control in p4_controls:
+        print_p4_controls = font.render(p4_control, True, ("#c7281a"))
+        p4_control_rect = print_p4_controls.get_rect(topright=(x_position, vertical_displacement))
+        screen.blit(print_p4_controls, p4_control_rect)
         vertical_displacement += 30
             
 def update_game_logic(delta_time, players, platforms, keys):
@@ -435,58 +594,184 @@ def update_game_logic(delta_time, players, platforms, keys):
     for platform in platforms:
         platform.update(delta_time)
 
+def get_start_and_finish(platforms, level_name):
+
+    next_checkpoints = list()
+    num = 1
+
+    for platform in platforms:
+
+        if platform.name == "starting-platform":
+            spawn_point = (platform.position.x + (platform.dimensions[0] / 2), platform.position.y - platform.dimensions[1])
+
+        if platform.name == f"checkpoint{num}":
+            next_checkpoints.append(platform)
+            num += 1
+
+        if platform.name == "finish-line":
+            finish_line = platform
+
+        if level_name == "scrolling_level":
+            
+            if platform.name == "introduce-jumping":
+                intro_to_jumping = platform
+
+            if platform.name == "introduce-sliding":
+                intro_to_sliding = platform
+        
+        else:
+            intro_to_jumping, intro_to_sliding = None, None
+
+    return spawn_point, intro_to_jumping, intro_to_sliding, next_checkpoints, finish_line
+
+def render_game_objects(platforms, players, camera):
+
+    for platform in platforms:
+        
+        platform_rect = camera.apply(platform)
+                
+        if platform.image:  # If the platform has an image
+            
+            scaled_image = pygame.transform.scale(
+                platform.image,
+                (int(platform_rect.width), int(platform_rect.height))
+
+            )
+            
+            screen.blit(scaled_image, platform_rect)
+        
+        else:  # Fallback to solid color if no image
+            pygame.draw.rect(screen, platform.color, platform_rect)
+
+    for player in players:
+
+        player_rect = camera.apply(player)
+        scaled_rect = pygame.Rect(
+            player_rect.x,
+            player_rect.y,
+            int(player_rect.width),
+            int(player_rect.height)
+        )
+        pygame.draw.rect(screen, player.color, scaled_rect)
+
+def update_tutorial_controls(players, introduce_jumping, introduce_sliding, introduced_controls_state):
+    """Allow players to use new controls when reaching new section and tell display_controls function to display new controls"""
+
+    for player in players:
+        
+        if player.on_platform == introduce_jumping and not introduced_controls_state["introduced_jumping"]:
+            introduced_controls_state["introduced_jumping"] = True
+
+        elif player.on_platform == introduce_sliding and not introduced_controls_state["introduced_sliding"]:
+            introduced_controls_state["introduced_sliding"] = True
+
+    if introduced_controls_state["introduced_jumping"]:
+        for player in players:
+            player.can_jump = True
+
+    if introduced_controls_state["introduced_sliding"]:
+        for player in players:
+            player.can_slide = True
+
 
 async def main():
 
     keys_data = await load_json_file('Players/player_controls.json')
-    levels_data = await load_json_file('Levels/demo_level.json')
+    
+    level_name = 'demo_level'  # Select either scrolling_level or demo_level
+
+    levels_data = await load_json_file(f'Levels/{level_name}.json')
 
     player1_controls = keys_data['controls']['players']['player1']
     player2_controls = keys_data['controls']['players']['player2']
+    player3_controls = keys_data['controls']['players']['player3']
+    player4_controls = keys_data['controls']['players']['player4']
 
-    level_name = 'demo_level'
     level_type = levels_data[level_name]['level_type']
     platforms = load_platforms(levels_data, level_name)
 
-    player1 = Player(player_id=1, position=(910, 610), controls=player1_controls, color=("#9EBA01"))
-    player2 = Player(player_id=2, position=(910, 610), controls=player2_controls, color=("#2276c9"))
+    OG_spawn_point, introduce_jumping, introduce_sliding, next_checkpoints, finish_line = get_start_and_finish(platforms, level_name)
 
-    players = [player1, player2]
-    reset_positions = [(910, 610), (910, 610)]
+
+    player1 = Player(player_id=1, position=OG_spawn_point, controls=player1_controls, color=("#9EBA01"))
+    player2 = Player(player_id=2, position=OG_spawn_point, controls=player2_controls, color=("#2276c9"))
+    player3 = Player(player_id=3, position=OG_spawn_point, controls=player3_controls, color=("#c7b61a"))
+    player4 = Player(player_id=4, position=OG_spawn_point, controls=player4_controls, color=("#c7281a"))
+
+    players = [player1, player2, player3, player4]
+    spawn_point = OG_spawn_point
+    checkpoint_increment = 0
+    reset_positions = []
+
+    for player in players:
+        reset_positions.append(spawn_point)
+    
+    if level_type == 'scrolling':
+        next_checkpoint = next_checkpoints[checkpoint_increment]
+        level_width, level_height = levels_data[level_name]['camera_width'], levels_data[level_name]['camera_height']
+        camera = Camera(width=level_width, height=level_height, window_size=window_size)
+        introduced_controls_state = {"introduced_jumping": False, "introduced_sliding": False}
+        
+        for player in players:
+            player.can_jump, player.can_slide = False, False
+
+    else:
+        level_width, level_height = 1000, 700
+        camera = Camera(width=level_width, height=level_height, window_size=window_size)
+        camera.is_active = False
+        introduced_controls_state = {"introduced_jumping": True, "introduced_sliding": True}
 
     running = True
     fixed_delta_time = 1 / 60
     accumulator = 0
     paused = False
-    finish_line = None
     game_finished = False
     best_player_num = None
     text_color = ("#71d6f5")
-
-    for platform in platforms:
-        if platform.position == pygame.Vector2(30, 100):
-            finish_line = platform
-
-    if level_type == 'scrolling':
-        camera = Camera(width=2000, height=700)
-    
-    elif level_type == 'escape':
-        camera = Camera(width=1000, height=700)
 
     while running:
         dt = clock.tick(60) / 1000.0
         accumulator += dt
         keys = pygame.key.get_pressed()
 
+        if level_name == 'scrolling_level':
+            update_tutorial_controls(players, platforms, introduce_jumping, introduce_sliding, introduced_controls_state)
+
         for player in players:
 
-            if player.position.y > 800:
-                player.reload(position=(910, 610))
+            if player.position.y > level_height + 100:
+                player.reload(spawn_point)
 
             if player.on_platform == finish_line:
                 best_player_num = player.id
                 game_finished = True
                 text_color = player.color
+                checkpoint_increment = 0
+                spawn_point = OG_spawn_point
+
+                for player in players:
+                    reset_positions.append(spawn_point)
+
+                for platform in next_checkpoints:
+                    platform.color = "#9ff084"
+                
+                if level_type == 'scrolling':
+                    spawn_point = OG_spawn_point
+                    reset_positions = [spawn_point, spawn_point]
+                    next_checkpoint = next_checkpoints[checkpoint_increment]
+                    introduced_controls_state = {"introduced_jumping": False, "introduced_sliding": False}
+                    
+                    for player in players:
+                        player.can_jump, player.can_slide = False, False    
+
+            if level_type == 'scrolling' and player.on_platform == next_checkpoint:
+                spawn_point = (next_checkpoint.position.x + (next_checkpoint.dimensions[0] / 2), next_checkpoint.start_position.y - next_checkpoint.dimensions[1])
+                next_checkpoint.color = "#228700"
+                reset_positions = [spawn_point, spawn_point]
+                
+                if checkpoint_increment < len(next_checkpoints) - 1:
+                    checkpoint_increment += 1
+                    next_checkpoint = next_checkpoints[checkpoint_increment]
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -495,7 +780,7 @@ async def main():
             elif event.type == pygame.KEYDOWN:
                 
                 if event.key == pygame.K_r:
-                    reload_players(players, platforms, reset_positions)
+                    reload_map(players, platforms, reset_positions)
                     best_player_num = None
                     game_finished = False
                     text_color = ("#71d6f5")
@@ -509,7 +794,7 @@ async def main():
                         paused = False
                     
                     elif event.key == pygame.K_r:
-                        reload_players(players, platforms, reset_positions)
+                        reload_map(players, platforms, reset_positions)
                         paused = False
                         game_finished = False
                         best_player_num = None
@@ -524,24 +809,13 @@ async def main():
             while accumulator >= fixed_delta_time:
                 update_game_logic(fixed_delta_time, players, platforms, keys)
                 accumulator -= fixed_delta_time
-
-                camera.update(player1)
+                camera.update(players)
 
             screen.fill((0, 0, 0))
             
-            for platform in platforms:
-                
-                if platform.image:  # If the platform has an image
-                    screen.blit(platform.image, camera.apply(platform))
-                
-                else:  # Fallback to solid color if no image
-                    pygame.draw.rect(screen, platform.color, camera.apply(platform))
+            render_game_objects(platforms, players, camera)
 
-            for player in players:
-                player_rect = camera.apply(player)
-                pygame.draw.rect(screen, player.color, player_rect)
-
-            display_controls()
+            display_controls(level_name, players, introduce_jumping, introduced_controls_state)
 
             pygame.display.flip()
 

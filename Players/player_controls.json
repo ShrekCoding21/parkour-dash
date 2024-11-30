@@ -16,6 +16,22 @@
             "jump": "K_UP",
             "slide": "K_DOWN",
             "powerup": "K_RSHIFT"
+        },
+
+        "player3": {
+            "left": "K_g",
+            "right": "K_j",
+            "jump": "K_y",
+            "slide": "K_h",
+            "powerup": "K_7"
+        },
+
+        "player4": {
+            "left": "K_k",
+            "right": "K_SEMICOLON",
+            "jump": "K_o",
+            "slide": "K_l",
+            "powerup": "K_0"
         }
 
 

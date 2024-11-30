@@ -130,6 +130,16 @@ def display_controls(level_name, players, introduce_jumping, introduced_controls
             '←: left',
             '→: right'
         ]
+
+        p3_controls = [
+            'g: left',
+            'j: right'
+        ]
+
+        p4_controls = [
+            'k: left',
+            'semicolon: right'
+        ]
     
     elif not introduced_controls_state["introduced_sliding"] and introduced_controls_state["introduced_jumping"]:
 
@@ -143,6 +153,18 @@ def display_controls(level_name, players, introduce_jumping, introduced_controls
             '←: left',
             '→: right',
             '↑: jump'
+        ]
+
+        p3_controls = [
+            'g: left',
+            'j: right',
+            'y: jump',
+        ]
+
+        p4_controls = [
+            'k: left',
+            'semicolon: right',
+            'o: jump'
         ]
         
 
@@ -161,6 +183,20 @@ def display_controls(level_name, players, introduce_jumping, introduced_controls
             '↑: up',
             '↓: slide'
             ]
+        
+        p3_controls = [
+            'g: left',
+            'j: right',
+            'y: jump',
+            'h: slide'
+        ]
+
+        p4_controls = [
+            'k: left',
+            'semicolon: right',
+            'o: jump',
+            'l: slide'
+        ]
         
     general_controls = [
         'p: game pause',
@@ -186,10 +222,25 @@ def display_controls(level_name, players, introduce_jumping, introduced_controls
 
     x_position = 990
     vertical_displacement = 10
+
     for general_control in general_controls:
         print_general_controls = font.render(general_control, True, ("#ffffff"))
         general_control_rect = print_general_controls.get_rect(topright=(x_position, vertical_displacement))
         screen.blit(print_general_controls, general_control_rect)
+        vertical_displacement += 30
+
+    vertical_displacement = 450
+
+    for p3_control in p3_controls:
+        print_p3_controls = font.render(p3_control, True, ("#c7b61a"))
+        p3_control_rect = print_p3_controls.get_rect(topright=(x_position, vertical_displacement))
+        screen.blit(print_p3_controls, p3_control_rect)
+        vertical_displacement += 30
+
+    for p4_control in p4_controls:
+        print_p4_controls = font.render(p4_control, True, ("#c7281a"))
+        p4_control_rect = print_p4_controls.get_rect(topright=(x_position, vertical_displacement))
+        screen.blit(print_p4_controls, p4_control_rect)
         vertical_displacement += 30
             
 def update_game_logic(delta_time, players, platforms, keys):
@@ -261,7 +312,7 @@ def render_game_objects(platforms, players, camera):
         )
         pygame.draw.rect(screen, player.color, scaled_rect)
 
-def update_tutorial_controls(players, platforms, introduce_jumping, introduce_sliding, introduced_controls_state):
+def update_tutorial_controls(players, introduce_jumping, introduce_sliding, introduced_controls_state):
     """Allow players to use new controls when reaching new section and tell display_controls function to display new controls"""
 
     for player in players:
@@ -285,12 +336,14 @@ async def main():
 
     keys_data = await load_json_file('Players/player_controls.json')
     
-    level_name = 'scrolling_level'  # Select either scrolling_level or demo_level
+    level_name = 'demo_level'  # Select either scrolling_level or demo_level
 
     levels_data = await load_json_file(f'Levels/{level_name}.json')
 
     player1_controls = keys_data['controls']['players']['player1']
     player2_controls = keys_data['controls']['players']['player2']
+    player3_controls = keys_data['controls']['players']['player3']
+    player4_controls = keys_data['controls']['players']['player4']
 
     level_type = levels_data[level_name]['level_type']
     platforms = load_platforms(levels_data, level_name)
@@ -300,11 +353,16 @@ async def main():
 
     player1 = Player(player_id=1, position=OG_spawn_point, controls=player1_controls, color=("#9EBA01"))
     player2 = Player(player_id=2, position=OG_spawn_point, controls=player2_controls, color=("#2276c9"))
+    player3 = Player(player_id=3, position=OG_spawn_point, controls=player3_controls, color=("#c7b61a"))
+    player4 = Player(player_id=4, position=OG_spawn_point, controls=player4_controls, color=("#c7281a"))
 
-    players = [player1, player2]
+    players = [player1, player2, player3, player4]
     spawn_point = OG_spawn_point
-    reset_positions = [spawn_point, spawn_point]
     checkpoint_increment = 0
+    reset_positions = []
+
+    for player in players:
+        reset_positions.append(spawn_point)
     
     if level_type == 'scrolling':
         next_checkpoint = next_checkpoints[checkpoint_increment]
@@ -348,7 +406,9 @@ async def main():
                 text_color = player.color
                 checkpoint_increment = 0
                 spawn_point = OG_spawn_point
-                reset_positions = [spawn_point, spawn_point]
+
+                for player in players:
+                    reset_positions.append(spawn_point)
 
                 for platform in next_checkpoints:
                     platform.color = "#9ff084"
