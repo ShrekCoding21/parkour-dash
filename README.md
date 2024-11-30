@@ -9,10 +9,12 @@ TSA Video game design competition code for RLC.
 
 # Features for checkpoint 2
 
+1) Working tutorial level
+2) Level selection screen
+
 # Next steps
 
-1) Create scrolling level
-2) Set up website to host video game
+1) Finish scrolling level
 
 # *Useful resources*
 
