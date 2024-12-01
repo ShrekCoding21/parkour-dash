@@ -80,7 +80,7 @@ def load_platforms(platform_data, level_name):
 
     return platforms
 
-def freeze_game(screen, clock, window_size, paused, game_finished, best_player_num, text_color):
+def freeze_game(screen, clock, window_size, counting_string, paused, game_finished, best_player_num, text_color):
 
     if paused:
         text1 = "Paused"
@@ -90,6 +90,7 @@ def freeze_game(screen, clock, window_size, paused, game_finished, best_player_n
     if game_finished:
         text1 = f'player {best_player_num} wins!'
         text2 = 'press (r) to restart game'
+        text3 = counting_string
         f_size = 35
 
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', f_size)
@@ -389,15 +390,22 @@ async def main():
     running = True
     fixed_delta_time = 1 / 60
     accumulator = 0
+    start_timer = pygame.time.get_ticks()
     paused = False
     game_finished = False
     best_player_num = None
     text_color = ("#71d6f5")
+    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 32)
 
     while running:
         dt = clock.tick(60) / 1000.0
         accumulator += dt
         keys = pygame.key.get_pressed()
+        counting_time = pygame.time.get_ticks() - start_timer
+        counting_minutes = counting_time // 60000  # Minutes
+        counting_seconds = (counting_time % 60000) // 1000  # Seconds
+        counting_milliseconds = (counting_time % 1000) // 10
+        counting_string = f"{counting_minutes:02d}:{counting_seconds:02d}:{counting_milliseconds:02d}"
 
         if level_name == 'scrolling_level':
             update_tutorial_controls(players, introduce_jumping, introduce_sliding, introduced_controls_state)
@@ -475,7 +483,7 @@ async def main():
 
         if paused or game_finished:
 
-            freeze_game(screen, clock, window_size, paused, game_finished, best_player_num, text_color)
+            freeze_game(screen, counting_string, clock, window_size, paused, game_finished, best_player_num, text_color)
 
         if not paused and not game_finished:
 
