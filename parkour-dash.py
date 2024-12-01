@@ -85,6 +85,7 @@ def freeze_game(screen, clock, window_size, counting_string, paused, game_finish
     if paused:
         text1 = "Paused"
         text2 = None
+        text3 = None
         f_size = 55
 
     if game_finished:
@@ -94,7 +95,7 @@ def freeze_game(screen, clock, window_size, counting_string, paused, game_finish
         f_size = 35
 
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', f_size)
-    texts = [text1, text2]
+    texts = [text1, text2, text3]
     offset = 30
 
     for text in texts:        
