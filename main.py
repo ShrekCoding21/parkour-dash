@@ -457,27 +457,29 @@ def load_platforms(platform_data, level_name):
 
     return platforms
 
-def freeze_game(screen, clock, window_size, paused, game_finished, best_player_num, text_color):
+def freeze_game(screen, clock, window_size, counting_string, paused, game_finished, best_player_num, text_color):
 
     if paused:
         text1 = "Paused"
         text2 = None
+        text3 = None
         f_size = 55
 
     if game_finished:
         text1 = f'player {best_player_num} wins!'
         text2 = 'press (r) to restart game'
+        text3 = f'completion time: {counting_string}'
         f_size = 35
 
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', f_size)
-    texts = [text1, text2]
+    texts = [text1, text2, text3]
     offset = 30
 
     for text in texts:        
         printtext = font.render(text, True, (text_color))
         text_rect = printtext.get_rect(center=(window_size[0] // 2, window_size[1] // 2 - offset))
         screen.blit(printtext, text_rect)
-        offset = -offset
+        offset -= 60
 
     pygame.display.flip()
 
@@ -492,7 +494,7 @@ def reload_map(players, platforms, reset_positions):
         for player, position in zip(players, reset_positions):
             player.reload(position)
 
-def display_controls(introduced_controls_state):
+def display_controls(introduced_controls_state, counting_string, timer_color):
     
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25)
 
@@ -606,6 +608,10 @@ def display_controls(introduced_controls_state):
         screen.blit(print_general_controls, general_control_rect)
         vertical_displacement += 30
 
+    print_timer = font.render(counting_string, True, (timer_color))
+    timer_rect = print_timer.get_rect(topright=(x_position, vertical_displacement))
+    screen.blit(print_timer, timer_rect)
+
     vertical_displacement = 450
 
     for p3_control in p3_controls:
@@ -629,6 +635,16 @@ def update_game_logic(delta_time, players, platforms, keys):
     for platform in platforms:
         platform.update(delta_time)
 
+def update_timer(start_timer):
+    
+    counting_time = pygame.time.get_ticks() - start_timer
+    counting_minutes = counting_time // 60000  # Minutes
+    counting_seconds = (counting_time % 60000) // 1000  # Seconds
+    counting_milliseconds = (counting_time % 1000) // 10
+    counting_string = f"{counting_minutes:02d}:{counting_seconds:02d}:{counting_milliseconds:02d}"
+
+    return counting_string
+
 def get_special_platforms(platforms, level_name):
 
     next_checkpoints = list()
@@ -648,7 +664,7 @@ def get_special_platforms(platforms, level_name):
         if platform.name == "finish-line":
             finish_line = platform
 
-        if level_name == "scrolling_level":
+        if level_name == "tutorial_level":
             
             if platform.name == "introduce-jumping":
                 intro_to_jumping = platform
@@ -719,7 +735,7 @@ async def main():
 
     keys_data = await load_json_file('Players/player_controls.json')
     
-    level_name = 'scrolling_level'  # Select either scrolling_level or demo_level
+    level_name = 'tutorial_level'  # Select either tutorial_level or demo_level
 
     levels_data = await load_json_file(f'Levels/{level_name}.json')
 
@@ -739,7 +755,7 @@ async def main():
     player3 = Player(player_id=3, position=OG_spawn_point, controls=player3_controls, color=("#c7b61a"))
     player4 = Player(player_id=4, position=OG_spawn_point, controls=player4_controls, color=("#c7281a"))
 
-    players = [player1, player2, player3, player4] # add player 3 and 4 back later
+    players = [player1, player2, player3, player4]
     spawn_point = OG_spawn_point
     checkpoint_increment = 0
     reset_positions = []
@@ -766,17 +782,20 @@ async def main():
     running = True
     fixed_delta_time = 1 / 60
     accumulator = 0
+    start_timer = pygame.time.get_ticks()
     paused = False
     game_finished = False
     best_player_num = None
     text_color = ("#71d6f5")
+
+
 
     while running:
         dt = clock.tick(60) / 1000.0
         accumulator += dt
         keys = pygame.key.get_pressed()
 
-        if level_name == 'scrolling_level':
+        if level_name == 'tutorial_level':
             update_tutorial_controls(players, introduce_jumping, introduce_sliding, introduced_controls_state)
 
         for player in players:
@@ -784,10 +803,11 @@ async def main():
             if player.position.y > level_height + 100:
                 player.reload(spawn_point)
 
-            if player.id == 2:
+            if player.id == 4:
                 print(player.position)
 
             if player.on_platform == finish_line:
+                reset_positions = []
                 best_player_num = player.id
                 game_finished = True
                 text_color = player.color
@@ -802,11 +822,12 @@ async def main():
                 
                 if level_type == 'scrolling':
                     spawn_point = OG_spawn_point
-                    reset_positions = [spawn_point, spawn_point]
+                    reset_positions = []
                     next_checkpoint = next_checkpoints[checkpoint_increment]
                     introduced_controls_state = {"introduced_jumping": False, "introduced_sliding": False}
                     
                     for player in players:
+                        reset_positions.append(spawn_point)
                         player.can_jump, player.can_slide = False, False    
 
             if level_type == 'scrolling':
@@ -817,7 +838,11 @@ async def main():
                 if player.on_platform == next_checkpoint:
                     spawn_point = (next_checkpoint.position.x + (next_checkpoint.dimensions[0] / 2), next_checkpoint.start_position.y - next_checkpoint.dimensions[1])
                     next_checkpoint.color = "#228700"
-                    reset_positions = [spawn_point, spawn_point]
+                    reset_positions = []
+                    
+                    for player in players:
+
+                        reset_positions.append(spawn_point)
                     
                     if checkpoint_increment < len(next_checkpoints) - 1:
                         checkpoint_increment += 1
@@ -830,10 +855,13 @@ async def main():
             elif event.type == pygame.KEYDOWN:
                 
                 if event.key == pygame.K_r:
-                    reload_map(players, platforms, reset_positions)
+                    reload_map(players, platforms, reset_positions)  
                     best_player_num = None
                     game_finished = False
                     text_color = ("#71d6f5")
+
+                    if level_name == 'tutorial_level' and spawn_point == OG_spawn_point or next_checkpoints == []:
+                        start_timer = pygame.time.get_ticks()
                 
                 if event.key == pygame.K_p:
                     paused = True
@@ -849,10 +877,13 @@ async def main():
                         game_finished = False
                         best_player_num = None
                         text_color = ("#71d6f5")
+                        
+                        if level_name == 'tutorial_level' and spawn_point == OG_spawn_point or level_name == 'demo_level':
+                            start_timer = pygame.time.get_ticks()
 
         if paused or game_finished:
 
-            freeze_game(screen, clock, window_size, paused, game_finished, best_player_num, text_color)
+            freeze_game(screen, clock, window_size, counting_string, paused, game_finished, best_player_num, text_color)
 
         if not paused and not game_finished:
 
@@ -863,9 +894,9 @@ async def main():
 
             screen.fill((0, 0, 0))
             
+            counting_string = update_timer(start_timer)
             render_game_objects(platforms, players, camera)
-
-            display_controls(introduced_controls_state)
+            display_controls(introduced_controls_state, counting_string, timer_color=("#32854b"))
 
             pygame.display.flip()
 
