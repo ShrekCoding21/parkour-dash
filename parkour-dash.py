@@ -109,12 +109,12 @@ def freeze_game(screen, clock, window_size, counting_string, paused, game_finish
     clock.tick(10)
 
 
-def reload_map(players, platforms, reset_positions):
+def reload_map(active_players, platforms, reset_positions):
         
         for platform in platforms:
             platform.reset()
 
-        for player, position in zip(players, reset_positions):
+        for player, position in zip(active_players, reset_positions):
             player.reload(position)
 
 def display_controls(introduced_controls_state, counting_string, print_player1_controls, print_player3_controls, print_player4_controls, timer_color):
@@ -204,9 +204,9 @@ def display_controls(introduced_controls_state, counting_string, print_player1_c
         screen.blit(print_p4_controls, p4_control_rect)
         vertical_displacement += 30
             
-def update_game_logic(delta_time, players, platforms, keys):
+def update_game_logic(delta_time, active_players, platforms, keys):
 
-    for player in players:
+    for player in active_players:
         player.update(delta_time, keys)
         player.collisions(platforms)
 
@@ -259,7 +259,7 @@ def get_special_platforms(platforms, level_name):
 
     return spawn_point, intro_to_jumping, intro_to_sliding, deathforms, next_checkpoints, finish_line
 
-def render_game_objects(platforms, players, camera):
+def render_game_objects(platforms, active_players, camera):
 
     for platform in platforms:
         
@@ -278,7 +278,7 @@ def render_game_objects(platforms, players, camera):
         else:  # Fallback to solid color if no image
             pygame.draw.rect(screen, platform.color, platform_rect)
 
-    for player in players:
+    for player in active_players:
 
         player_rect = camera.apply(player)
         scaled_rect = pygame.Rect(
@@ -289,10 +289,10 @@ def render_game_objects(platforms, players, camera):
         )
         pygame.draw.rect(screen, player.color, scaled_rect)
 
-def update_tutorial_controls(players, introduce_jumping, introduce_sliding, introduced_controls_state):
+def update_tutorial_controls(active_players, introduce_jumping, introduce_sliding, introduced_controls_state):
     """Allow players to use new controls when reaching new section and tell display_controls function to display new controls"""
 
-    for player in players:
+    for player in active_players:
         
         if player.on_platform == introduce_jumping and not introduced_controls_state["introduced_jumping"]:
             introduced_controls_state["introduced_jumping"] = True
@@ -301,11 +301,11 @@ def update_tutorial_controls(players, introduce_jumping, introduce_sliding, intr
             introduced_controls_state["introduced_sliding"] = True
 
     if introduced_controls_state["introduced_jumping"]:
-        for player in players:
+        for player in active_players:
             player.can_jump = True
 
     if introduced_controls_state["introduced_sliding"]:
-        for player in players:
+        for player in active_players:
             player.can_slide = True
 
 
@@ -341,37 +341,39 @@ async def main():
     for action, key in p4_controls.items():
         print_player4_controls.append(f'{action}: {key}')
 
-    print(print_player1_controls[0])
-    print(print_player3_controls[0])
-    print(print_player4_controls[0])
-        
-
     level_type = levels_data[level_name]['level_type']
     platforms = load_platforms(levels_data, level_name)
+    player_num = 1
 
     OG_spawn_point, introduce_jumping, introduce_sliding, death_platforms, next_checkpoints, finish_line = get_special_platforms(platforms, level_name)
 
-    player1 = Player(player_id=1, position=OG_spawn_point, controls=player1_controls, color=("#9EBA01"))
-    player2 = Player(player_id=2, position=OG_spawn_point, controls=player2_controls, color=("#2276c9"))
-    player3 = Player(player_id=3, position=OG_spawn_point, controls=player3_controls, color=("#c7b61a"))
-    player4 = Player(player_id=4, position=OG_spawn_point, controls=player4_controls, color=("#c7281a"))
-
-    players = [player1, player2, player3, player4]
+    players = {
+    "player1": Player(player_id=1, position=OG_spawn_point, controls=player1_controls, color=("#9EBA01")),
+    "player2": Player(player_id=2, position=OG_spawn_point, controls=player2_controls, color=("#2276c9")),
+    "player3": Player(player_id=3, position=OG_spawn_point, controls=player3_controls, color=("#c7b61a")),
+    "player4": Player(player_id=4, position=OG_spawn_point, controls=player4_controls, color=("#c7281a"))
+    }
+    
+    for number in range(player_num):
+        active_players = players[f'player{number + 1}']
+    
+    print(active_players)
+    
     spawn_point = OG_spawn_point
     checkpoint_increment = 0
     reset_positions = []
 
-    for player in players:
+    for player in active_players:
         reset_positions.append(spawn_point)
     
     if level_type == 'scrolling':
         next_checkpoint = next_checkpoints[checkpoint_increment]
         level_width, level_height = levels_data[level_name]['camera_width'], levels_data[level_name]['camera_height']
         camera = Camera(width=level_width, height=level_height, window_size=window_size)
-        camera.is_active = False # CHANGE LATER
+        camera.is_active = True # CHANGE LATER
         introduced_controls_state = {"introduced_jumping": False, "introduced_sliding": False}
         
-        for player in players:
+        for player in active_players:
             player.can_jump, player.can_slide = False, False
 
     else:
@@ -397,15 +399,12 @@ async def main():
         keys = pygame.key.get_pressed()
 
         if level_name == 'tutorial_level':
-            update_tutorial_controls(players, introduce_jumping, introduce_sliding, introduced_controls_state)
+            update_tutorial_controls(active_players, introduce_jumping, introduce_sliding, introduced_controls_state)
 
-        for player in players:
+        for player in active_players:
 
             if player.position.y > level_height + 100:
                 player.reload(spawn_point)
-
-            if player.id == 4:
-                print(player.position)
 
             if player.on_platform == finish_line:
                 reset_positions = []
@@ -415,7 +414,7 @@ async def main():
                 checkpoint_increment = 0
                 spawn_point = OG_spawn_point
 
-                for player in players:
+                for player in active_players:
                     reset_positions.append(spawn_point)
 
                 for platform in next_checkpoints:
@@ -427,7 +426,7 @@ async def main():
                     next_checkpoint = next_checkpoints[checkpoint_increment]
                     introduced_controls_state = {"introduced_jumping": False, "introduced_sliding": False}
                     
-                    for player in players:
+                    for player in active_players:
                         reset_positions.append(spawn_point)
                         player.can_jump, player.can_slide = False, False    
 
@@ -441,7 +440,7 @@ async def main():
                     next_checkpoint.color = "#228700"
                     reset_positions = []
                     
-                    for player in players:
+                    for player in active_players:
 
                         reset_positions.append(spawn_point)
                     
@@ -456,7 +455,7 @@ async def main():
             elif event.type == pygame.KEYDOWN:
                 
                 if event.key == pygame.K_r:
-                    reload_map(players, platforms, reset_positions)  
+                    reload_map(active_players, platforms, reset_positions)  
                     best_player_num = None
                     game_finished = False
                     text_color = ("#71d6f5")
@@ -473,7 +472,7 @@ async def main():
                         paused = False
                     
                     elif event.key == pygame.K_r:
-                        reload_map(players, platforms, reset_positions)
+                        reload_map(active_players, platforms, reset_positions)
                         paused = False
                         game_finished = False
                         best_player_num = None
@@ -489,14 +488,14 @@ async def main():
         if not paused and not game_finished:
 
             while accumulator >= fixed_delta_time:
-                update_game_logic(fixed_delta_time, players, platforms, keys)
+                update_game_logic(fixed_delta_time, active_players, platforms, keys)
                 accumulator -= fixed_delta_time
-                camera.update(players, player)
+                camera.update(active_players, player)
 
             screen.fill((0, 0, 0))
             
             counting_string = update_timer(start_timer)
-            render_game_objects(platforms, players, camera)
+            render_game_objects(platforms, active_players, camera)
             display_controls(introduced_controls_state, counting_string, print_player1_controls, print_player3_controls, print_player4_controls, timer_color=("#32854b"))
 
             pygame.display.flip()

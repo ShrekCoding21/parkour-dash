@@ -9,7 +9,7 @@ class Camera():
         self.width = width
         self.height = height
         self.window_size = window_size
-        self.zoom = 1.0
+        self.zoom = 0.3
         self.margin = 100
         self.is_active = True
 

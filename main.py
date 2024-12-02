@@ -333,7 +333,7 @@ class Camera():
                 rect.x = (rect.x - self.camera_rect.x) * self.zoom
                 rect.y = (rect.y - self.camera_rect.y) * self.zoom
                 rect.width *= self.zoom
-                rect.height *= self.zoom
+                rect.height00 *= self.zoom
                 return rect
             
             elif isinstance(obj, Platform):
