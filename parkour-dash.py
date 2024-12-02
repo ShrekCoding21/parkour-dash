@@ -117,89 +117,44 @@ def reload_map(players, platforms, reset_positions):
         for player, position in zip(players, reset_positions):
             player.reload(position)
 
-def display_controls(introduced_controls_state, counting_string, timer_color):
+def display_controls(introduced_controls_state, counting_string, print_player1_controls, print_player3_controls, print_player4_controls, timer_color):
     
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25)
 
+    full_p2_controls = [
+        '←: left',
+        '→: right',
+        '↑: up',
+        '↓: slide'
+    ]
+
+    full_p1_controls = print_player1_controls
+    full_p3_controls = print_player3_controls
+    full_p4_controls = print_player4_controls
+
     if not introduced_controls_state["introduced_jumping"]:
         
-        p1_controls = [
-            'a: left',
-            'd: right'
-        ]
-
-        p2_controls = [
-            '←: left',
-            '→: right'
-        ]
-
-        p3_controls = [
-            'g: left',
-            'j: right'
-        ]
-
-        p4_controls = [
-            'k: left',
-            'semicolon: right'
-        ]
+        p1_controls = [full_p1_controls[0], full_p1_controls[1]]
+        p2_controls = [full_p2_controls[0], full_p2_controls[1]]
+        p3_controls = [full_p3_controls[0], full_p3_controls[1]]
+        p4_controls = [full_p4_controls[0], full_p4_controls[1]]
     
     elif not introduced_controls_state["introduced_sliding"] and introduced_controls_state["introduced_jumping"]:
 
-        p1_controls = [
-            'a: left',
-            'd: right',
-            'w: jump'
-        ]
-
-        p2_controls = [
-            '←: left',
-            '→: right',
-            '↑: jump'
-        ]
-
-        p3_controls = [
-            'g: left',
-            'j: right',
-            'y: jump',
-        ]
-
-        p4_controls = [
-            'k: left',
-            'semicolon: right',
-            'o: jump'
-        ]
+        p1_controls = [full_p1_controls[0], full_p1_controls[1], full_p1_controls[2]]
+        p2_controls = [full_p2_controls[0], full_p2_controls[1], full_p2_controls[2]]
+        p3_controls = [full_p3_controls[0], full_p3_controls[1], full_p3_controls[2]]
+        p4_controls = [full_p4_controls[0], full_p4_controls[1], full_p4_controls[2]]
         
 
     else:
 
-        p1_controls = [
-            'a: left',
-            'd: right',
-            'w: jump',
-            's: slide'
-            ]
+        p1_controls = [full_p1_controls]       
+        p2_controls = [full_p2_controls]       
+        p3_controls = [full_p3_controls]
+        p4_controls = [full_p4_controls]
         
-        p2_controls = [
-            '←: left',
-            '→: right',
-            '↑: up',
-            '↓: slide'
-            ]
-        
-        p3_controls = [
-            'g: left',
-            'j: right',
-            'y: jump',
-            'h: slide'
-        ]
-
-        p4_controls = [
-            'k: left',
-            'semicolon: right',
-            'o: jump',
-            'l: slide'
-        ]
-        
+    
     general_controls = [
         'p: game pause',
         'u: game unpause',
@@ -367,11 +322,34 @@ async def main():
     player3_controls = keys_data['controls']['players']['player3']
     player4_controls = keys_data['controls']['players']['player4']
 
+    print_player_controls = keys_data['show_controls']['players']
+
+    p1_controls = print_player_controls['player1']
+    p3_controls = print_player_controls['player3']
+    p4_controls = print_player_controls['player4']
+
+    print_player1_controls = []
+    print_player3_controls = []
+    print_player4_controls = []
+
+    for action, key in p1_controls.items():
+        print_player1_controls.append(f'{action}: {key}')
+
+    for action, key in p3_controls.items():
+        print_player3_controls.append(f'{action}: {key}')
+    
+    for action, key in p4_controls.items():
+        print_player4_controls.append(f'{action}: {key}')
+
+    print(print_player1_controls[0])
+    print(print_player3_controls[0])
+    print(print_player4_controls[0])
+        
+
     level_type = levels_data[level_name]['level_type']
     platforms = load_platforms(levels_data, level_name)
 
     OG_spawn_point, introduce_jumping, introduce_sliding, death_platforms, next_checkpoints, finish_line = get_special_platforms(platforms, level_name)
-
 
     player1 = Player(player_id=1, position=OG_spawn_point, controls=player1_controls, color=("#9EBA01"))
     player2 = Player(player_id=2, position=OG_spawn_point, controls=player2_controls, color=("#2276c9"))
@@ -519,7 +497,7 @@ async def main():
             
             counting_string = update_timer(start_timer)
             render_game_objects(platforms, players, camera)
-            display_controls(introduced_controls_state, counting_string, timer_color=("#32854b"))
+            display_controls(introduced_controls_state, counting_string, print_player1_controls, print_player3_controls, print_player4_controls, timer_color=("#32854b"))
 
             pygame.display.flip()
 

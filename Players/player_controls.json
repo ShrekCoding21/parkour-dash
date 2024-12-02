@@ -37,4 +37,37 @@
 
     }
 
-}}
+},
+
+"show_controls": {
+    "players": {
+
+        "player1": {
+            "left": "a",
+            "right": "d",
+            "jump": "w",
+            "slide": "s",
+            "powerup": "l-shift"
+        },
+
+        "player3": {
+            "left": "g",
+            "right": "j",
+            "jump": "y",
+            "slide": "h",
+            "powerup": "7"
+        },
+
+        "player4": {
+            "left": "k",
+            "right": ";",
+            "jump": "o",
+            "slide": "l",
+            "powerup": "0"
+        }
+
+    }     
+
+}
+
+}
