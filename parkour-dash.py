@@ -117,43 +117,64 @@ def reload_map(active_players, platforms, reset_positions):
         for player, position in zip(active_players, reset_positions):
             player.reload(position)
 
-def display_controls(introduced_controls_state, counting_string, print_player1_controls, print_player3_controls, print_player4_controls, timer_color):
+def display_controls(introduced_controls_state, counting_string, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, timer_color):
     
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25)
-
-    full_p2_controls = [
-        '←: left',
-        '→: right',
-        '↑: up',
-        '↓: slide'
-    ]
-
+    
     full_p1_controls = print_player1_controls
+    full_p2_controls = print_player2_controls
     full_p3_controls = print_player3_controls
     full_p4_controls = print_player4_controls
 
     if not introduced_controls_state["introduced_jumping"]:
         
         p1_controls = [full_p1_controls[0], full_p1_controls[1]]
-        p2_controls = [full_p2_controls[0], full_p2_controls[1]]
-        p3_controls = [full_p3_controls[0], full_p3_controls[1]]
-        p4_controls = [full_p4_controls[0], full_p4_controls[1]]
+        
+        if p4_active:
+            p2_controls = [full_p2_controls[0], full_p2_controls[1]]
+            p3_controls = [full_p3_controls[0], full_p3_controls[1]]
+            p4_controls = [full_p4_controls[0], full_p4_controls[1]]
+
+        elif p3_active and not p4_active:
+            p3_controls = [full_p3_controls[0], full_p3_controls[1]]
+            p2_controls = [full_p2_controls[0], full_p2_controls[1]]
+
+        elif p2_active and not p3_active:
+            p2_controls = [full_p2_controls[0], full_p2_controls[1]]
+
+
     
     elif not introduced_controls_state["introduced_sliding"] and introduced_controls_state["introduced_jumping"]:
 
         p1_controls = [full_p1_controls[0], full_p1_controls[1], full_p1_controls[2]]
-        p2_controls = [full_p2_controls[0], full_p2_controls[1], full_p2_controls[2]]
-        p3_controls = [full_p3_controls[0], full_p3_controls[1], full_p3_controls[2]]
-        p4_controls = [full_p4_controls[0], full_p4_controls[1], full_p4_controls[2]]
         
+        if p4_active:
+            p2_controls = [full_p2_controls[0], full_p2_controls[1], full_p2_controls[2]]
+            p3_controls = [full_p3_controls[0], full_p3_controls[1], full_p3_controls[2]]
+            p4_controls = [full_p4_controls[0], full_p4_controls[1], full_p4_controls[2]]
+        
+        elif p3_active and not p4_active:
+            p2_controls = [full_p2_controls[0], full_p2_controls[1], full_p2_controls[2]]
+            p3_controls = [full_p3_controls[0], full_p3_controls[1], full_p3_controls[2]]
 
+        elif p2_active and not p3_active:
+            p2_controls = [full_p2_controls[0], full_p2_controls[1], full_p2_controls[2]]          
+        
     else:
 
-        p1_controls = [full_p1_controls]       
-        p2_controls = [full_p2_controls]       
-        p3_controls = [full_p3_controls]
-        p4_controls = [full_p4_controls]
+        p1_controls = full_p1_controls       
         
+        if p4_active:
+            p2_controls = full_p2_controls       
+            p3_controls = full_p3_controls
+            p4_controls = full_p4_controls
+
+        elif p3_active and not p4_active:
+            p2_controls = full_p2_controls       
+            p3_controls = full_p3_controls
+
+        elif p2_active and not p3_active:
+            p2_controls = full_p2_controls
     
     general_controls = [
         'p: game pause',
@@ -165,17 +186,20 @@ def display_controls(introduced_controls_state, counting_string, print_player1_c
         
     x_position = 20
     vertical_displacement = 150
+    
     for p1_control in p1_controls:
         print_p1_controls = font.render(p1_control, True, ("#9EBA01"))
         p1_control_rect = print_p1_controls.get_rect(topleft=(x_position, vertical_displacement))
         screen.blit(print_p1_controls, p1_control_rect)
         vertical_displacement += 30
+    
+    if p2_active:
 
-    for p2_control in p2_controls:
-        print_p2_controls = font.render(p2_control, True, ("#2276c9"))
-        p2_control_rect = print_p2_controls.get_rect(topleft=(x_position, vertical_displacement))
-        screen.blit(print_p2_controls, p2_control_rect)
-        vertical_displacement += 30
+        for p2_control in p2_controls:
+            print_p2_controls = font.render(p2_control, True, ("#2276c9"))
+            p2_control_rect = print_p2_controls.get_rect(topleft=(x_position, vertical_displacement))
+            screen.blit(print_p2_controls, p2_control_rect)
+            vertical_displacement += 30
 
     x_position = 990
     vertical_displacement = 10
@@ -192,17 +216,78 @@ def display_controls(introduced_controls_state, counting_string, print_player1_c
 
     vertical_displacement = 450
 
-    for p3_control in p3_controls:
-        print_p3_controls = font.render(p3_control, True, ("#c7b61a"))
-        p3_control_rect = print_p3_controls.get_rect(topright=(x_position, vertical_displacement))
-        screen.blit(print_p3_controls, p3_control_rect)
-        vertical_displacement += 30
+    if p3_active:
 
-    for p4_control in p4_controls:
-        print_p4_controls = font.render(p4_control, True, ("#c7281a"))
-        p4_control_rect = print_p4_controls.get_rect(topright=(x_position, vertical_displacement))
-        screen.blit(print_p4_controls, p4_control_rect)
-        vertical_displacement += 30
+        for p3_control in p3_controls:
+            print_p3_controls = font.render(p3_control, True, ("#c7b61a"))
+            p3_control_rect = print_p3_controls.get_rect(topright=(x_position, vertical_displacement))
+            screen.blit(print_p3_controls, p3_control_rect)
+            vertical_displacement += 30
+
+    if p4_active:
+
+        for p4_control in p4_controls:
+            print_p4_controls = font.render(p4_control, True, ("#c7281a"))
+            p4_control_rect = print_p4_controls.get_rect(topright=(x_position, vertical_displacement))
+            screen.blit(print_p4_controls, p4_control_rect)
+            vertical_displacement += 30
+
+def determine_blitted_controls(active_players, p1_controls, p3_controls, p4_controls):
+
+    print_player1_controls = []
+    print_player2_controls = []
+    print_player3_controls = []
+    print_player4_controls = []
+
+    p2_active = False
+    p3_active = False
+    p4_active = False
+
+    for action, key in p1_controls.items():
+        print_player1_controls.append(f'{action}: {key}')
+
+    if len(active_players) >= 4:    
+        p4_active = True
+        p3_active = True
+        p2_active = True
+        
+        for action, key in p4_controls.items():
+            print_player4_controls.append(f'{action}: {key}')
+
+        for action, key in p3_controls.items():
+            print_player3_controls.append(f'{action}: {key}')
+
+        print_player2_controls = [
+            '←: left',
+            '→: right',
+            '↑: jump',
+            '↓: slide'
+        ]
+
+    elif len(active_players) >= 3 and not p4_active:
+        p3_active = True
+        p2_active = True
+
+        for action, key in p3_controls.items():
+            print_player3_controls.append(f'{action}: {key}')
+
+        print_player2_controls = [
+            '←: left',
+            '→: right',
+            '↑: jump',
+            '↓: slide'
+        ]
+
+    elif len(active_players) >= 2 and not p3_active:
+        p2_active = True
+        print_player2_controls = [
+            '←: left',
+            '→: right',
+            '↑: jump',
+            '↓: slide'
+        ]
+
+    return print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active
             
 def update_game_logic(delta_time, active_players, platforms, keys):
 
@@ -328,22 +413,9 @@ async def main():
     p3_controls = print_player_controls['player3']
     p4_controls = print_player_controls['player4']
 
-    print_player1_controls = []
-    print_player3_controls = []
-    print_player4_controls = []
-
-    for action, key in p1_controls.items():
-        print_player1_controls.append(f'{action}: {key}')
-
-    for action, key in p3_controls.items():
-        print_player3_controls.append(f'{action}: {key}')
-    
-    for action, key in p4_controls.items():
-        print_player4_controls.append(f'{action}: {key}')
-
     level_type = levels_data[level_name]['level_type']
     platforms = load_platforms(levels_data, level_name)
-    player_num = 1
+    num_of_players = 3
 
     OG_spawn_point, introduce_jumping, introduce_sliding, death_platforms, next_checkpoints, finish_line = get_special_platforms(platforms, level_name)
 
@@ -353,15 +425,19 @@ async def main():
     "player3": Player(player_id=3, position=OG_spawn_point, controls=player3_controls, color=("#c7b61a")),
     "player4": Player(player_id=4, position=OG_spawn_point, controls=player4_controls, color=("#c7281a"))
     }
+
+    active_players = []
     
-    for number in range(player_num):
-        active_players = players[f'player{number + 1}']
+    for number in range(num_of_players):
+        active_players.append(players[f'player{number + 1}'])
     
     print(active_players)
     
     spawn_point = OG_spawn_point
     checkpoint_increment = 0
     reset_positions = []
+
+    print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active = determine_blitted_controls(active_players, p1_controls, p3_controls, p4_controls)
 
     for player in active_players:
         reset_positions.append(spawn_point)
@@ -496,7 +572,7 @@ async def main():
             
             counting_string = update_timer(start_timer)
             render_game_objects(platforms, active_players, camera)
-            display_controls(introduced_controls_state, counting_string, print_player1_controls, print_player3_controls, print_player4_controls, timer_color=("#32854b"))
+            display_controls(introduced_controls_state, counting_string, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, timer_color=("#32854b"))
 
             pygame.display.flip()
 
