@@ -415,7 +415,7 @@ async def main():
 
     level_type = levels_data[level_name]['level_type']
     platforms = load_platforms(levels_data, level_name)
-    num_of_players = 3
+    num_of_players = 2
 
     OG_spawn_point, introduce_jumping, introduce_sliding, death_platforms, next_checkpoints, finish_line = get_special_platforms(platforms, level_name)
 
