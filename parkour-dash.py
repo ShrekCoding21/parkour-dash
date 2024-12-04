@@ -289,10 +289,10 @@ def determine_blitted_controls(active_players, p1_controls, p3_controls, p4_cont
 
     return print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active
             
-def update_game_logic(delta_time, active_players, platforms, keys):
+def update_game_logic(delta_time, active_players, platforms, keys, position):
 
     for player in active_players:
-        player.update(delta_time, keys)
+        player.update(delta_time, keys, platforms, position)
         player.collisions(platforms)
 
     for platform in platforms:
@@ -415,7 +415,7 @@ async def main():
 
     level_type = levels_data[level_name]['level_type']
     platforms = load_platforms(levels_data, level_name)
-    num_of_players = 2
+    num_of_players = 1
 
     OG_spawn_point, introduce_jumping, introduce_sliding, death_platforms, next_checkpoints, finish_line = get_special_platforms(platforms, level_name)
 
@@ -564,7 +564,7 @@ async def main():
         if not paused and not game_finished:
 
             while accumulator >= fixed_delta_time:
-                update_game_logic(fixed_delta_time, active_players, platforms, keys)
+                update_game_logic(fixed_delta_time, active_players, platforms, keys, position=spawn_point)
                 accumulator -= fixed_delta_time
                 camera.update(active_players, player)
 

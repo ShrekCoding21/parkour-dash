@@ -10,6 +10,7 @@ class Player():
         self.velocity = pygame.Vector2(0, 0)
         self.on_ground = False
         self.on_platform = None
+        self.under_platform = False
         self.jump_strength = 600
         self.speed = 200
         self.acceleration = 5000
@@ -72,8 +73,7 @@ class Player():
                         self.velocity.y = 0
 
             player_rect = self.rect
-
-    
+  
     def load_animations(self):
         pass
 
@@ -98,7 +98,7 @@ class Player():
             self.start_slide = self.position.x
     
 
-    def handle_controls(self, keys, delta_time):
+    def handle_controls(self, keys, delta_time, position):
         
         ACCELERATION = self.acceleration * delta_time
         DECELERATION = self.deceleration * delta_time
@@ -107,7 +107,7 @@ class Player():
             self.velocity.x -= ACCELERATION
             self.facing = -1
 
-            if self.slide_direction == 1:
+            if self.slide_direction == 1 and not self.under_platform:
                 self.is_sliding = False
                 
                 if self.on_ground:
@@ -120,7 +120,7 @@ class Player():
             self.velocity.x += ACCELERATION
             self.facing = 1
 
-            if self.slide_direction == -1:
+            if self.slide_direction == -1 and not self.under_platform:
                 self.is_sliding = False
                 
                 if self.on_ground:
@@ -159,18 +159,44 @@ class Player():
 
             elif self.on_ground and distance_slid > self.slide_distance:
 
-                self.width, self.height = 32, 64
-                self.position.y -= 32
-                self.is_sliding = False
-                self.velocity.x = 0
-                
+                if not self.under_platform:
+                    self.velocity.x = 0
+                    self.is_sliding = False              
+                    self.width, self.height = 32, 64
+                    # self.position.y -= 32
 
-            
+                if self.under_platform:
+                    self.reload(position)
+    
+    def detect_headbumps(self, platforms):
+        self.under_platform = False  # Reset state each frame
 
-    def update(self, delta_time, keys):
+        # Get the player's hitbox (rect)
+        player_rect = self.rect
+
+        # Create a "head zone" directly above the player's hitbox for detection
+        head_zone = pygame.Rect(player_rect.x, player_rect.y - 64, player_rect.width, 32)
+
+        for platform in platforms:
+            # Create a rect for the platform
+            platform_rect = pygame.Rect(
+                platform.position.x, platform.position.y, platform.dimensions[0], platform.dimensions[1]
+            )
+
+            # Check if the head zone overlaps with the platform rect
+            if head_zone.colliderect(platform_rect):
+                print("hi")
+                self.under_platform = True
+                break  # Exit loop if a platform is detected
+
+    def update(self, delta_time, keys, platforms, position):
         
         self.gravity_and_motion(delta_time)
-        self.handle_controls(keys, delta_time)
+        self.handle_controls(keys, delta_time, position)
+        self.detect_headbumps(platforms)
+
+        if self.under_platform:
+            print("under platform")
 
         if self.on_platform and self.on_platform.is_moving:
             self.position.x += self.on_platform.velocity.x * delta_time

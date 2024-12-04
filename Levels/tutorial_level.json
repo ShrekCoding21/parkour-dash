@@ -179,7 +179,7 @@
         "main-platform": {
             "x-position": 390,
             "y-position": 1500,
-            "width": 910,
+            "width": 540,
             "height": 520,
             "is_moving": "False",
             "color": "#9ff084"
@@ -189,7 +189,7 @@
             "x-position": 900,
             "y-position": 1440,
             "width": 400,
-            "height": 100,
+            "height": 580,
             "is_moving": "False",
             "color": "#9ff084"
         },
@@ -215,25 +215,25 @@
         "obstacle2": {
             "x-position": 1960,
             "y-position": 1438,
-            "width": 150,
+            "width": 130,
             "height": 120,
             "is_moving": "False",
             "color": "#9ff084"
         },
 
         "introduce-jumpsliding": {
-            "x-position": 1978,
+            "x-position": 1918,
             "y-position": 1590,
-            "width": 52,
+            "width": 122,
             "height": 430,
             "is_moving": "False",
             "color": "#9ff084"
         },
 
         "death-form3": {
-            "x-position": 2162,
+            "x-position": 2160,
             "y-position": 1865,
-            "width": 340,
+            "width": 342,
             "height": 10,
             "is_moving": "False",
             "color": "#000000"
@@ -249,7 +249,7 @@
         },
 
         "obstacle3": {
-            "x-position": 2555,
+            "x-position": 2535,
             "y-position": 1438,
             "width": 100,
             "height": 120,
