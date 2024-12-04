@@ -335,14 +335,18 @@ def get_special_platforms(platforms, level_name):
             if platform.name == "introduce-sliding":
                 intro_to_sliding = platform
 
+            if platform.name == "introduce-jumpsliding":
+                print("u stoopid")
+                intro_to_jumpslide = platform
+
             if platform.name == f"death-form{deathpoint_num}":
                 deathforms.append(platform)
                 deathpoint_num += 1
         
         else:
-            intro_to_jumping, intro_to_sliding = None, None
+            intro_to_jumping, intro_to_sliding, intro_to_jumpslide = None, None, None
 
-    return spawn_point, intro_to_jumping, intro_to_sliding, deathforms, next_checkpoints, finish_line
+    return spawn_point, intro_to_jumping, intro_to_sliding, intro_to_jumpslide, deathforms, next_checkpoints, finish_line
 
 def render_game_objects(platforms, active_players, camera):
 
@@ -374,8 +378,10 @@ def render_game_objects(platforms, active_players, camera):
         )
         pygame.draw.rect(screen, player.color, scaled_rect)
 
-def update_tutorial_controls(active_players, introduce_jumping, introduce_sliding, introduced_controls_state):
+def update_tutorial_controls(active_players, introduce_jumping, introduce_sliding, introduce_jumpsliding, introduced_controls_state):
     """Allow players to use new controls when reaching new section and tell display_controls function to display new controls"""
+
+    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25)
 
     for player in active_players:
         
@@ -385,6 +391,10 @@ def update_tutorial_controls(active_players, introduce_jumping, introduce_slidin
         elif player.on_platform == introduce_sliding and not introduced_controls_state["introduced_sliding"]:
             introduced_controls_state["introduced_sliding"] = True
 
+        elif player.on_platform == introduce_jumpsliding and not introduced_controls_state["introduced_jumpsliding"]:
+            introduced_controls_state["introduced_jumpsliding"] = True
+            print("hi")
+
     if introduced_controls_state["introduced_jumping"]:
         for player in active_players:
             player.can_jump = True
@@ -392,6 +402,13 @@ def update_tutorial_controls(active_players, introduce_jumping, introduce_slidin
     if introduced_controls_state["introduced_sliding"]:
         for player in active_players:
             player.can_slide = True
+    
+    if introduced_controls_state["introduced_jumpsliding"]:
+
+        print_jumpslide_tutorial = font.render("Press jump and slide keys at the same time to jumpslide", True, ("#00f7f7"))
+        jumpslide_tutorial_rect = print_jumpslide_tutorial.get_rect(center=(500, 350))
+        screen.blit(print_jumpslide_tutorial, jumpslide_tutorial_rect)
+        print("karthik is big forehead")
 
 
 async def main():
@@ -417,7 +434,7 @@ async def main():
     platforms = load_platforms(levels_data, level_name)
     num_of_players = 1
 
-    OG_spawn_point, introduce_jumping, introduce_sliding, death_platforms, next_checkpoints, finish_line = get_special_platforms(platforms, level_name)
+    OG_spawn_point, introduce_jumping, introduce_sliding, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line = get_special_platforms(platforms, level_name)
 
     players = {
     "player1": Player(player_id=1, position=OG_spawn_point, controls=player1_controls, color=("#9EBA01")),
@@ -439,13 +456,14 @@ async def main():
 
     for player in active_players:
         reset_positions.append(spawn_point)
-    
-    if level_type == 'scrolling':
+
+    introduced_controls_state = {"introduced_jumping": False, "introduced_sliding": False, "introduced_jumpsliding": False}
+
+    if level_name == 'tutorial_level':
         next_checkpoint = next_checkpoints[checkpoint_increment]
         level_width, level_height = levels_data[level_name]['camera_width'], levels_data[level_name]['camera_height']
         camera = Camera(width=level_width, height=level_height, window_size=window_size)
         camera.is_active = True # CHANGE LATER
-        introduced_controls_state = {"introduced_jumping": False, "introduced_sliding": False}
         
         for player in active_players:
             player.can_jump, player.can_slide = False, False
@@ -454,7 +472,7 @@ async def main():
         level_width, level_height = 1000, 700
         camera = Camera(width=level_width, height=level_height, window_size=window_size)
         camera.is_active = False
-        introduced_controls_state = {"introduced_jumping": True, "introduced_sliding": True}
+        introduced_controls_state["introduced_jumping"], introduced_controls_state['introduced_sliding'], introduced_controls_state['introduced_jumpsliding'] = True, True, True
 
     running = True
     fixed_delta_time = 1 / 60
@@ -464,6 +482,7 @@ async def main():
     game_finished = False
     best_player_num = None
     text_color = ("#71d6f5")
+    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25)
 
 
 
@@ -473,7 +492,7 @@ async def main():
         keys = pygame.key.get_pressed()
 
         if level_name == 'tutorial_level':
-            update_tutorial_controls(active_players, introduce_jumping, introduce_sliding, introduced_controls_state)
+            update_tutorial_controls(active_players, introduce_jumping, introduce_sliding, introduce_jumpsliding, introduced_controls_state)
 
         for player in active_players:
 
@@ -498,7 +517,7 @@ async def main():
                     spawn_point = OG_spawn_point
                     reset_positions = []
                     next_checkpoint = next_checkpoints[checkpoint_increment]
-                    introduced_controls_state = {"introduced_jumping": False, "introduced_sliding": False}
+                    introduced_controls_state = {"introduced_jumping": False, "introduced_sliding": False, "introduced_jumpsliding": False}
                     
                     for player in active_players:
                         reset_positions.append(spawn_point)
