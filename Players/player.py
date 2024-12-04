@@ -185,7 +185,6 @@ class Player():
 
             # Check if the head zone overlaps with the platform rect
             if head_zone.colliderect(platform_rect):
-                print("hi")
                 self.under_platform = True
                 break  # Exit loop if a platform is detected
 
@@ -194,9 +193,6 @@ class Player():
         self.gravity_and_motion(delta_time)
         self.handle_controls(keys, delta_time, position)
         self.detect_headbumps(platforms)
-
-        if self.under_platform:
-            print("under platform")
 
         if self.on_platform and self.on_platform.is_moving:
             self.position.x += self.on_platform.velocity.x * delta_time

@@ -431,8 +431,6 @@ async def main():
     for number in range(num_of_players):
         active_players.append(players[f'player{number + 1}'])
     
-    print(active_players)
-    
     spawn_point = OG_spawn_point
     checkpoint_increment = 0
     reset_positions = []
