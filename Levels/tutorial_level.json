@@ -197,7 +197,7 @@
         "introduce-sliding": {
             "x-position": 1270,
             "y-position": 1590,
-            "width": 872,
+            "width": 820,
             "height": 430,
             "is_moving": "False",
             "color": "#9ff084"
@@ -222,12 +222,12 @@
         },
 
         "introduce-jumpsliding": {
-            "x-position": 1918,
+            "x-position": 2070,
             "y-position": 1590,
-            "width": 122,
+            "width": 70,
             "height": 430,
             "is_moving": "False",
-            "color": "#9ff084"
+            "color": "#ffffff"
         },
 
         "death-form3": {
