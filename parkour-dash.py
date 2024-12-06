@@ -2,6 +2,7 @@ import pygame
 import asyncio
 import json
 import time
+from PIL import Image, ImageFilter
 from Players.player import Player
 from Platforms.platform import Platform
 from camera import Camera
@@ -80,42 +81,51 @@ def load_platforms(platform_data, level_name):
 
     return platforms
 
-def freeze_game(screen, clock, window_size, counting_string, paused, game_finished, best_player_num, text_color):
+def pause_menu(screen, window_size, clock):
 
-    if paused:
-        text1 = "Paused"
-        text2 = None
-        text3 = None
-        f_size = 55
+    screen_surface = pygame.image.tostring(screen, "RGBA")
+    pil_image = Image.frombytes("RGBA", screen.get_size(), screen_surface)
+    blurred_image = pil_image.filter(ImageFilter.GaussianBlur(radius=10))
+    blurred_surface = pygame.image.fromstring(blurred_image.tobytes(), screen.get_size(), "RGBA")
 
-    if game_finished:
-        text1 = f'player {best_player_num} wins!'
-        text2 = 'press (r) to restart game'
-        text3 = f'completion time: {counting_string}'
-        f_size = 35
+    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 55)
 
-    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', f_size)
+    printtext = font.render("Paused", True, ("#71d6f5"))
+    text_rect = printtext.get_rect(center=(window_size[0] // 2, window_size[1] // 2 - 30))
+    screen.blit(blurred_surface, (0, 0))
+    screen.blit(printtext, text_rect)
+
+    pygame.display.flip()
+    clock.tick(10)
+
+
+def game_finished(screen, clock, window_size, counting_string, best_player_num, text_color):
+
+    text1 = f'player {best_player_num} wins!'
+    text2 = 'press (r) to restart game'
+    text3 = f'completion time: {counting_string}'
+
+    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 35)
     texts = [text1, text2, text3]
-    offset = 30
 
-    for text in texts:        
+    offset = 30
+    for text in texts:
         printtext = font.render(text, True, (text_color))
         text_rect = printtext.get_rect(center=(window_size[0] // 2, window_size[1] // 2 - offset))
         screen.blit(printtext, text_rect)
         offset -= 60
 
     pygame.display.flip()
-
     clock.tick(10)
 
 def introduce_controls(blit_jumpslide):
 
-    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
+    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30)
 
     print_jumpslide_tutorial1 = font.render("press jump and slide keys", True, ("#00f7f7"))
     print_jumpslide_tutorial2 = font.render("together to jumpslide", True, ("#00f7f7"))
-    jumpslide_tutorial_rect1 = print_jumpslide_tutorial1.get_rect(center=(500, 380))
-    jumpslide_tutorial_rect2 = print_jumpslide_tutorial2.get_rect(center=(500, 420))
+    jumpslide_tutorial_rect1 = print_jumpslide_tutorial1.get_rect(center=(500, 180))
+    jumpslide_tutorial_rect2 = print_jumpslide_tutorial2.get_rect(center=(500, 220))
     
     if blit_jumpslide:
         screen.blit(print_jumpslide_tutorial1, jumpslide_tutorial_rect1)
@@ -496,6 +506,8 @@ async def main():
 
             if player.id == 1:
 
+                print(player.position)
+
                 if player.on_platform:
                     current_platform = player.on_platform.name
                     print(current_platform)
@@ -503,7 +515,7 @@ async def main():
                     if current_platform not in platforms_used:
                         platforms_used.append(current_platform)
                 
-            if player.on_platform == introduce_jumpsliding:
+            if player.on_platform == introduce_jumpsliding and level_name == 'tutorial_level':
                 blit_jumpslide = True
             else:
                 blit_jumpslide = False
@@ -587,9 +599,14 @@ async def main():
                         if level_name == 'tutorial_level' and spawn_point == OG_spawn_point or level_name == 'demo_level':
                             start_timer = pygame.time.get_ticks()
 
-        if paused or game_finished:
+        if paused:
 
-            freeze_game(screen, clock, window_size, counting_string, paused, game_finished, best_player_num, text_color)
+            pause_menu(screen, window_size, clock)
+        
+        elif game_finished:
+
+            print(screen, clock, window_size, counting_string, best_player_num, text_color)
+            game_finished(screen, clock, window_size, counting_string, best_player_num, text_color)
 
         if not paused and not game_finished:
 
