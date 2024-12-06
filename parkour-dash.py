@@ -480,6 +480,7 @@ async def main():
     game_finished = False
     best_player_num = None
     text_color = ("#71d6f5")
+    platforms_used = []
 
 
 
@@ -494,7 +495,13 @@ async def main():
         for player in active_players:
 
             if player.id == 1:
-                print(player.position.x)
+
+                if player.on_platform:
+                    current_platform = player.on_platform.name
+                    print(current_platform)
+
+                    if current_platform not in platforms_used:
+                        platforms_used.append(current_platform)
                 
             if player.on_platform == introduce_jumpsliding:
                 blit_jumpslide = True
@@ -548,6 +555,7 @@ async def main():
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                print(platforms_used)
                 running = False
             
             elif event.type == pygame.KEYDOWN:
