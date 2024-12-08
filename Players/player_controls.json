@@ -46,24 +46,21 @@
             "left": "a",
             "right": "d",
             "jump": "w",
-            "slide": "s",
-            "powerup": "l-shift"
+            "slide": "s"
         },
 
         "player3": {
             "left": "g",
             "right": "j",
             "jump": "y",
-            "slide": "h",
-            "powerup": "7"
+            "slide": "h"
         },
 
         "player4": {
             "left": "k",
             "right": ";",
             "jump": "o",
-            "slide": "l",
-            "powerup": "0"
+            "slide": "l"
         }
 
     }     

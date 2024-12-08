@@ -1,6 +1,8 @@
 import pygame
 import asyncio
 import json
+import time
+from PIL import Image, ImageFilter
 
 WEB_ENVIRONMENT = False
 try:
@@ -417,6 +419,53 @@ class Camera():
 
 
 
+"""buttons.py code goes here"""
+
+
+
+class Button():
+
+    def __init__(self, image, pos, font, base_color, hovering_color, text_input):
+        self.image = image
+        self.x_coordinate = pos[0]
+        self.y_coordinate = pos[1]
+        self.font = font
+        self.base_color, self.hovering_color = base_color, hovering_color
+        self.text_input = text_input
+        self.text = self.font.render(self.text_input, True, self.base_color)
+
+        if self.image is None:
+            self.image = self.text
+        
+        elif self.text_input is None:
+            self.text = self.image
+
+        self.rect = self.image.get_rect(center=(self.x_coordinate, self.y_coordinate))
+        self.text_rect = self.text.get_rect(center=(self.x_coordinate, self.y_coordinate))
+
+    def update(self, screen):
+        
+        if self.image is not None:
+            screen.blit(self.image, self.rect)
+        
+        screen.blit(self.text, self.text_rect)
+    
+    def checkForInput(self, position):
+
+        if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top, self.rect.bottom):
+            return True
+        return False
+    
+    def changeColor(self, position):
+
+        if self.checkForInput(position):
+            self.text = self.font.render(self.text_input, True, self.hovering_color)
+        
+        else:
+            self.text = self.font.render(self.text_input, True, self.base_color)
+
+
+
 """parkour-dash.py code goes here"""
 
 
@@ -468,42 +517,93 @@ def load_platforms(platform_data, level_name):
 
     return platforms
 
-def freeze_game(screen, clock, window_size, counting_string, paused, game_finished, best_player_num, text_color):
+def pause_menu(screen, window_size, time_paused, MENU_MOUSE_POS):
 
-    if paused:
-        text1 = "Paused"
-        text2 = None
-        text3 = None
-        f_size = 55
+    blur_duration = 1
+    screen_surface = pygame.image.tobytes(screen, "RGBA")
+    pil_image = Image.frombytes("RGBA", screen.get_size(), screen_surface)
+    blurred_image = pil_image.filter(ImageFilter.GaussianBlur(radius=10))
+    blurred_surface = pygame.image.frombytes(blurred_image.tobytes(), screen.get_size(), "RGBA")
 
-    if game_finished:
-        text1 = f'player {best_player_num} wins!'
-        text2 = 'press (r) to restart game'
-        text3 = f'completion time: {counting_string}'
-        f_size = 35
+    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 55)
+    button_image = pygame.image.load("Buttons/tutorial_button.png").convert_alpha()
 
-    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', f_size)
+    printtext = font.render("Paused", True, ("#71d6f5"))
+    text_rect = printtext.get_rect(center=(window_size[0] // 2, window_size[1] // 2 - 200))
+    paused_time_elapsed = time.time() - time_paused
+
+    RESUME_BUTTON = Button(image=button_image, pos=(500, 260), text_input="resume", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+    DISPLAY_CONTROLS = Button(image=button_image, pos=(500, 330), text_input="controls", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30), base_color="#167fc9", hovering_color="#F59071")
+    SETTINGS = Button(image=button_image, pos=(500, 400), text_input="settings", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30), base_color="#167fc9", hovering_color="#F59071")
+    MAIN_MENU = Button(image=button_image, pos=(500, 470), text_input="home", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+
+    if paused_time_elapsed <= blur_duration:
+        screen.blit(blurred_surface, (0, 0))
+    
+    else:
+        screen.blit(printtext, text_rect)
+        for button in [RESUME_BUTTON, DISPLAY_CONTROLS, SETTINGS, MAIN_MENU]:
+            button.changeColor(pygame.mouse.get_pos())
+            button.update(screen)
+
+    for event in pygame.event.get():
+        
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            exit()
+
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            
+            if RESUME_BUTTON.checkForInput(MENU_MOUSE_POS):
+                print("resume game pressed")
+                return False
+            
+            elif DISPLAY_CONTROLS.checkForInput(MENU_MOUSE_POS):
+                print("display controls requested")
+
+            elif SETTINGS.checkForInput(MENU_MOUSE_POS):
+                print("show settings")
+            
+            elif MAIN_MENU.checkForInput(MENU_MOUSE_POS):
+                print("return to home screen")
+
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_u:
+                return False
+
+
+    pygame.display.flip()
+
+    return True
+
+
+def level_complete(screen, clock, window_size, counting_string, best_player_num, text_color):
+
+    text1 = f'player {best_player_num} wins!'
+    text2 = 'press (r) to restart game'
+    text3 = f'completion time: {counting_string}'
+
+    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 35)
     texts = [text1, text2, text3]
-    offset = 30
 
-    for text in texts:        
+    offset = 30
+    for text in texts:
         printtext = font.render(text, True, (text_color))
         text_rect = printtext.get_rect(center=(window_size[0] // 2, window_size[1] // 2 - offset))
         screen.blit(printtext, text_rect)
         offset -= 60
 
     pygame.display.flip()
-
     clock.tick(10)
 
 def introduce_controls(blit_jumpslide):
 
-    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
+    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30)
 
     print_jumpslide_tutorial1 = font.render("press jump and slide keys", True, ("#00f7f7"))
     print_jumpslide_tutorial2 = font.render("together to jumpslide", True, ("#00f7f7"))
-    jumpslide_tutorial_rect1 = print_jumpslide_tutorial1.get_rect(center=(500, 380))
-    jumpslide_tutorial_rect2 = print_jumpslide_tutorial2.get_rect(center=(500, 420))
+    jumpslide_tutorial_rect1 = print_jumpslide_tutorial1.get_rect(center=(500, 180))
+    jumpslide_tutorial_rect2 = print_jumpslide_tutorial2.get_rect(center=(500, 220))
     
     if blit_jumpslide:
         screen.blit(print_jumpslide_tutorial1, jumpslide_tutorial_rect1)
@@ -858,7 +958,7 @@ async def main():
         level_width, level_height = 1000, 700
         camera = Camera(width=level_width, height=level_height, window_size=window_size)
         camera.is_active = False
-        introduced_controls_state["introduced_jumping"], introduced_controls_state['introduced_sliding'] = True, True
+        introduced_controls_state["introduced_jumping"], introduced_controls_state['introduced_sliding'] = True, True   
 
     running = True
     fixed_delta_time = 1 / 60
@@ -869,13 +969,15 @@ async def main():
     best_player_num = None
     text_color = ("#71d6f5")
     platforms_used = []
-
+    RELOAD = Button(image=pygame.image.load("Buttons/reload_button.png").convert_alpha(), pos=(85, 43), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+    PAUSE = Button(image=pygame.image.load("Buttons/pause_button.png").convert_alpha(), pos=(30, 35), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color=("White"), hovering_color=("White"))
 
 
     while running:
         dt = clock.tick(60) / 1000.0
         accumulator += dt
         keys = pygame.key.get_pressed()
+        MENU_MOUSE_POS = pygame.mouse.get_pos()
 
         if level_name == 'tutorial_level':
             update_tutorial_controls(active_players, introduce_jumping, introduce_sliding, introduced_controls_state)
@@ -884,14 +986,16 @@ async def main():
 
             if player.id == 1:
 
+                # print(player.position)
+
                 if player.on_platform:
                     current_platform = player.on_platform.name
-                    print(current_platform)
+                    # print(current_platform)
 
                     if current_platform not in platforms_used:
                         platforms_used.append(current_platform)
                 
-            if player.on_platform == introduce_jumpsliding:
+            if player.on_platform == introduce_jumpsliding and level_name == 'tutorial_level':
                 blit_jumpslide = True
             else:
                 blit_jumpslide = False
@@ -942,9 +1046,19 @@ async def main():
                         next_checkpoint = next_checkpoints[checkpoint_increment]
 
         for event in pygame.event.get():
+            
             if event.type == pygame.QUIT:
                 print(platforms_used)
                 running = False
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+
+                if RELOAD.checkForInput(MENU_MOUSE_POS):
+                    reload_map(active_players, platforms, reset_positions)
+
+                if PAUSE.checkForInput(MENU_MOUSE_POS):
+                    time_paused = time.time()
+                    paused = True
             
             elif event.type == pygame.KEYDOWN:
                 
@@ -958,11 +1072,12 @@ async def main():
                         start_timer = pygame.time.get_ticks()
                 
                 if event.key == pygame.K_p:
+                    time_paused = time.time()
                     paused = True
                 
                 elif paused or game_finished:
 
-                    if event.key == pygame.K_u:
+                    if event.key == pygame.K_u or not pause_menu(screen, window_size, time_paused):
                         paused = False
                     
                     elif event.key == pygame.K_r:
@@ -975,11 +1090,16 @@ async def main():
                         if level_name == 'tutorial_level' and spawn_point == OG_spawn_point or level_name == 'demo_level':
                             start_timer = pygame.time.get_ticks()
 
-        if paused or game_finished:
+        if paused:
+            
+            MENU_MOUSE_POS = pygame.mouse.get_pos()    
+            paused = pause_menu(screen, window_size, time_paused, MENU_MOUSE_POS)
+        
+        elif game_finished:
 
-            freeze_game(screen, clock, window_size, counting_string, paused, game_finished, best_player_num, text_color)
+            level_complete(screen, clock, window_size, counting_string, best_player_num, text_color)
 
-        if not paused and not game_finished:
+        else:
 
             while accumulator >= fixed_delta_time:
                 update_game_logic(fixed_delta_time, active_players, platforms, keys, position=spawn_point)
@@ -993,6 +1113,10 @@ async def main():
             display_controls(introduced_controls_state, counting_string, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, timer_color=("#32854b"))
             introduce_controls(blit_jumpslide)
 
+            for button in [RELOAD, PAUSE]:
+                button.changeColor(pygame.mouse.get_pos())
+                button.update(screen)
+
             pygame.display.flip()
 
         await asyncio.sleep(0)
@@ -1001,5 +1125,7 @@ async def main():
 
 # Run the main function
 asyncio.run(main())
+
+"""if you read this you are nice"""
 
 """if you read this you are nice"""

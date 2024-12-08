@@ -6,6 +6,7 @@ from PIL import Image, ImageFilter
 from Players.player import Player
 from Platforms.platform import Platform
 from camera import Camera
+from Buttons.buttons import Button
 
 WEB_ENVIRONMENT = False
 try:
@@ -81,25 +82,69 @@ def load_platforms(platform_data, level_name):
 
     return platforms
 
-def pause_menu(screen, window_size, clock):
+def pause_menu(screen, window_size, time_paused):
 
-    screen_surface = pygame.image.tostring(screen, "RGBA")
+    MENU_MOUSE_POS = pygame.mouse.get_pos()
+
+    blur_duration = 1
+    screen_surface = pygame.image.tobytes(screen, "RGBA")
     pil_image = Image.frombytes("RGBA", screen.get_size(), screen_surface)
     blurred_image = pil_image.filter(ImageFilter.GaussianBlur(radius=10))
-    blurred_surface = pygame.image.fromstring(blurred_image.tobytes(), screen.get_size(), "RGBA")
+    blurred_surface = pygame.image.frombytes(blurred_image.tobytes(), screen.get_size(), "RGBA")
 
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 55)
+    button_image = pygame.image.load("Buttons/tutorial_button.png").convert_alpha()
 
     printtext = font.render("Paused", True, ("#71d6f5"))
-    text_rect = printtext.get_rect(center=(window_size[0] // 2, window_size[1] // 2 - 30))
-    screen.blit(blurred_surface, (0, 0))
-    screen.blit(printtext, text_rect)
+    text_rect = printtext.get_rect(center=(window_size[0] // 2, window_size[1] // 2 - 200))
+    paused_time_elapsed = time.time() - time_paused
+
+    RESUME_BUTTON = Button(image=button_image, pos=(500, 260), text_input="resume", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+    DISPLAY_CONTROLS = Button(image=button_image, pos=(500, 330), text_input="controls", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30), base_color="#167fc9", hovering_color="#F59071")
+    SETTINGS = Button(image=button_image, pos=(500, 400), text_input="settings", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30), base_color="#167fc9", hovering_color="#F59071")
+    MAIN_MENU = Button(image=button_image, pos=(500, 470), text_input="home", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+
+    if paused_time_elapsed <= blur_duration:
+        screen.blit(blurred_surface, (0, 0))
+    
+    else:
+        screen.blit(printtext, text_rect)
+        for button in [RESUME_BUTTON, DISPLAY_CONTROLS, SETTINGS, MAIN_MENU]:
+            button.changeColor(pygame.mouse.get_pos())
+            button.update(screen)
+
+    for event in pygame.event.get():
+        
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            exit()
+
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            
+            if RESUME_BUTTON.checkForInput(MENU_MOUSE_POS):
+                print("resume game pressed")
+                return False
+            
+            elif DISPLAY_CONTROLS.checkForInput(MENU_MOUSE_POS):
+                print("display controls requested")
+
+            elif SETTINGS.checkForInput(MENU_MOUSE_POS):
+                print("show settings")
+            
+            elif MAIN_MENU.checkForInput(MENU_MOUSE_POS):
+                print("return to home screen")
+
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_u:
+                return False
+
 
     pygame.display.flip()
-    clock.tick(10)
+
+    return True
 
 
-def game_finished(screen, clock, window_size, counting_string, best_player_num, text_color):
+def level_complete(screen, clock, window_size, counting_string, best_player_num, text_color):
 
     text1 = f'player {best_player_num} wins!'
     text2 = 'press (r) to restart game'
@@ -480,7 +525,7 @@ async def main():
         level_width, level_height = 1000, 700
         camera = Camera(width=level_width, height=level_height, window_size=window_size)
         camera.is_active = False
-        introduced_controls_state["introduced_jumping"], introduced_controls_state['introduced_sliding'] = True, True
+        introduced_controls_state["introduced_jumping"], introduced_controls_state['introduced_sliding'] = True, True   
 
     running = True
     fixed_delta_time = 1 / 60
@@ -491,13 +536,15 @@ async def main():
     best_player_num = None
     text_color = ("#71d6f5")
     platforms_used = []
-
+    RELOAD = Button(image=pygame.image.load("Buttons/reload_button.png").convert_alpha(), pos=(85, 43), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+    PAUSE = Button(image=pygame.image.load("Buttons/pause_button.png").convert_alpha(), pos=(30, 35), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color=("White"), hovering_color=("White"))
 
 
     while running:
         dt = clock.tick(60) / 1000.0
         accumulator += dt
         keys = pygame.key.get_pressed()
+        MENU_MOUSE_POS = pygame.mouse.get_pos()
 
         if level_name == 'tutorial_level':
             update_tutorial_controls(active_players, introduce_jumping, introduce_sliding, introduced_controls_state)
@@ -506,11 +553,11 @@ async def main():
 
             if player.id == 1:
 
-                print(player.position)
+                # print(player.position)
 
                 if player.on_platform:
                     current_platform = player.on_platform.name
-                    print(current_platform)
+                    # print(current_platform)
 
                     if current_platform not in platforms_used:
                         platforms_used.append(current_platform)
@@ -566,9 +613,19 @@ async def main():
                         next_checkpoint = next_checkpoints[checkpoint_increment]
 
         for event in pygame.event.get():
+            
             if event.type == pygame.QUIT:
                 print(platforms_used)
                 running = False
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+
+                if RELOAD.checkForInput(MENU_MOUSE_POS):
+                    reload_map(active_players, platforms, reset_positions)
+
+                if PAUSE.checkForInput(MENU_MOUSE_POS):
+                    time_paused = time.time()
+                    paused = True
             
             elif event.type == pygame.KEYDOWN:
                 
@@ -582,11 +639,12 @@ async def main():
                         start_timer = pygame.time.get_ticks()
                 
                 if event.key == pygame.K_p:
+                    time_paused = time.time()
                     paused = True
                 
                 elif paused or game_finished:
 
-                    if event.key == pygame.K_u:
+                    if event.key == pygame.K_u or not pause_menu(screen, window_size, time_paused):
                         paused = False
                     
                     elif event.key == pygame.K_r:
@@ -600,15 +658,14 @@ async def main():
                             start_timer = pygame.time.get_ticks()
 
         if paused:
-
-            pause_menu(screen, window_size, clock)
+            
+            paused = pause_menu(screen, window_size, time_paused)
         
         elif game_finished:
 
-            print(screen, clock, window_size, counting_string, best_player_num, text_color)
-            game_finished(screen, clock, window_size, counting_string, best_player_num, text_color)
+            level_complete(screen, clock, window_size, counting_string, best_player_num, text_color)
 
-        if not paused and not game_finished:
+        else:
 
             while accumulator >= fixed_delta_time:
                 update_game_logic(fixed_delta_time, active_players, platforms, keys, position=spawn_point)
@@ -621,6 +678,10 @@ async def main():
             render_game_objects(platforms, active_players, camera)
             display_controls(introduced_controls_state, counting_string, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, timer_color=("#32854b"))
             introduce_controls(blit_jumpslide)
+
+            for button in [RELOAD, PAUSE]:
+                button.changeColor(pygame.mouse.get_pos())
+                button.update(screen)
 
             pygame.display.flip()
 
