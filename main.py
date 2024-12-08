@@ -517,64 +517,76 @@ def load_platforms(platform_data, level_name):
 
     return platforms
 
-def pause_menu(screen, window_size, time_paused, MENU_MOUSE_POS):
+async def pause_menu(screen, window_size, time_paused):
 
     blur_duration = 1
+    max_blur_radius = 10
     screen_surface = pygame.image.tobytes(screen, "RGBA")
     pil_image = Image.frombytes("RGBA", screen.get_size(), screen_surface)
-    blurred_image = pil_image.filter(ImageFilter.GaussianBlur(radius=10))
-    blurred_surface = pygame.image.frombytes(blurred_image.tobytes(), screen.get_size(), "RGBA")
 
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 55)
     button_image = pygame.image.load("Buttons/tutorial_button.png").convert_alpha()
 
     printtext = font.render("Paused", True, ("#71d6f5"))
     text_rect = printtext.get_rect(center=(window_size[0] // 2, window_size[1] // 2 - 200))
-    paused_time_elapsed = time.time() - time_paused
 
     RESUME_BUTTON = Button(image=button_image, pos=(500, 260), text_input="resume", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
     DISPLAY_CONTROLS = Button(image=button_image, pos=(500, 330), text_input="controls", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30), base_color="#167fc9", hovering_color="#F59071")
     SETTINGS = Button(image=button_image, pos=(500, 400), text_input="settings", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30), base_color="#167fc9", hovering_color="#F59071")
     MAIN_MENU = Button(image=button_image, pos=(500, 470), text_input="home", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
 
-    if paused_time_elapsed <= blur_duration:
-        screen.blit(blurred_surface, (0, 0))
-    
-    else:
-        screen.blit(printtext, text_rect)
-        for button in [RESUME_BUTTON, DISPLAY_CONTROLS, SETTINGS, MAIN_MENU]:
-            button.changeColor(pygame.mouse.get_pos())
-            button.update(screen)
+    buttons = [RESUME_BUTTON, DISPLAY_CONTROLS, SETTINGS, MAIN_MENU]
 
-    for event in pygame.event.get():
+    while True:
         
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            exit()
+        MENU_MOUSE_POS = pygame.mouse.get_pos()
+        paused_time_elapsed = time.time() - time_paused
 
-        elif event.type == pygame.MOUSEBUTTONDOWN:
+        if paused_time_elapsed < blur_duration:
+            blur_radius = (paused_time_elapsed / blur_duration) * max_blur_radius
+        else:
+            blur_radius = max_blur_radius
+        
+        blurred_image = pil_image.filter(ImageFilter.GaussianBlur(radius=blur_radius))
+        blurred_surface = pygame.image.frombytes(blurred_image.tobytes(), screen.get_size(), "RGBA")
+        
+        for event in pygame.event.get():
             
-            if RESUME_BUTTON.checkForInput(MENU_MOUSE_POS):
-                print("resume game pressed")
-                return False
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                
+                if RESUME_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    return False
+                
+                elif DISPLAY_CONTROLS.checkForInput(MENU_MOUSE_POS):
+                    print("display controls")
+
+                elif SETTINGS.checkForInput(MENU_MOUSE_POS):
+                    print("go to settings")
+                
+                elif MAIN_MENU.checkForInput(MENU_MOUSE_POS):
+                    print("home")
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_u:
+                    return False
+
+        screen.blit(blurred_surface, (0, 0))
+        
+        if paused_time_elapsed >= blur_duration:
+            printtext = font.render("Paused", True, ("#71d6f5"))
+            text_rect = printtext.get_rect(center=(window_size[0] // 2, window_size[1] // 2 - 200))
+            screen.blit(printtext, text_rect)
             
-            elif DISPLAY_CONTROLS.checkForInput(MENU_MOUSE_POS):
-                print("display controls requested")
+            for button in buttons:
+                button.changeColor(pygame.mouse.get_pos())
+                button.update(screen)
 
-            elif SETTINGS.checkForInput(MENU_MOUSE_POS):
-                print("show settings")
-            
-            elif MAIN_MENU.checkForInput(MENU_MOUSE_POS):
-                print("return to home screen")
-
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_u:
-                return False
-
-
-    pygame.display.flip()
-
-    return True
+        pygame.display.flip()
+        await asyncio.sleep(0)
 
 
 def level_complete(screen, clock, window_size, counting_string, best_player_num, text_color):
@@ -1092,9 +1104,11 @@ async def main():
 
         if paused:
             
-            MENU_MOUSE_POS = pygame.mouse.get_pos()    
-            paused = pause_menu(screen, window_size, time_paused, MENU_MOUSE_POS)
-        
+            action = await pause_menu(screen, window_size, time_paused)
+
+            if action == False:
+                paused = False
+
         elif game_finished:
 
             level_complete(screen, clock, window_size, counting_string, best_player_num, text_color)
@@ -1125,7 +1139,5 @@ async def main():
 
 # Run the main function
 asyncio.run(main())
-
-"""if you read this you are nice"""
 
 """if you read this you are nice"""
