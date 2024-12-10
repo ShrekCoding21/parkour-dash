@@ -96,11 +96,12 @@ async def pause_menu(screen, window_size, time_paused):
     text_rect = printtext.get_rect(center=(window_size[0] // 2, window_size[1] // 2 - 200))
 
     RESUME_BUTTON = Button(image=button_image, pos=(500, 260), text_input="resume", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
-    DISPLAY_CONTROLS = Button(image=button_image, pos=(500, 330), text_input="controls", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30), base_color="#167fc9", hovering_color="#F59071")
-    SETTINGS = Button(image=button_image, pos=(500, 400), text_input="settings", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30), base_color="#167fc9", hovering_color="#F59071")
-    MAIN_MENU = Button(image=button_image, pos=(500, 470), text_input="home", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+    RESTART_LEVEL = Button(image=button_image, pos=(500, 330), text_input="restart", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 35), base_color="#167fc9", hovering_color="#F59071")
+    DISPLAY_CONTROLS = Button(image=button_image, pos=(500, 400), text_input="controls", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30), base_color="#167fc9", hovering_color="#F59071")
+    SETTINGS = Button(image=button_image, pos=(500, 470), text_input="settings", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30), base_color="#167fc9", hovering_color="#F59071")
+    MAIN_MENU = Button(image=button_image, pos=(500, 540), text_input="home", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
 
-    buttons = [RESUME_BUTTON, DISPLAY_CONTROLS, SETTINGS, MAIN_MENU]
+    buttons = [RESUME_BUTTON, RESTART_LEVEL, DISPLAY_CONTROLS, SETTINGS, MAIN_MENU]
 
     while True:
         
@@ -125,6 +126,9 @@ async def pause_menu(screen, window_size, time_paused):
                 
                 if RESUME_BUTTON.checkForInput(MENU_MOUSE_POS):
                     return False
+                
+                elif RESTART_LEVEL.checkForInput(MENU_MOUSE_POS):
+                    return "level restart"
                 
                 elif DISPLAY_CONTROLS.checkForInput(MENU_MOUSE_POS):
                     print("display controls")
@@ -414,7 +418,6 @@ def get_special_platforms(platforms, level_name):
 
             if platform.name == "introduce-jumpsliding":
                 intro_to_jumpslide = platform
-                print(platform.position)
 
             if platform.name == f"death-form{deathpoint_num}":
                 deathforms.append(platform)
@@ -595,13 +598,10 @@ async def main():
                     platform.color = "#9ff084"
                 
                 if level_name == 'tutorial_level':
-                    spawn_point = OG_spawn_point
-                    reset_positions = []
                     next_checkpoint = next_checkpoints[checkpoint_increment]
                     introduced_controls_state["introduced_jumping"], introduced_controls_state['introduced_sliding'] = False, False
                     
                     for player in active_players:
-                        reset_positions.append(spawn_point)
                         player.can_jump, player.can_slide = False, False    
 
             if level_type == 'scrolling':
@@ -632,6 +632,12 @@ async def main():
 
                 if RELOAD.checkForInput(MENU_MOUSE_POS):
                     reload_map(active_players, platforms, reset_positions)
+                    best_player_num = None
+                    game_finished = False
+                    text_color = ("#71d6f5")
+
+                    if level_name == 'tutorial_level' and spawn_point == OG_spawn_point or next_checkpoints == []:
+                        start_timer = pygame.time.get_ticks()
 
                 if PAUSE.checkForInput(MENU_MOUSE_POS):
                     time_paused = time.time()
@@ -673,6 +679,30 @@ async def main():
 
             if action == False:
                 paused = False
+            elif action == "level restart":
+
+                reset_positions = []
+                checkpoint_increment = 0
+                spawn_point = OG_spawn_point
+
+                for player in active_players:
+                    reset_positions.append(spawn_point)
+
+                for platform in next_checkpoints:
+                    platform.color = "#9ff084"
+                
+                if level_name == 'tutorial_level':
+                    next_checkpoint = next_checkpoints[checkpoint_increment]
+                    introduced_controls_state["introduced_jumping"], introduced_controls_state['introduced_sliding'] = False, False
+                    
+                    for player in active_players:
+                        player.can_jump, player.can_slide = False, False
+
+                reload_map(active_players, platforms, reset_positions)
+                start_timer = pygame.time.get_ticks()
+                paused = False
+
+
 
         elif game_finished:
 
