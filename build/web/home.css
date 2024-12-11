@@ -58,3 +58,19 @@ li a {
 li a:hover {
     background-color: rgb(166, 214, 220);
 }
+
+.iframe-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+    padding-left: 400px;
+    padding-right: 400px;
+    box-sizing: border-box;
+}
+
+iframe {
+    width: 80%;
+    height: 80%;
+}
