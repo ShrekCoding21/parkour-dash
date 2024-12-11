@@ -2,8 +2,7 @@
 {"tutorial_level": {
         
     "level_type": "scrolling",
-    "camera_width": 3000,
-    "camera_height": 3000,
+    "camera_dimensions": [3000, 3000],
 
     "platforms": {
 

@@ -1,0 +1,64 @@
+{"home": {
+
+    "level_type": "escape",
+
+    "platforms": {
+
+        "starting-platform": {
+            "x-position": 30,
+            "y-position": 550,
+            "width": 100,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#94e0a8"
+        },
+
+        "left-border": {
+            "x-position": 0,
+            "y-position": 0,
+            "width": 25,
+            "height": 700,
+            "is_moving": "False",
+            "color": "#94e0a8"
+        },
+
+        "right-border": {
+            "x-position": 975,
+            "y-position": 0,
+            "width": 25,
+            "height": 700,
+            "is_moving": "False",
+            "color": "#94e0a8"
+        },
+
+        "base-platform1": {
+            "x-position": 0,
+            "y-position": 550,
+            "width": 500,
+            "height": 250,
+            "is_moving": "False",
+            "color": "#94e0a8"
+        },
+
+        "base-platform2": {
+            "x-position": 630,
+            "y-position": 550,
+            "width": 470,
+            "height": 250,
+            "is_moving": "False",
+            "color": "#94e0a8"
+        },
+
+        "finish-line": {
+            "x-position": 1111,
+            "y-position": 2240,
+            "width": 150,
+            "height": 30,
+            "is_moving": "False",
+            "image_path": "Platforms/finish-line.png",
+            "color": "#ffffff"
+        }
+
+
+    }
+}}
