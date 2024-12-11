@@ -1,9 +1,6 @@
 import requests
 import json
 
-
-import requests
-
 def get_coordinates(city_name):
     url = "https://nominatim.openstreetmap.org/search"
     params = {
