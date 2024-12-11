@@ -33,6 +33,75 @@ async def load_json_file(filepath):
             keys_data = json.load(key_map)
     return keys_data
 
+async def load_level(level_name):
+
+    keys_data = await load_json_file('Players/player_controls.json')
+    
+    # Select tutorial_level, demo_level, or home
+
+    levels_data = await load_json_file(f'Levels/{level_name}.json')
+
+    player1_controls = keys_data['controls']['players']['player1']
+    player2_controls = keys_data['controls']['players']['player2']
+    player3_controls = keys_data['controls']['players']['player3']
+    player4_controls = keys_data['controls']['players']['player4']
+
+    print_player_controls = keys_data['show_controls']['players']
+
+    p1_controls = print_player_controls['player1']
+    p3_controls = print_player_controls['player3']
+    p4_controls = print_player_controls['player4']
+
+    level_type = levels_data[level_name]['level_type']
+    platforms = load_platforms(levels_data, level_name)
+    num_of_players = 1
+
+    OG_spawn_point, introduce_jumping, introduce_sliding, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line = get_special_platforms(platforms, level_name)
+
+    players = {
+    "player1": Player(player_id=1, position=OG_spawn_point, controls=player1_controls, color=("#9EBA01")),
+    "player2": Player(player_id=2, position=OG_spawn_point, controls=player2_controls, color=("#2276c9")),
+    "player3": Player(player_id=3, position=OG_spawn_point, controls=player3_controls, color=("#c7b61a")),
+    "player4": Player(player_id=4, position=OG_spawn_point, controls=player4_controls, color=("#c7281a"))
+    }
+
+    active_players = []
+    
+    for number in range(num_of_players):
+        active_players.append(players[f'player{number + 1}'])
+    
+    spawn_point = OG_spawn_point
+    checkpoint_increment = 0
+    reset_positions = []
+
+    print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active = determine_blitted_controls(active_players, p1_controls, p3_controls, p4_controls)
+
+    for player in active_players:
+        reset_positions.append(spawn_point)
+
+    introduced_controls_state = {"introduced_jumping": False, "introduced_sliding": False}
+
+    if level_type == 'scrolling':
+        
+        level_width, level_height = levels_data[level_name]['camera_dimensions'][0], levels_data[level_name]['camera_dimensions'][1]
+        camera = Camera(width=level_width, height=level_height, window_size=window_size)
+        camera.is_active = True
+        
+        if level_name == 'tutorial_level':
+
+            next_checkpoint = next_checkpoints[checkpoint_increment]
+
+            for player in active_players:
+                player.can_jump, player.can_slide = False, False
+
+    else:
+        level_width, level_height = 1000, 700
+        camera = Camera(width=level_width, height=level_height, window_size=window_size)
+        camera.is_active = False
+        introduced_controls_state["introduced_jumping"], introduced_controls_state['introduced_sliding'] = True, True
+
+    return introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint
+
 def load_platforms(platform_data, level_name):
 
     platforms = []
