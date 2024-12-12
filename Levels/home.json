@@ -17,7 +17,7 @@
             "x-position": 0,
             "y-position": 0,
             "width": 25,
-            "height": 700,
+            "height": 400,
             "is_moving": "False",
             "color": "#94e0a8"
         },
@@ -47,6 +47,15 @@
             "height": 250,
             "is_moving": "False",
             "color": "#94e0a8"
+        },
+        
+        "settings": {
+            "x-position": -400,
+            "y-position": 550,
+            "width": 400,
+            "height": 50,
+            "is_moving": "False",
+            "color": "#ffffff"
         },
 
         "finish-line": {

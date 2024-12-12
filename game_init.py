@@ -56,7 +56,7 @@ async def load_level(level_name):
     platforms = load_platforms(levels_data, level_name)
     num_of_players = 1
 
-    OG_spawn_point, introduce_jumping, introduce_sliding, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line = get_special_platforms(platforms, level_name)
+    OG_spawn_point, introduce_jumping, introduce_sliding, introduce_jumpsliding, death_platforms, show_settings, next_checkpoints, finish_line = get_special_platforms(platforms, level_name)
 
     players = {
     "player1": Player(player_id=1, position=OG_spawn_point, controls=player1_controls, color=("#9EBA01")),
@@ -99,8 +99,10 @@ async def load_level(level_name):
         camera = Camera(width=level_width, height=level_height, window_size=window_size)
         camera.is_active = False
         introduced_controls_state["introduced_jumping"], introduced_controls_state['introduced_sliding'] = True, True
+        next_checkpoint = None
+        checkpoint_increment = None
 
-    return introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint
+    return show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint
 
 def load_platforms(platform_data, level_name):
 
@@ -148,6 +150,20 @@ def load_platforms(platform_data, level_name):
 
 
     return platforms
+
+async def settings_menu(screen, window_size):
+
+    blur_duration = 1
+    max_blur_radius = 10
+    screen_surface = pygame.image.tobytes(screen, "RGBA")
+    pil_image = Image.frombytes("RGBA", screen.get_size(), screen_surface)
+
+    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 55)
+    button_image = pygame.image.load("Buttons/tutorial_button.png").convert_alpha()
+
+    while True:
+
+        MENU_MOUSE_POS = pygame.mouse.get_pos()
 
 async def pause_menu(screen, window_size, time_paused):
 
@@ -204,7 +220,7 @@ async def pause_menu(screen, window_size, time_paused):
                     print("go to settings")
                 
                 elif MAIN_MENU.checkForInput(MENU_MOUSE_POS):
-                    print("home")
+                    return "go to home"
 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_u:
@@ -468,11 +484,11 @@ def get_special_platforms(platforms, level_name):
         if platform.name == "starting-platform":
             spawn_point = (platform.position.x + (platform.dimensions[0] / 2), platform.position.y - platform.dimensions[1])
 
-        if platform.name == f"checkpoint{checkpoint_num}":
+        elif platform.name == f"checkpoint{checkpoint_num}":
             next_checkpoints.append(platform)
             checkpoint_num += 1
 
-        if platform.name == "finish-line":
+        elif platform.name == "finish-line":
             finish_line = platform
 
         if level_name == "tutorial_level":
@@ -480,20 +496,30 @@ def get_special_platforms(platforms, level_name):
             if platform.name == "introduce-jumping":
                 intro_to_jumping = platform
 
-            if platform.name == "introduce-sliding":
+            elif platform.name == "introduce-sliding":
                 intro_to_sliding = platform
 
-            if platform.name == "introduce-jumpsliding":
+            elif platform.name == "introduce-jumpsliding":
                 intro_to_jumpslide = platform
 
-            if platform.name == f"death-form{deathpoint_num}":
+            elif platform.name == f"death-form{deathpoint_num}":
                 deathforms.append(platform)
                 deathpoint_num += 1
+
+            show_settings = None
+
+        elif level_name == "home":
+
+            if platform.name == "settings":
+                show_settings = platform
+                intro_to_jumping, intro_to_sliding, intro_to_jumpslide, next_checkpoints = None, None, None, None
+
+        
         
         else:
-            intro_to_jumping, intro_to_sliding, intro_to_jumpslide = None, None, None
+            intro_to_jumping, intro_to_sliding, intro_to_jumpslide, next_checkpoints, show_settings = None, None, None, None, None
 
-    return spawn_point, intro_to_jumping, intro_to_sliding, intro_to_jumpslide, deathforms, next_checkpoints, finish_line
+    return spawn_point, intro_to_jumping, intro_to_sliding, intro_to_jumpslide, deathforms, show_settings, next_checkpoints, finish_line
 
 def render_game_objects(platforms, active_players, camera):
 

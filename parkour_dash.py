@@ -4,7 +4,7 @@ import time
 from Players.player import Player
 from camera import Camera
 from Buttons.buttons import Button
-from game_init import load_json_file, load_platforms, pause_menu, level_complete, introduce_controls, reload_map, display_controls, determine_blitted_controls, update_game_logic, update_timer, get_special_platforms, render_game_objects, update_tutorial_controls
+from game_init import load_level, load_json_file, load_platforms, pause_menu, level_complete, introduce_controls, reload_map, display_controls, determine_blitted_controls, update_game_logic, update_timer, get_special_platforms, render_game_objects, update_tutorial_controls
 
 WEB_ENVIRONMENT = False
 try:
@@ -22,70 +22,8 @@ pygame.display.set_caption("Parkour Dash")
 
 async def main():
 
-    keys_data = await load_json_file('Players/player_controls.json')
-    
-    level_name = 'home'  # Select tutorial_level, demo_level, or home
-
-    levels_data = await load_json_file(f'Levels/{level_name}.json')
-
-    player1_controls = keys_data['controls']['players']['player1']
-    player2_controls = keys_data['controls']['players']['player2']
-    player3_controls = keys_data['controls']['players']['player3']
-    player4_controls = keys_data['controls']['players']['player4']
-
-    print_player_controls = keys_data['show_controls']['players']
-
-    p1_controls = print_player_controls['player1']
-    p3_controls = print_player_controls['player3']
-    p4_controls = print_player_controls['player4']
-
-    level_type = levels_data[level_name]['level_type']
-    platforms = load_platforms(levels_data, level_name)
-    num_of_players = 1
-
-    OG_spawn_point, introduce_jumping, introduce_sliding, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line = get_special_platforms(platforms, level_name)
-
-    players = {
-    "player1": Player(player_id=1, position=OG_spawn_point, controls=player1_controls, color=("#9EBA01")),
-    "player2": Player(player_id=2, position=OG_spawn_point, controls=player2_controls, color=("#2276c9")),
-    "player3": Player(player_id=3, position=OG_spawn_point, controls=player3_controls, color=("#c7b61a")),
-    "player4": Player(player_id=4, position=OG_spawn_point, controls=player4_controls, color=("#c7281a"))
-    }
-
-    active_players = []
-    
-    for number in range(num_of_players):
-        active_players.append(players[f'player{number + 1}'])
-    
-    spawn_point = OG_spawn_point
-    checkpoint_increment = 0
-    reset_positions = []
-
-    print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active = determine_blitted_controls(active_players, p1_controls, p3_controls, p4_controls)
-
-    for player in active_players:
-        reset_positions.append(spawn_point)
-
-    introduced_controls_state = {"introduced_jumping": False, "introduced_sliding": False}
-
-    if level_type == 'scrolling':
-        
-        level_width, level_height = levels_data[level_name]['camera_dimensions'][0], levels_data[level_name]['camera_dimensions'][1]
-        camera = Camera(width=level_width, height=level_height, window_size=window_size)
-        camera.is_active = True
-        
-        if level_name == 'tutorial_level':
-
-            next_checkpoint = next_checkpoints[checkpoint_increment]
-
-            for player in active_players:
-                player.can_jump, player.can_slide = False, False
-
-    else:
-        level_width, level_height = 1000, 700
-        camera = Camera(width=level_width, height=level_height, window_size=window_size)
-        camera.is_active = False
-        introduced_controls_state["introduced_jumping"], introduced_controls_state['introduced_sliding'] = True, True   
+    level_name = 'home'
+    show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name)   
 
     running = True
     fixed_delta_time = 1 / 60
@@ -130,8 +68,8 @@ async def main():
             if player.position.y > level_height + 100:
 
                 if level_name == 'home':
-                    level_name == 'tutorial_level'
-                    
+                    level_name = 'tutorial_level'
+                    show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name)
 
                 else:
 
@@ -175,6 +113,15 @@ async def main():
                     if checkpoint_increment < len(next_checkpoints) - 1:
                         checkpoint_increment += 1
                         next_checkpoint = next_checkpoints[checkpoint_increment]
+            
+            elif level_name == 'home':
+
+                if player.on_platform == show_settings:
+
+                    time_entered_settings = time.time()
+                    editing_settings = True
+                    
+                    print("show settings")
 
         for event in pygame.event.get():
             
@@ -233,6 +180,7 @@ async def main():
 
             if action == False:
                 paused = False
+            
             elif action == "level restart":
 
                 reset_positions = []
@@ -256,6 +204,11 @@ async def main():
                 start_timer = pygame.time.get_ticks()
                 paused = False
 
+            elif action == "go to home":
+
+                level_name = 'home'
+                checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name)
+                paused = False
 
 
         elif game_finished:
