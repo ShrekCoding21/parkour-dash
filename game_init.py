@@ -159,13 +159,14 @@ async def settings_menu(screen, window_size, time_entered_settings):
     pil_image = Image.frombytes("RGBA", screen.get_size(), screen_surface)
 
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 55)
+    littlefont = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 35)
     button_image = pygame.image.load("Buttons/tutorial_button.png").convert_alpha()
 
-    EXIT_SETTINGS = Button(image=button_image, pos=(500, 260), text_input="exit", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
-    ONE_PLAYER = Button(image=button_image, pos=(500, 260), text_input="1 player", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
-    TWO_PLAYER = Button(image=button_image, pos=(500, 260), text_input="2 players", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
-    THREE_PLAYER = Button(image=button_image, pos=(500, 260), text_input="3 players", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
-    FOUR_PLAYER = Button(image=button_image, pos=(500, 260), text_input="4 players", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+    EXIT_SETTINGS = Button(image=button_image, pos=(500, 290), text_input="exit", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+    ONE_PLAYER = Button(image=button_image, pos=(180, 220), text_input="1 player", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+    TWO_PLAYER = Button(image=button_image, pos=(400, 220), text_input="2 players", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+    THREE_PLAYER = Button(image=button_image, pos=(620, 220), text_input="3 players", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+    FOUR_PLAYER = Button(image=button_image, pos=(840, 220), text_input="4 players", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
 
     buttons = [EXIT_SETTINGS, ONE_PLAYER, TWO_PLAYER, THREE_PLAYER, FOUR_PLAYER]
 
@@ -207,9 +208,12 @@ async def settings_menu(screen, window_size, time_entered_settings):
         screen.blit(blurred_surface, (0, 0))
 
         if settings_time_elapsed >= blur_duration:
-            printtext = font.render("Paused", True, ("#71d6f5"))
-            text_rect = printtext.get_rect(center=(window_size[0] // 2, window_size[1] // 2 - 200))
-            screen.blit(printtext, text_rect)
+            printsettings = font.render("settings", True, ("#71d6f5"))
+            print_player_num = font.render("# of players", True, ("#71d6f5"))
+            text_rect1 = printsettings.get_rect(center=(window_size[0] // 2, window_size[1] // 2 - 200))
+            text_rect2 = print_player_num.get_rect(topleft=(20, 180))
+            screen.blit(printsettings, text_rect1)
+            screen.blit(print_player_num, text_rect2)
             
             for button in buttons:
                 button.changeColor(pygame.mouse.get_pos())

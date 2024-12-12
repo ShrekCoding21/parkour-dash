@@ -4,7 +4,7 @@ import time
 from Players.player import Player
 from camera import Camera
 from Buttons.buttons import Button
-from game_init import load_level, load_json_file, load_platforms, pause_menu, level_complete, introduce_controls, reload_map, display_controls, determine_blitted_controls, update_game_logic, update_timer, get_special_platforms, render_game_objects, update_tutorial_controls
+from game_init import settings_menu, load_level, load_json_file, load_platforms, pause_menu, level_complete, introduce_controls, reload_map, display_controls, determine_blitted_controls, update_game_logic, update_timer, get_special_platforms, render_game_objects, update_tutorial_controls
 
 WEB_ENVIRONMENT = False
 try:
@@ -30,6 +30,7 @@ async def main():
     accumulator = 0
     start_timer = pygame.time.get_ticks()
     paused = False
+    editing_settings = False
     game_finished = False
     best_player_num = None
     text_color = ("#71d6f5")
@@ -123,7 +124,7 @@ async def main():
                     
                     print("show settings")
 
-                    action = await show_settings(screen, window_size, time_entered_settings)
+                    action = await settings_menu(screen, window_size, time_entered_settings)
 
         for event in pygame.event.get():
             
