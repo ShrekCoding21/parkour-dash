@@ -151,7 +151,7 @@ def load_platforms(platform_data, level_name):
 
     return platforms
 
-async def settings_menu(screen, window_size):
+async def settings_menu(screen, window_size, time_entered_settings):
 
     blur_duration = 1
     max_blur_radius = 10
@@ -161,9 +161,62 @@ async def settings_menu(screen, window_size):
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 55)
     button_image = pygame.image.load("Buttons/tutorial_button.png").convert_alpha()
 
+    EXIT_SETTINGS = Button(image=button_image, pos=(500, 260), text_input="exit", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+    ONE_PLAYER = Button(image=button_image, pos=(500, 260), text_input="1 player", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+    TWO_PLAYER = Button(image=button_image, pos=(500, 260), text_input="2 players", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+    THREE_PLAYER = Button(image=button_image, pos=(500, 260), text_input="3 players", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+    FOUR_PLAYER = Button(image=button_image, pos=(500, 260), text_input="4 players", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+
+    buttons = [EXIT_SETTINGS, ONE_PLAYER, TWO_PLAYER, THREE_PLAYER, FOUR_PLAYER]
+
     while True:
 
         MENU_MOUSE_POS = pygame.mouse.get_pos()
+        settings_time_elapsed = time.time()
+
+        if settings_time_elapsed < blur_duration:
+            blur_radius = (settings_time_elapsed / blur_duration) * max_blur_radius
+        else:
+            blur_radius = max_blur_radius
+
+        for event in pygame.event.get():
+            
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                
+                if EXIT_SETTINGS.checkForInput(MENU_MOUSE_POS):
+                    print("exit")
+                
+                elif ONE_PLAYER.checkForInput(MENU_MOUSE_POS):
+                    print("one player")
+                
+                elif TWO_PLAYER.checkForInput(MENU_MOUSE_POS):
+                    print("two players")
+
+                elif THREE_PLAYER.checkForInput(MENU_MOUSE_POS):
+                    print("three players")
+                
+                elif FOUR_PLAYER.checkForInput(MENU_MOUSE_POS):
+                    print("four players")
+        
+        blurred_image = pil_image.filter(ImageFilter.GaussianBlur(radius=blur_radius))
+        blurred_surface = pygame.image.frombytes(blurred_image.tobytes(), screen.get_size(), "RGBA")
+        screen.blit(blurred_surface, (0, 0))
+
+        if settings_time_elapsed >= blur_duration:
+            printtext = font.render("Paused", True, ("#71d6f5"))
+            text_rect = printtext.get_rect(center=(window_size[0] // 2, window_size[1] // 2 - 200))
+            screen.blit(printtext, text_rect)
+            
+            for button in buttons:
+                button.changeColor(pygame.mouse.get_pos())
+                button.update(screen)
+
+        pygame.display.flip()
+        await asyncio.sleep(0)
 
 async def pause_menu(screen, window_size, time_paused):
 
