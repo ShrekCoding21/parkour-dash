@@ -15,6 +15,7 @@ TSA Video game design competition code for RLC.
 # List of bugs
 
 1) Restarting level; if u die, you go back to checkpoint even after reloading
+2) When on settings platform; if player chooses same number of players that there already is, it reloads settings menu
 
 # Next steps
 
