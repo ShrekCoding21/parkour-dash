@@ -33,7 +33,7 @@ async def load_json_file(filepath):
             keys_data = json.load(key_map)
     return keys_data
 
-async def load_level(level_name):
+async def load_level(level_name, num_of_players):
 
     keys_data = await load_json_file('Players/player_controls.json')
     
@@ -54,7 +54,6 @@ async def load_level(level_name):
 
     level_type = levels_data[level_name]['level_type']
     platforms = load_platforms(levels_data, level_name)
-    num_of_players = 1
 
     OG_spawn_point, introduce_jumping, introduce_sliding, introduce_jumpsliding, death_platforms, show_settings, next_checkpoints, finish_line = get_special_platforms(platforms, level_name)
 
@@ -159,21 +158,22 @@ async def settings_menu(screen, window_size, time_entered_settings):
     pil_image = Image.frombytes("RGBA", screen.get_size(), screen_surface)
 
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 55)
-    littlefont = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 35)
+    lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 35)
     button_image = pygame.image.load("Buttons/tutorial_button.png").convert_alpha()
+    small_button = pygame.image.load("Buttons/lilbutton.png").convert_alpha()
 
-    EXIT_SETTINGS = Button(image=button_image, pos=(500, 290), text_input="exit", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
-    ONE_PLAYER = Button(image=button_image, pos=(180, 220), text_input="1 player", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
-    TWO_PLAYER = Button(image=button_image, pos=(400, 220), text_input="2 players", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
-    THREE_PLAYER = Button(image=button_image, pos=(620, 220), text_input="3 players", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
-    FOUR_PLAYER = Button(image=button_image, pos=(840, 220), text_input="4 players", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+    EXIT_SETTINGS = Button(image=button_image, pos=(500, 290), text_input="exit", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 20), base_color="#167fc9", hovering_color="#F59071")
+    ONE_PLAYER = Button(image=small_button, pos=(400, 220), text_input="1p", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25), base_color="#167fc9", hovering_color="#F59071")
+    TWO_PLAYER = Button(image=small_button, pos=(480, 220), text_input="2p", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25), base_color="#167fc9", hovering_color="#F59071")
+    THREE_PLAYER = Button(image=small_button, pos=(560, 220), text_input="3p", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25), base_color="#167fc9", hovering_color="#F59071")
+    FOUR_PLAYER = Button(image=small_button, pos=(640, 220), text_input="4p", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25), base_color="#167fc9", hovering_color="#F59071")
 
     buttons = [EXIT_SETTINGS, ONE_PLAYER, TWO_PLAYER, THREE_PLAYER, FOUR_PLAYER]
 
     while True:
 
         MENU_MOUSE_POS = pygame.mouse.get_pos()
-        settings_time_elapsed = time.time()
+        settings_time_elapsed = time.time() - time_entered_settings
 
         if settings_time_elapsed < blur_duration:
             blur_radius = (settings_time_elapsed / blur_duration) * max_blur_radius
@@ -190,18 +190,23 @@ async def settings_menu(screen, window_size, time_entered_settings):
                 
                 if EXIT_SETTINGS.checkForInput(MENU_MOUSE_POS):
                     print("exit")
+                    return False
                 
                 elif ONE_PLAYER.checkForInput(MENU_MOUSE_POS):
-                    print("one player")
+                    print("one p")
+                    return "one player"
                 
                 elif TWO_PLAYER.checkForInput(MENU_MOUSE_POS):
-                    print("two players")
+                    print("2p")
+                    return "two players"
 
                 elif THREE_PLAYER.checkForInput(MENU_MOUSE_POS):
-                    print("three players")
+                    print("3p")
+                    return "three players"
                 
                 elif FOUR_PLAYER.checkForInput(MENU_MOUSE_POS):
-                    print("four players")
+                    print("4p")
+                    return "four players"
         
         blurred_image = pil_image.filter(ImageFilter.GaussianBlur(radius=blur_radius))
         blurred_surface = pygame.image.frombytes(blurred_image.tobytes(), screen.get_size(), "RGBA")
@@ -209,9 +214,9 @@ async def settings_menu(screen, window_size, time_entered_settings):
 
         if settings_time_elapsed >= blur_duration:
             printsettings = font.render("settings", True, ("#71d6f5"))
-            print_player_num = font.render("# of players", True, ("#71d6f5"))
+            print_player_num = lil_font.render("# of players:", True, ("#71d6f5"))
             text_rect1 = printsettings.get_rect(center=(window_size[0] // 2, window_size[1] // 2 - 200))
-            text_rect2 = print_player_num.get_rect(topleft=(20, 180))
+            text_rect2 = print_player_num.get_rect(bottomleft=(20, 232))
             screen.blit(printsettings, text_rect1)
             screen.blit(print_player_num, text_rect2)
             
@@ -274,7 +279,7 @@ async def pause_menu(screen, window_size, time_paused):
                     print("display controls")
 
                 elif SETTINGS.checkForInput(MENU_MOUSE_POS):
-                    print("go to settings")
+                    return "go to settings"
                 
                 elif MAIN_MENU.checkForInput(MENU_MOUSE_POS):
                     return "go to home"
@@ -430,10 +435,6 @@ def display_controls(introduced_controls_state, counting_string, print_player1_c
         general_control_rect = print_general_controls.get_rect(topright=(x_position, vertical_displacement))
         screen.blit(print_general_controls, general_control_rect)
         vertical_displacement += 30
-
-    print_timer = font.render(counting_string, True, (timer_color))
-    timer_rect = print_timer.get_rect(topright=(x_position, vertical_displacement))
-    screen.blit(print_timer, timer_rect)
 
     vertical_displacement = 450
 
