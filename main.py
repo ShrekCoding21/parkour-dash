@@ -470,6 +470,76 @@ class Button():
 
 
 
+async def load_level(level_name, num_of_players):
+
+    keys_data = await load_json_file('Players/player_controls.json')
+    
+    # Select tutorial_level, demo_level, or home
+
+    levels_data = await load_json_file(f'Levels/{level_name}.json')
+
+    player1_controls = keys_data['controls']['players']['player1']
+    player2_controls = keys_data['controls']['players']['player2']
+    player3_controls = keys_data['controls']['players']['player3']
+    player4_controls = keys_data['controls']['players']['player4']
+
+    print_player_controls = keys_data['show_controls']['players']
+
+    p1_controls = print_player_controls['player1']
+    p3_controls = print_player_controls['player3']
+    p4_controls = print_player_controls['player4']
+
+    level_type = levels_data[level_name]['level_type']
+    platforms = load_platforms(levels_data, level_name)
+
+    OG_spawn_point, introduce_jumping, introduce_sliding, introduce_jumpsliding, death_platforms, show_settings, next_checkpoints, finish_line = get_special_platforms(platforms, level_name)
+
+    players = {
+    "player1": Player(player_id=1, position=OG_spawn_point, controls=player1_controls, color=("#9EBA01")),
+    "player2": Player(player_id=2, position=OG_spawn_point, controls=player2_controls, color=("#2276c9")),
+    "player3": Player(player_id=3, position=OG_spawn_point, controls=player3_controls, color=("#c7b61a")),
+    "player4": Player(player_id=4, position=OG_spawn_point, controls=player4_controls, color=("#c7281a"))
+    }
+
+    active_players = []
+    
+    for number in range(num_of_players):
+        active_players.append(players[f'player{number + 1}'])
+    
+    spawn_point = OG_spawn_point
+    checkpoint_increment = 0
+    reset_positions = []
+
+    print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active = determine_blitted_controls(active_players, p1_controls, p3_controls, p4_controls)
+
+    for player in active_players:
+        reset_positions.append(spawn_point)
+
+    introduced_controls_state = {"introduced_jumping": False, "introduced_sliding": False}
+
+    if level_type == 'scrolling':
+        
+        level_width, level_height = levels_data[level_name]['camera_dimensions'][0], levels_data[level_name]['camera_dimensions'][1]
+        camera = Camera(width=level_width, height=level_height, window_size=window_size)
+        camera.is_active = True
+        
+        if level_name == 'tutorial_level':
+
+            next_checkpoint = next_checkpoints[checkpoint_increment]
+
+            for player in active_players:
+                player.can_jump, player.can_slide = False, False
+
+    else:
+        level_width, level_height = 1000, 700
+        camera = Camera(width=level_width, height=level_height, window_size=window_size)
+        camera.is_active = False
+        introduced_controls_state["introduced_jumping"], introduced_controls_state['introduced_sliding'] = True, True
+        next_checkpoint = None
+        checkpoint_increment = None
+
+    return show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint
+
 def load_platforms(platform_data, level_name):
 
     platforms = []
@@ -517,9 +587,90 @@ def load_platforms(platform_data, level_name):
 
     return platforms
 
+async def settings_menu(screen, window_size, time_entered_settings):
+
+    blur_duration = 0.85
+    max_blur_radius = 10
+    screen_surface = pygame.image.tobytes(screen, "RGBA")
+    pil_image = Image.frombytes("RGBA", screen.get_size(), screen_surface)
+
+    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 55)
+    lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 35)
+    button_image = pygame.image.load("Buttons/tutorial_button.png").convert_alpha()
+    small_button = pygame.image.load("Buttons/lilbutton.png").convert_alpha()
+
+    EXIT_SETTINGS = Button(image=button_image, pos=(500, 500), text_input="exit", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 20), base_color="#167fc9", hovering_color="#F59071")
+    ONE_PLAYER = Button(image=small_button, pos=(470, 250), text_input="1p", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25), base_color="#167fc9", hovering_color="#F59071")
+    TWO_PLAYER = Button(image=small_button, pos=(550, 250), text_input="2p", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25), base_color="#167fc9", hovering_color="#F59071")
+    THREE_PLAYER = Button(image=small_button, pos=(630, 250), text_input="3p", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25), base_color="#167fc9", hovering_color="#F59071")
+    FOUR_PLAYER = Button(image=small_button, pos=(710, 250), text_input="4p", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25), base_color="#167fc9", hovering_color="#F59071")
+
+    buttons = [EXIT_SETTINGS, ONE_PLAYER, TWO_PLAYER, THREE_PLAYER, FOUR_PLAYER]
+
+    while True:
+
+        MENU_MOUSE_POS = pygame.mouse.get_pos()
+        settings_time_elapsed = time.time() - time_entered_settings
+
+        if settings_time_elapsed < blur_duration:
+            blur_radius = (settings_time_elapsed / blur_duration) * max_blur_radius
+        else:
+            blur_radius = max_blur_radius
+
+        for event in pygame.event.get():
+            
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return False
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                
+                if EXIT_SETTINGS.checkForInput(MENU_MOUSE_POS):
+                    print("exit")
+                    return False
+                
+                elif ONE_PLAYER.checkForInput(MENU_MOUSE_POS):
+                    print("one p")
+                    return "one player"
+                
+                elif TWO_PLAYER.checkForInput(MENU_MOUSE_POS):
+                    print("2p")
+                    return "two players"
+
+                elif THREE_PLAYER.checkForInput(MENU_MOUSE_POS):
+                    print("3p")
+                    return "three players"
+                
+                elif FOUR_PLAYER.checkForInput(MENU_MOUSE_POS):
+                    print("4p")
+                    return "four players"
+        
+        blurred_image = pil_image.filter(ImageFilter.GaussianBlur(radius=blur_radius))
+        blurred_surface = pygame.image.frombytes(blurred_image.tobytes(), screen.get_size(), "RGBA")
+        screen.blit(blurred_surface, (0, 0))
+
+        if settings_time_elapsed >= blur_duration:
+            printsettings = font.render("settings", True, ("#71d6f5"))
+            print_player_num = lil_font.render("# of players:", True, ("#71d6f5"))
+            text_rect1 = printsettings.get_rect(center=(window_size[0] // 2, window_size[1] // 2 - 200))
+            text_rect2 = print_player_num.get_rect(center=(260, 250))
+            screen.blit(printsettings, text_rect1)
+            screen.blit(print_player_num, text_rect2)
+            
+            for button in buttons:
+                button.changeColor(pygame.mouse.get_pos())
+                button.update(screen)
+
+        pygame.display.flip()
+        await asyncio.sleep(0)
+
 async def pause_menu(screen, window_size, time_paused):
 
-    blur_duration = 1
+    blur_duration = 0.85
     max_blur_radius = 10
     screen_surface = pygame.image.tobytes(screen, "RGBA")
     pil_image = Image.frombytes("RGBA", screen.get_size(), screen_surface)
@@ -569,13 +720,13 @@ async def pause_menu(screen, window_size, time_paused):
                     print("display controls")
 
                 elif SETTINGS.checkForInput(MENU_MOUSE_POS):
-                    print("go to settings")
+                    return "go to settings"
                 
                 elif MAIN_MENU.checkForInput(MENU_MOUSE_POS):
-                    print("home")
+                    return "go to home"
 
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_u:
+                if event.key == pygame.K_ESCAPE:
                     return False
 
         screen.blit(blurred_surface, (0, 0))
@@ -694,7 +845,7 @@ def display_controls(introduced_controls_state, counting_string, print_player1_c
     
     general_controls = [
         'p: game pause',
-        'u: game unpause',
+        'esc: game unpause',
         'r: game reload'
         ]
 
@@ -821,7 +972,6 @@ def update_timer(start_timer):
     counting_seconds = (counting_time % 60000) // 1000  # Seconds
     counting_milliseconds = (counting_time % 1000) // 10
     counting_string = f"{counting_minutes:02d}:{counting_seconds:02d}:{counting_milliseconds:02d}"
-
     return counting_string
 
 def get_special_platforms(platforms, level_name):
@@ -836,11 +986,11 @@ def get_special_platforms(platforms, level_name):
         if platform.name == "starting-platform":
             spawn_point = (platform.position.x + (platform.dimensions[0] / 2), platform.position.y - platform.dimensions[1])
 
-        if platform.name == f"checkpoint{checkpoint_num}":
+        elif platform.name == f"checkpoint{checkpoint_num}":
             next_checkpoints.append(platform)
             checkpoint_num += 1
 
-        if platform.name == "finish-line":
+        elif platform.name == "finish-line":
             finish_line = platform
 
         if level_name == "tutorial_level":
@@ -848,20 +998,30 @@ def get_special_platforms(platforms, level_name):
             if platform.name == "introduce-jumping":
                 intro_to_jumping = platform
 
-            if platform.name == "introduce-sliding":
+            elif platform.name == "introduce-sliding":
                 intro_to_sliding = platform
 
-            if platform.name == "introduce-jumpsliding":
+            elif platform.name == "introduce-jumpsliding":
                 intro_to_jumpslide = platform
 
-            if platform.name == f"death-form{deathpoint_num}":
+            elif platform.name == f"death-form{deathpoint_num}":
                 deathforms.append(platform)
                 deathpoint_num += 1
+
+            show_settings = None
+
+        elif level_name == "home":
+
+            if platform.name == "settings":
+                show_settings = platform
+                intro_to_jumping, intro_to_sliding, intro_to_jumpslide, next_checkpoints = None, None, None, None
+
+        
         
         else:
-            intro_to_jumping, intro_to_sliding, intro_to_jumpslide = None, None, None
+            intro_to_jumping, intro_to_sliding, intro_to_jumpslide, next_checkpoints, show_settings = None, None, None, None, None
 
-    return spawn_point, intro_to_jumping, intro_to_sliding, intro_to_jumpslide, deathforms, next_checkpoints, finish_line
+    return spawn_point, intro_to_jumping, intro_to_sliding, intro_to_jumpslide, deathforms, show_settings, next_checkpoints, finish_line
 
 def render_game_objects(platforms, active_players, camera):
 
@@ -914,75 +1074,37 @@ def update_tutorial_controls(active_players, introduce_jumping, introduce_slidin
 
 async def main():
 
-    keys_data = await load_json_file('Players/player_controls.json')
-    
-    level_name = 'tutorial_level'  # Select either tutorial_level or demo_level
+    level_name = 'home'
+    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 60)
+    lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25)
+    text_color = ("#71d6f5")
 
-    levels_data = await load_json_file(f'Levels/{level_name}.json')
+    print_welcome1 = font.render("welcome to", True, (text_color))
+    print_welcome2 = font.render("project AstRA", True, (text_color))
+    show_tutorial_level1 = lil_font.render("jump here for tutorial", True, (text_color))
+    show_tutorial_level2 = lil_font.render("↓", True, (text_color))
+    show_settings1 = lil_font.render("← settings", True, (text_color))
+    highlight_game_controls1 = lil_font.render("these could be useful→", True, (text_color))
 
-    player1_controls = keys_data['controls']['players']['player1']
-    player2_controls = keys_data['controls']['players']['player2']
-    player3_controls = keys_data['controls']['players']['player3']
-    player4_controls = keys_data['controls']['players']['player4']
+    print_welcome1_rect = print_welcome1.get_rect(center=(500, 155))
+    print_welcome2_rect = print_welcome2.get_rect(center=(500, 230))
+    show_tutorial_level1_rect = show_tutorial_level1.get_rect(center=(600, 525))
+    show_tutorial_level2_rect = show_tutorial_level2.get_rect(center=(550, 550))
+    show_settings1_rect = show_settings1.get_rect(center=(125, 475))
+    highlight_game_controls1_rect = highlight_game_controls1.get_rect(center=(435, 50))
 
-    print_player_controls = keys_data['show_controls']['players']
-
-    p1_controls = print_player_controls['player1']
-    p3_controls = print_player_controls['player3']
-    p4_controls = print_player_controls['player4']
-
-    level_type = levels_data[level_name]['level_type']
-    platforms = load_platforms(levels_data, level_name)
     num_of_players = 1
-
-    OG_spawn_point, introduce_jumping, introduce_sliding, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line = get_special_platforms(platforms, level_name)
-
-    players = {
-    "player1": Player(player_id=1, position=OG_spawn_point, controls=player1_controls, color=("#9EBA01")),
-    "player2": Player(player_id=2, position=OG_spawn_point, controls=player2_controls, color=("#2276c9")),
-    "player3": Player(player_id=3, position=OG_spawn_point, controls=player3_controls, color=("#c7b61a")),
-    "player4": Player(player_id=4, position=OG_spawn_point, controls=player4_controls, color=("#c7281a"))
-    }
-
-    active_players = []
-    
-    for number in range(num_of_players):
-        active_players.append(players[f'player{number + 1}'])
-    
-    spawn_point = OG_spawn_point
-    checkpoint_increment = 0
-    reset_positions = []
-
-    print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active = determine_blitted_controls(active_players, p1_controls, p3_controls, p4_controls)
-
-    for player in active_players:
-        reset_positions.append(spawn_point)
-
-    introduced_controls_state = {"introduced_jumping": False, "introduced_sliding": False}
-
-    if level_name == 'tutorial_level':
-        next_checkpoint = next_checkpoints[checkpoint_increment]
-        level_width, level_height = levels_data[level_name]['camera_width'], levels_data[level_name]['camera_height']
-        camera = Camera(width=level_width, height=level_height, window_size=window_size)
-        camera.is_active = True
-        
-        for player in active_players:
-            player.can_jump, player.can_slide = False, False
-
-    else:
-        level_width, level_height = 1000, 700
-        camera = Camera(width=level_width, height=level_height, window_size=window_size)
-        camera.is_active = False
-        introduced_controls_state["introduced_jumping"], introduced_controls_state['introduced_sliding'] = True, True   
+    show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)   
 
     running = True
     fixed_delta_time = 1 / 60
     accumulator = 0
     start_timer = pygame.time.get_ticks()
     paused = False
+    editing_settings = False
+    reload_players = False
     game_finished = False
     best_player_num = None
-    text_color = ("#71d6f5")
     platforms_used = []
     RELOAD = Button(image=pygame.image.load("Buttons/reload_button.png").convert_alpha(), pos=(85, 43), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
     PAUSE = Button(image=pygame.image.load("Buttons/pause_button.png").convert_alpha(), pos=(30, 35), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color=("White"), hovering_color=("White"))
@@ -1001,6 +1123,8 @@ async def main():
 
             if player.id == 1:
 
+                # print(editing_settings)
+
                 # print(player.position)
 
                 if player.on_platform:
@@ -1016,7 +1140,15 @@ async def main():
                 blit_jumpslide = False
 
             if player.position.y > level_height + 100:
-                player.reload(spawn_point)
+
+                if level_name == 'home':
+                    level_name = 'tutorial_level'
+                    show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
+                    start_timer = pygame.time.get_ticks()
+
+                else:
+
+                    player.reload(spawn_point)
 
             if player.on_platform == finish_line:
                 reset_positions = []
@@ -1039,7 +1171,7 @@ async def main():
                     for player in active_players:
                         player.can_jump, player.can_slide = False, False    
 
-            if level_type == 'scrolling':
+            if level_name == 'tutorial_level':
 
                 if player.on_platform in death_platforms:
                     player.reload(spawn_point)
@@ -1056,6 +1188,20 @@ async def main():
                     if checkpoint_increment < len(next_checkpoints) - 1:
                         checkpoint_increment += 1
                         next_checkpoint = next_checkpoints[checkpoint_increment]
+            
+            elif level_name == 'home':
+
+                if player.on_platform == show_settings and not editing_settings:
+
+                    if not reload_players:
+
+                        time_entered_settings = time.time()
+                        editing_settings = True
+                    
+                    else:
+
+                        player.reload(spawn_point)
+                        reload_players = False
 
         for event in pygame.event.get():
             
@@ -1114,6 +1260,7 @@ async def main():
 
             if action == False:
                 paused = False
+            
             elif action == "level restart":
 
                 reset_positions = []
@@ -1123,8 +1270,9 @@ async def main():
                 for player in active_players:
                     reset_positions.append(spawn_point)
 
-                for platform in next_checkpoints:
-                    platform.color = "#9ff084"
+                if level_name != 'home':
+                    for platform in next_checkpoints:
+                        platform.color = "#9ff084"
                 
                 if level_name == 'tutorial_level':
                     next_checkpoint = next_checkpoints[checkpoint_increment]
@@ -1137,8 +1285,65 @@ async def main():
                 start_timer = pygame.time.get_ticks()
                 paused = False
 
+            elif action == "go to home":
 
+                level_name = 'home'
+                show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
+                paused = False
+                start_timer = pygame.time.get_ticks()
 
+            elif action == "go to settings" and not editing_settings:
+
+                time_entered_settings = time.time()
+                print("show settings (via pause menu)")
+                paused = False
+                editing_settings = True
+
+        elif editing_settings:
+
+            settings_action = await settings_menu(screen, window_size, time_entered_settings)
+
+            if not settings_action:
+                reload_players = True
+                editing_settings = False
+
+            elif settings_action == "one player":
+                
+                if len(active_players) != 1:
+                    num_of_players = 1
+                    show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
+                    reload_players = True
+                    
+                editing_settings = False
+            
+            elif settings_action == "two players":
+
+                if len(active_players) != 2:
+                    num_of_players = 2
+                    show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
+                    reload_players = True
+
+                editing_settings = False
+            
+            elif settings_action == "three players":
+
+                if len(active_players) != 3:
+                    num_of_players = 3
+                    show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
+                    reload_players = True
+
+                editing_settings = False
+            
+            elif settings_action == "four players":
+
+                if len(active_players) != 4:
+                    num_of_players = 4
+                    show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
+                    reload_players = True
+
+                editing_settings = False
+
+            
         elif game_finished:
 
             level_complete(screen, clock, window_size, counting_string, best_player_num, text_color)
@@ -1156,6 +1361,14 @@ async def main():
             render_game_objects(platforms, active_players, camera)
             display_controls(introduced_controls_state, counting_string, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, timer_color=("#32854b"))
             introduce_controls(blit_jumpslide)
+
+            if level_name == 'home':
+                screen.blit(print_welcome1, print_welcome1_rect)
+                screen.blit(print_welcome2, print_welcome2_rect)
+                screen.blit(show_tutorial_level1, show_tutorial_level1_rect)
+                screen.blit(show_tutorial_level2, show_tutorial_level2_rect)
+                screen.blit(show_settings1, show_settings1_rect)
+                screen.blit(highlight_game_controls1, highlight_game_controls1_rect)
 
             for button in [RELOAD, PAUSE]:
                 button.changeColor(pygame.mouse.get_pos())

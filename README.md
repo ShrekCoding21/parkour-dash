@@ -12,6 +12,10 @@ TSA Video game design competition code for RLC.
 1) Working tutorial level
 2) Level selection screen
 
+# List of bugs
+
+1) Restarting level; if u die, you go back to checkpoint even after reloading
+
 # Next steps
 
 1) Finish scrolling level

@@ -4,7 +4,7 @@ import time
 from Players.player import Player
 from camera import Camera
 from Buttons.buttons import Button
-from game_init import settings_menu, load_level, load_json_file, load_platforms, pause_menu, level_complete, introduce_controls, reload_map, display_controls, determine_blitted_controls, update_game_logic, update_timer, get_special_platforms, render_game_objects, update_tutorial_controls
+from game_init import settings_menu, load_level, pause_menu, level_complete, introduce_controls, reload_map, display_controls, update_game_logic, update_timer, get_special_platforms, render_game_objects, update_tutorial_controls
 
 WEB_ENVIRONMENT = False
 try:
@@ -23,25 +23,23 @@ pygame.display.set_caption("Parkour Dash")
 async def main():
 
     level_name = 'home'
-    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 65)
-    lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 35)
+    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 60)
+    lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25)
     text_color = ("#71d6f5")
 
     print_welcome1 = font.render("welcome to", True, (text_color))
-    print_welcome2 = font.render("project ASTRA", True, (text_color))
+    print_welcome2 = font.render("project AstRA", True, (text_color))
     show_tutorial_level1 = lil_font.render("jump here for tutorial", True, (text_color))
     show_tutorial_level2 = lil_font.render("↓", True, (text_color))
     show_settings1 = lil_font.render("← settings", True, (text_color))
-    highlight_game_controls1 = lil_font.render("these could be useful →", True, (text_color))
-    highlight_player_controls1 = lil_font.render("← look at these too", True, (text_color))
+    highlight_game_controls1 = lil_font.render("these could be useful→", True, (text_color))
 
-    print_welcome1_rect = print_welcome1.get_rect(center=(500, 125))
-    print_welcome2_rect = print_welcome2.get_rect(center=(500, 225))
-    show_tutorial_level1_rect = show_tutorial_level1.get_rect(center=(600, 500))
+    print_welcome1_rect = print_welcome1.get_rect(center=(500, 155))
+    print_welcome2_rect = print_welcome2.get_rect(center=(500, 230))
+    show_tutorial_level1_rect = show_tutorial_level1.get_rect(center=(600, 525))
     show_tutorial_level2_rect = show_tutorial_level2.get_rect(center=(550, 550))
-    show_settings1_rect = show_settings1.get_rect(center=(150, 475))
-    highlight_game_controls1_rect = highlight_game_controls1.get_rect(center=(430, 50))
-    highlight_player_controls1_rect = highlight_player_controls1.get_rect(center=(500, 350))
+    show_settings1_rect = show_settings1.get_rect(center=(125, 475))
+    highlight_game_controls1_rect = highlight_game_controls1.get_rect(center=(435, 50))
 
     num_of_players = 1
     show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)   
@@ -73,7 +71,7 @@ async def main():
 
             if player.id == 1:
 
-                print(editing_settings)
+                # print(editing_settings)
 
                 # print(player.position)
 
@@ -94,6 +92,7 @@ async def main():
                 if level_name == 'home':
                     level_name = 'tutorial_level'
                     show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
+                    start_timer = pygame.time.get_ticks()
 
                 else:
 
@@ -240,6 +239,7 @@ async def main():
                 level_name = 'home'
                 show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
                 paused = False
+                start_timer = pygame.time.get_ticks()
 
             elif action == "go to settings" and not editing_settings:
 
@@ -318,7 +318,6 @@ async def main():
                 screen.blit(show_tutorial_level2, show_tutorial_level2_rect)
                 screen.blit(show_settings1, show_settings1_rect)
                 screen.blit(highlight_game_controls1, highlight_game_controls1_rect)
-                screen.blit(highlight_player_controls1, highlight_player_controls1_rect)
 
             for button in [RELOAD, PAUSE]:
                 button.changeColor(pygame.mouse.get_pos())
