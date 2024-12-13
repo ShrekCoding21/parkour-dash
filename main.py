@@ -1160,14 +1160,14 @@ async def main():
 
                 for player in active_players:
                     reset_positions.append(spawn_point)
-
-                for platform in next_checkpoints:
-                    platform.color = "#9ff084"
                 
                 if level_name == 'tutorial_level':
                     next_checkpoint = next_checkpoints[checkpoint_increment]
                     introduced_controls_state["introduced_jumping"], introduced_controls_state['introduced_sliding'] = False, False
                     
+                    for platform in next_checkpoints:
+                        platform.color = "#9ff084"
+
                     for player in active_players:
                         player.can_jump, player.can_slide = False, False    
 
