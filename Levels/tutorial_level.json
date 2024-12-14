@@ -94,9 +94,9 @@
             "width": 2570,
             "height": 10,
             "is_moving": "False",
+            "image_path": "Platforms/transparent_platform1.png",
             "color": "#000000"
         },
-
 
 
         "checkpoint1": {
@@ -146,6 +146,7 @@
             "width": 2160,
             "height": 10,
             "is_moving": "False",
+            "image_path": "Platforms/transparent_platform1.png",
             "color": "#000000"
         },
 
@@ -235,6 +236,7 @@
             "width": 342,
             "height": 10,
             "is_moving": "False",
+            "image_path": "Platforms/transparent_platform1.png",
             "color": "#000000"
         },
 

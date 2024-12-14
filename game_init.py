@@ -2,6 +2,7 @@ import pygame
 import asyncio
 import json
 import time
+import cv2
 from PIL import Image, ImageFilter
 from Players.player import Player
 from Platforms.platform import Platform
@@ -102,6 +103,75 @@ async def load_level(level_name, num_of_players):
         checkpoint_increment = None
 
     return show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint
+
+async def load_cutscene(video_path, time_video_started, scale_to=None):
+    
+    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
+    video = cv2.VideoCapture(video_path)
+    print_skip1 = font.render("Press space", True, ("#ffffff"))
+    print_skip2 = font.render("or s to skip", True, ("#ffffff"))
+    print_skip1_rect = print_skip1.get_rect(topleft=(10, 20))
+    print_skip2_rect = print_skip2.get_rect(topleft=(10, 60))
+    time_until_skip = 8
+
+    success, video_image = video.read()
+    if not success:
+        print(f"Failed to load video: {video_path}")
+        return
+
+    fps = video.get(cv2.CAP_PROP_FPS)
+    frame_delay = 1 / fps
+
+    original_width, original_height = video_image.shape[1::-1]
+    target_width, target_height = scale_to if scale_to else (original_width, original_height)
+
+    window = pygame.display.set_mode((target_width, target_height))
+
+    run = success
+    while run:
+        
+        video_time = time.time() - time_video_started
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            
+            elif video_time >= time_until_skip and event.type == pygame.KEYDOWN:  # Skip cutscene
+
+                if event.key == pygame.K_s or event.key == pygame.K_SPACE:
+
+                    run = False
+                    break
+
+        if not run:
+            break
+
+        success, video_image = video.read()
+
+        if success:
+            resized_image = cv2.resize(video_image, (target_width, target_height))
+
+            video_surf = pygame.image.frombuffer(
+                resized_image.tobytes(), resized_image.shape[1::-1], "BGR")
+        else:
+            run = False
+            break
+
+        window.blit(video_surf, (0, 0))
+
+        if video_time >= time_until_skip:
+            window.blit(print_skip1, print_skip1_rect)
+            window.blit(print_skip2, print_skip2_rect)
+
+        pygame.display.flip()
+
+        await asyncio.sleep(frame_delay)
+
+    window.fill((0, 0, 0))
+    pygame.display.flip()
+
+
 
 def load_platforms(platform_data, level_name):
 
@@ -331,7 +401,7 @@ def introduce_controls(blit_jumpslide):
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30)
 
     print_jumpslide_tutorial1 = font.render("press jump and slide keys", True, ("#00f7f7"))
-    print_jumpslide_tutorial2 = font.render("together to jumpslide", True, ("#00f7f7"))
+    print_jumpslide_tutorial2 = font.render("together to leap", True, ("#00f7f7"))
     jumpslide_tutorial_rect1 = print_jumpslide_tutorial1.get_rect(center=(500, 180))
     jumpslide_tutorial_rect2 = print_jumpslide_tutorial2.get_rect(center=(500, 220))
     

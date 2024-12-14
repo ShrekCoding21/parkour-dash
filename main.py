@@ -466,7 +466,7 @@ class Button():
 
 
 
-"""parkour-dash.py code goes here"""
+"""game_init.py"""
 
 
 
@@ -540,6 +540,75 @@ async def load_level(level_name, num_of_players):
 
     return show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint
 
+# async def load_cutscene(video_path, time_video_started, scale_to=None):
+    
+#     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
+#     video = cv2.VideoCapture(video_path)
+#     print_skip1 = font.render("Press space", True, ("#ffffff"))
+#     print_skip2 = font.render("or s to skip", True, ("#ffffff"))
+#     print_skip1_rect = print_skip1.get_rect(topleft=(10, 20))
+#     print_skip2_rect = print_skip2.get_rect(topleft=(10, 60))
+#     time_until_skip = 8
+
+#     success, video_image = video.read()
+#     if not success:
+#         print(f"Failed to load video: {video_path}")
+#         return
+
+#     fps = video.get(cv2.CAP_PROP_FPS)
+#     frame_delay = 1 / fps
+
+#     original_width, original_height = video_image.shape[1::-1]
+#     target_width, target_height = scale_to if scale_to else (original_width, original_height)
+
+#     window = pygame.display.set_mode((target_width, target_height))
+
+#     run = success
+#     while run:
+        
+#         video_time = time.time() - time_video_started
+
+#         for event in pygame.event.get():
+#             if event.type == pygame.QUIT:
+#                 pygame.quit()
+#                 exit()
+            
+#             elif video_time >= time_until_skip and event.type == pygame.KEYDOWN:  # Skip cutscene
+
+#                 if event.key == pygame.K_s or event.key == pygame.K_SPACE:
+
+#                     run = False
+#                     break
+
+#         if not run:
+#             break
+
+#         success, video_image = video.read()
+
+#         if success:
+#             resized_image = cv2.resize(video_image, (target_width, target_height))
+
+#             video_surf = pygame.image.frombuffer(
+#                 resized_image.tobytes(), resized_image.shape[1::-1], "BGR")
+#         else:
+#             run = False
+#             break
+
+#         window.blit(video_surf, (0, 0))
+
+#         if video_time >= time_until_skip:
+#             window.blit(print_skip1, print_skip1_rect)
+#             window.blit(print_skip2, print_skip2_rect)
+
+#         pygame.display.flip()
+
+#         await asyncio.sleep(frame_delay)
+
+#     window.fill((0, 0, 0))
+#     pygame.display.flip()
+
+
+
 def load_platforms(platform_data, level_name):
 
     platforms = []
@@ -599,7 +668,7 @@ async def settings_menu(screen, window_size, time_entered_settings):
     button_image = pygame.image.load("Buttons/tutorial_button.png").convert_alpha()
     small_button = pygame.image.load("Buttons/lilbutton.png").convert_alpha()
 
-    EXIT_SETTINGS = Button(image=button_image, pos=(500, 500), text_input="exit", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 20), base_color="#167fc9", hovering_color="#F59071")
+    EXIT_SETTINGS = Button(image=button_image, pos=(500, 500), text_input="exit", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
     ONE_PLAYER = Button(image=small_button, pos=(470, 250), text_input="1p", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25), base_color="#167fc9", hovering_color="#F59071")
     TWO_PLAYER = Button(image=small_button, pos=(550, 250), text_input="2p", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25), base_color="#167fc9", hovering_color="#F59071")
     THREE_PLAYER = Button(image=small_button, pos=(630, 250), text_input="3p", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25), base_color="#167fc9", hovering_color="#F59071")
@@ -768,7 +837,7 @@ def introduce_controls(blit_jumpslide):
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30)
 
     print_jumpslide_tutorial1 = font.render("press jump and slide keys", True, ("#00f7f7"))
-    print_jumpslide_tutorial2 = font.render("together to jumpslide", True, ("#00f7f7"))
+    print_jumpslide_tutorial2 = font.render("together to leap", True, ("#00f7f7"))
     jumpslide_tutorial_rect1 = print_jumpslide_tutorial1.get_rect(center=(500, 180))
     jumpslide_tutorial_rect2 = print_jumpslide_tutorial2.get_rect(center=(500, 220))
     
@@ -972,6 +1041,7 @@ def update_timer(start_timer):
     counting_seconds = (counting_time % 60000) // 1000  # Seconds
     counting_milliseconds = (counting_time % 1000) // 10
     counting_string = f"{counting_minutes:02d}:{counting_seconds:02d}:{counting_milliseconds:02d}"
+
     return counting_string
 
 def get_special_platforms(platforms, level_name):
@@ -1072,9 +1142,16 @@ def update_tutorial_controls(active_players, introduce_jumping, introduce_slidin
         for player in active_players:
             player.can_slide = True
 
+bg_image = pygame.image.load("assets/parkour_dash_background.png").convert_alpha()
+bg_image = pygame.transform.scale(bg_image, window_size)
+
+"""parkour_dash.py code goes here"""
 async def main():
 
+    # await load_cutscene("assets/parkour_dash_intro.mp4", time_video_started=time.time(), scale_to=window_size)
+
     level_name = 'home'
+    global bg_image
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 60)
     lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25)
     text_color = ("#71d6f5")
@@ -1358,6 +1435,7 @@ async def main():
             screen.fill((0, 0, 0))
             
             counting_string = update_timer(start_timer)
+            screen.blit(bg_image, (0, 0))
             render_game_objects(platforms, active_players, camera)
             display_controls(introduced_controls_state, counting_string, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, timer_color=("#32854b"))
             introduce_controls(blit_jumpslide)

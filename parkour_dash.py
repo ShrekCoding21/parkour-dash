@@ -1,10 +1,8 @@
 import pygame
 import asyncio
 import time
-from Players.player import Player
-from camera import Camera
 from Buttons.buttons import Button
-from game_init import settings_menu, load_level, pause_menu, level_complete, introduce_controls, reload_map, display_controls, update_game_logic, update_timer, get_special_platforms, render_game_objects, update_tutorial_controls
+from game_init import load_cutscene, settings_menu, load_level, pause_menu, level_complete, introduce_controls, reload_map, display_controls, update_game_logic, update_timer, render_game_objects, update_tutorial_controls
 
 WEB_ENVIRONMENT = False
 try:
@@ -22,7 +20,11 @@ pygame.display.set_caption("Parkour Dash")
 
 async def main():
 
+    await load_cutscene("assets/parkour_dash_intro.mp4", time_video_started=time.time(), scale_to=window_size)
+
     level_name = 'home'
+    bg_image = pygame.image.load("assets/parkour_dash_background.png").convert_alpha()
+    bg_image = pygame.transform.scale(bg_image, window_size)
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 60)
     lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25)
     text_color = ("#71d6f5")
@@ -306,6 +308,7 @@ async def main():
             screen.fill((0, 0, 0))
             
             counting_string = update_timer(start_timer)
+            screen.blit(bg_image, (0, 0))
             render_game_objects(platforms, active_players, camera)
             display_controls(introduced_controls_state, counting_string, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, timer_color=("#32854b"))
             introduce_controls(blit_jumpslide)
