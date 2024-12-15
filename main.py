@@ -13,6 +13,7 @@ except ImportError:
 
 pygame.init()
 window_size = (1000, 700)
+canvas = pygame.Surface(window_size)
 screen = pygame.display.set_mode(window_size)
 clock = pygame.time.Clock()
 
@@ -466,9 +467,74 @@ class Button():
 
 
 
+"""sprites.py"""
+
+
+
+class Spritesheet:
+    def __init__(self, filename, width, height):
+        self.filename = filename
+        self.target_width = width
+        self.target_height = height
+        
+        try:
+            self.sprite_sheet = pygame.image.load(filename).convert_alpha()
+        except pygame.error as e:
+            print(f"Error loading sprite sheet: {e}")
+            raise
+        
+        self.meta_data = self.filename.replace('png', 'json')
+        try:
+            with open(self.meta_data) as f:
+                self.data = json.load(f)
+        except FileNotFoundError:
+            print(f"Error: {self.meta_data} not found!")
+            raise
+        
+        print(f"Successfully loaded {self.filename} and {self.meta_data}")
+
+    def get_sprite(self, x, y, w, h):
+        sprite = pygame.Surface((w, h), pygame.SRCALPHA)
+        sprite.blit(self.sprite_sheet, (0, 0), (x, y, w, h))
+        # Scale the sprite to the target dimensions
+        scaled_sprite = pygame.transform.scale(sprite, (self.target_width, self.target_height))
+        return scaled_sprite
+
+    def get_all_frames(self, name):
+        try:
+            frame_data = self.data['frames'][name]
+            total_frames = frame_data['total_frames']
+            frame_info = frame_data['frame']
+        except KeyError:
+            print(f"Error: {name} not found in JSON.")
+            return [], 0
+
+        frame_w, frame_h = frame_info["w"], frame_info["h"]
+        frames = []
+
+        for i in range(total_frames):
+            x = frame_info["x"] + i * frame_w
+            y = frame_info["y"]
+            frames.append(self.get_sprite(x, y, frame_w, frame_h))
+        
+        frame_speed = self.data['frames'][name]['animation_speed']
+
+        return frames, total_frames, frame_speed
+
 """game_init.py"""
 
 
+
+async def load_json_file(filepath):
+    if WEB_ENVIRONMENT:
+        # Load file using pygbag.fs in a web environment
+        with pygbag.fs.open(filepath, 'r') as key_map:
+            return json.load(key_map)
+    else:
+        # Load file normally in a local environment
+        with open(filepath, 'r') as key_map:
+            keys_data = json.load(key_map)
+    return keys_data
 
 async def load_level(level_name, num_of_players):
 
@@ -540,75 +606,6 @@ async def load_level(level_name, num_of_players):
 
     return show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint
 
-# async def load_cutscene(video_path, time_video_started, scale_to=None):
-    
-#     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
-#     video = cv2.VideoCapture(video_path)
-#     print_skip1 = font.render("Press space", True, ("#ffffff"))
-#     print_skip2 = font.render("or s to skip", True, ("#ffffff"))
-#     print_skip1_rect = print_skip1.get_rect(topleft=(10, 20))
-#     print_skip2_rect = print_skip2.get_rect(topleft=(10, 60))
-#     time_until_skip = 8
-
-#     success, video_image = video.read()
-#     if not success:
-#         print(f"Failed to load video: {video_path}")
-#         return
-
-#     fps = video.get(cv2.CAP_PROP_FPS)
-#     frame_delay = 1 / fps
-
-#     original_width, original_height = video_image.shape[1::-1]
-#     target_width, target_height = scale_to if scale_to else (original_width, original_height)
-
-#     window = pygame.display.set_mode((target_width, target_height))
-
-#     run = success
-#     while run:
-        
-#         video_time = time.time() - time_video_started
-
-#         for event in pygame.event.get():
-#             if event.type == pygame.QUIT:
-#                 pygame.quit()
-#                 exit()
-            
-#             elif video_time >= time_until_skip and event.type == pygame.KEYDOWN:  # Skip cutscene
-
-#                 if event.key == pygame.K_s or event.key == pygame.K_SPACE:
-
-#                     run = False
-#                     break
-
-#         if not run:
-#             break
-
-#         success, video_image = video.read()
-
-#         if success:
-#             resized_image = cv2.resize(video_image, (target_width, target_height))
-
-#             video_surf = pygame.image.frombuffer(
-#                 resized_image.tobytes(), resized_image.shape[1::-1], "BGR")
-#         else:
-#             run = False
-#             break
-
-#         window.blit(video_surf, (0, 0))
-
-#         if video_time >= time_until_skip:
-#             window.blit(print_skip1, print_skip1_rect)
-#             window.blit(print_skip2, print_skip2_rect)
-
-#         pygame.display.flip()
-
-#         await asyncio.sleep(frame_delay)
-
-#     window.fill((0, 0, 0))
-#     pygame.display.flip()
-
-
-
 def load_platforms(platform_data, level_name):
 
     platforms = []
@@ -655,6 +652,60 @@ def load_platforms(platform_data, level_name):
 
 
     return platforms
+
+async def load_cutscene(canvas):
+
+    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
+    cutscene = Spritesheet('assets/parkour_dash_intro_sprite.png', 1000, 700)
+    cutscene_frames, cutscene_total_frames, animation_speed = cutscene.get_all_frames('cutscene.png')
+    index = 0
+    animation_start_time = pygame.time.get_ticks()
+    last_update_time = pygame.time.get_ticks()
+    running = True
+    show_skip1 = font.render("Press space or", True, ("#ffffff"))
+    show_skip2 = font.render("s to skip", True, ("#ffffff"))
+    show_skip1_rect = show_skip1.get_rect(topleft=(10, 10))
+    show_skip2_rect = show_skip2.get_rect(topleft=(10, 50))
+    time_to_skip = 8000
+
+    while running:
+        current_time = pygame.time.get_ticks()
+        time_playing = current_time - animation_start_time
+
+        if current_time - last_update_time > animation_speed:
+            index = (index + 1) % cutscene_total_frames
+            last_update_time = current_time
+
+            if index == 289:
+                running = False
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
+            elif time_playing >= time_to_skip and event.type == pygame.KEYDOWN:
+                
+                if event.key == pygame.K_s or event.key == pygame.K_SPACE:
+                    running = False
+
+        canvas.fill((0, 0, 0))
+        
+        current_frame = cutscene_frames[index]
+        
+        frame_rect = current_frame.get_rect(center=(canvas.get_width() // 2, canvas.get_height() // 2))
+        canvas.blit(current_frame, frame_rect.topleft)
+
+        screen.blit(canvas, (0, 0))
+
+        if time_playing >= time_to_skip:
+
+            screen.blit(show_skip1, show_skip1_rect)
+            screen.blit(show_skip2, show_skip2_rect)
+
+        pygame.display.update()
+        await asyncio.sleep(0)
+
 
 async def settings_menu(screen, window_size, time_entered_settings):
 
@@ -1142,16 +1193,14 @@ def update_tutorial_controls(active_players, introduce_jumping, introduce_slidin
         for player in active_players:
             player.can_slide = True
 
-bg_image = pygame.image.load("assets/parkour_dash_background.png").convert_alpha()
-bg_image = pygame.transform.scale(bg_image, window_size)
-
 """parkour_dash.py code goes here"""
 async def main():
 
-    # await load_cutscene("assets/parkour_dash_intro.mp4", time_video_started=time.time(), scale_to=window_size)
+    await load_cutscene(canvas)
 
     level_name = 'home'
-    global bg_image
+    bg_image = pygame.image.load("assets/parkour_dash_background.png").convert_alpha()
+    bg_image = pygame.transform.scale(bg_image, window_size)
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 60)
     lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25)
     text_color = ("#71d6f5")
@@ -1185,6 +1234,7 @@ async def main():
     platforms_used = []
     RELOAD = Button(image=pygame.image.load("Buttons/reload_button.png").convert_alpha(), pos=(85, 43), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
     PAUSE = Button(image=pygame.image.load("Buttons/pause_button.png").convert_alpha(), pos=(30, 35), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color=("White"), hovering_color=("White"))
+
 
 
     while running:
@@ -1278,6 +1328,7 @@ async def main():
                     else:
 
                         player.reload(spawn_point)
+                        start_timer = pygame.time.get_ticks()
                         reload_players = False
 
         for event in pygame.event.get():

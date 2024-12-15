@@ -2,6 +2,7 @@ import pygame
 import asyncio
 import time
 from Buttons.buttons import Button
+from assets.sprites import Spritesheet
 from game_init import load_cutscene, settings_menu, load_level, pause_menu, level_complete, introduce_controls, reload_map, display_controls, update_game_logic, update_timer, render_game_objects, update_tutorial_controls
 
 WEB_ENVIRONMENT = False
@@ -13,6 +14,7 @@ except ImportError:
 
 pygame.init()
 window_size = (1000, 700)
+canvas = pygame.Surface(window_size)
 screen = pygame.display.set_mode(window_size)
 clock = pygame.time.Clock()
 
@@ -20,7 +22,7 @@ pygame.display.set_caption("Parkour Dash")
 
 async def main():
 
-    await load_cutscene("assets/parkour_dash_intro.mp4", time_video_started=time.time(), scale_to=window_size)
+    await load_cutscene(canvas)
 
     level_name = 'home'
     bg_image = pygame.image.load("assets/parkour_dash_background.png").convert_alpha()
@@ -58,6 +60,7 @@ async def main():
     platforms_used = []
     RELOAD = Button(image=pygame.image.load("Buttons/reload_button.png").convert_alpha(), pos=(85, 43), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
     PAUSE = Button(image=pygame.image.load("Buttons/pause_button.png").convert_alpha(), pos=(30, 35), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color=("White"), hovering_color=("White"))
+
 
 
     while running:
@@ -151,6 +154,7 @@ async def main():
                     else:
 
                         player.reload(spawn_point)
+                        start_timer = pygame.time.get_ticks()
                         reload_players = False
 
         for event in pygame.event.get():
