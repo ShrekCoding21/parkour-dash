@@ -3,7 +3,7 @@ import asyncio
 import json
 import time
 from PIL import Image, ImageFilter
-from assets.sprites import Spritesheet
+from sprites import Spritesheet
 from Players.player import Player
 from Platforms.platform import Platform
 from camera import Camera
