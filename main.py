@@ -2,6 +2,7 @@ import pygame
 import asyncio
 import json
 import time
+import sys
 from PIL import Image, ImageFilter
 from sprites import Spritesheet
 from Players.player import Player
@@ -25,6 +26,9 @@ screen = pygame.display.set_mode(window_size)
 clock = pygame.time.Clock()
 
 pygame.display.set_caption("Parkour Dash")
+
+if sys.platform == "emscripten":    
+    platform.document.body.style.background = "#050a36"
 
 async def load_json_file(filepath):
     if WEB_ENVIRONMENT:

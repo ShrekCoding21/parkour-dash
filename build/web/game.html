@@ -288,7 +288,7 @@ config = {
             font-family: "Major Mono Display", monospace;
             font-weight: 500;
             font-style: normal;
-            color: #71d6f5;
+            color: #32a1c9;
             z-index: 10;
         }
             #status {
@@ -456,25 +456,87 @@ frameborder="1"
         <div id="terminal" tabIndex=1 align="left"></div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script type="application/javascript">
 
     async function custom_onload(debug_hidden) {
-        // this is called before anything python is loaded
-        // make your js customization here
-        console.log(__FILE__, "custom_onload")
+        // This is called before anything Python is loaded
+        // Make your JavaScript customizations here
+        console.log(__FILE__, "custom_onload");
+        window.onbeforeunload = null;
+        pyconsole.hidden = debug_hidden;
+        system.hidden = debug_hidden;
+        transfer.hidden = debug_hidden;
+        info.hidden = debug_hidden;
+        box.hidden = debug_hidden;
 
-        pyconsole.hidden = debug_hidden
-        system.hidden = debug_hidden
-        transfer.hidden = debug_hidden
-        info.hidden = debug_hidden
-        box.hidden =  debug_hidden
+        async function getCoordinates(cityName) {
+            const url = "https://nominatim.openstreetmap.org/search";
+            const params = {
+                q: cityName,
+                format: "json",
+                limit: 1
+            };
+            const headers = { "User-Agent": "YourAppName/1.0 (your_email@example.com)" };
 
+            try {
+                const response = await axios.get(url, { params, headers });
+                if (!response.data || response.data.length === 0) {
+                    throw new Error("Empty response from API. Try again later.");
+                }
+
+                const location = response.data[0];
+                return [parseFloat(location.lat), parseFloat(location.lon)];
+            } catch (error) {
+                throw new Error(`Request Error: ${error.message}`);
+            }
+        }
+
+        async function fetchWeatherData(lat, lon) {
+            const url = "https://api.open-meteo.com/v1/forecast";
+            const params = {
+                latitude: lat,
+                longitude: lon,
+                current_weather: true,
+                hourly: "is_day",
+                temperature_unit: "fahrenheit",
+                wind_speed_unit: "mph",
+                precipitation_unit: "inch",
+                timezone: "America/New_York",
+            };
+            const response = await axios.get(url, { params });
+            return response.data;
+        }
+
+        function processWeather(data) {
+            const current = data.current_weather;
+            return {
+                weather_code: current.weathercode,
+                temperature: current.temperature,
+                windspeed: current.windspeed,
+            };
+        }
+
+        const city = "Atlanta";
+        getCoordinates(city)
+            .then(async ([lat, lon]) => {
+                console.log(`Coordinates for ${city}: Latitude ${lat}, Longitude ${lon}`);
+                const weatherData = await fetchWeatherData(lat, lon);
+                const currentWeather = processWeather(weatherData);
+
+                console.log(`Weather Code: ${currentWeather.weather_code}`);
+                console.log(`Temperature: ${currentWeather.temperature} °F`);
+                console.log(`Wind Speed: ${currentWeather.windspeed} mph`);
+            })
+            .catch(error => {
+                console.error(error.message);
+            });
     }
+
 
     function custom_prerun(){
         // no python main and no (MEMFS + VFS) yet.
         console.log(__FILE__, "custom_prerun")
-
     }
 
     function custom_postrun(){
