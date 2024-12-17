@@ -6,7 +6,6 @@ import sys
 from PIL import Image, ImageFilter
 from sprites import Spritesheet
 from Players.player import Player
-from Platforms.platform import Platform
 from camera import Camera
 from Buttons.buttons import Button
 from game_init import load_platforms, level_complete, introduce_controls, reload_map, display_controls, determine_blitted_controls, update_game_logic, update_timer, get_special_platforms, render_game_objects, update_tutorial_controls
