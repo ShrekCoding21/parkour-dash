@@ -457,6 +457,18 @@ frameborder="1"
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script type="module">
+        import { loadPyodide } from "https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js";
+
+        async function initPyodide() {
+            window.pyodide = await loadPyodide();
+            console.log("Pyodide initialized!");
+        }
+
+        initPyodide();
+    </script>
+
+    
     <script type="application/javascript">
 
     async function custom_onload(debug_hidden) {
@@ -527,6 +539,8 @@ frameborder="1"
                 console.log(`Weather Code: ${currentWeather.weather_code}`);
                 console.log(`Temperature: ${currentWeather.temperature} °F`);
                 console.log(`Wind Speed: ${currentWeather.windspeed} mph`);
+
+                pyodide.runPython(`handle_weather_data(${currentWeather.weather_code})`);
             })
             .catch(error => {
                 console.error(error.message);

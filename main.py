@@ -40,6 +40,11 @@ async def load_json_file(filepath):
             keys_data = json.load(key_map)
     return keys_data
 
+async def get_weather_data():
+    path = "build/web/output/weather_data.json"
+    weather_data = await load_json_file(path)
+    return weather_data
+
 async def load_level(level_name, num_of_players):
 
     keys_data = await load_json_file('Players/player_controls.json')
@@ -342,6 +347,7 @@ async def main():
     show_tutorial_level2 = lil_font.render("↓", True, (text_color))
     show_settings1 = lil_font.render("← settings", True, (text_color))
     highlight_game_controls1 = lil_font.render("these could be useful→", True, (text_color))
+    yay_weather = font.render("yay weather", True, (text_color))
 
     print_welcome1_rect = print_welcome1.get_rect(center=(500, 155))
     print_welcome2_rect = print_welcome2.get_rect(center=(500, 230))
@@ -349,7 +355,9 @@ async def main():
     show_tutorial_level2_rect = show_tutorial_level2.get_rect(center=(550, 550))
     show_settings1_rect = show_settings1.get_rect(center=(125, 475))
     highlight_game_controls1_rect = highlight_game_controls1.get_rect(center=(435, 50))
+    yay_weather_rect = yay_weather.get_rect(center=(500, 350))
 
+    weather = get_weather_data()
     num_of_players = 1
     show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)   
 
@@ -630,6 +638,9 @@ async def main():
                 screen.blit(show_settings1, show_settings1_rect)
                 screen.blit(highlight_game_controls1, highlight_game_controls1_rect)
 
+            elif weather:
+                screen.blit(yay_weather, yay_weather_rect)
+                
             for button in [RELOAD, PAUSE]:
                 button.changeColor(pygame.mouse.get_pos())
                 button.update(screen)
