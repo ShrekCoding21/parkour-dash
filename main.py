@@ -3,9 +3,7 @@ import asyncio
 import json
 import time
 import sys
-import os
-# import js
-import pyodide
+import pyodide # ignore what IDE says; THIS IS NECESSARY FOR CODE TO RUN IN BROWSER
 import pygbag
 from PIL import Image, ImageFilter
 from sprites import Spritesheet
@@ -14,6 +12,8 @@ from camera import Camera
 from Buttons.buttons import Button
 from game_init import load_platforms, level_complete, introduce_controls, reload_map, display_controls, determine_blitted_controls, update_game_logic, update_timer, get_special_platforms, render_game_objects, update_tutorial_controls
 
+# Change this to whatever weather you want to test or leave as None to use API data
+TEST_WEATHER = None
 
 WEB_ENVIRONMENT = False
 try:
@@ -29,26 +29,30 @@ screen = pygame.display.set_mode(window_size)
 clock = pygame.time.Clock()
 
 pygame.display.set_caption("Parkour Dash")
-print("caption set", flush=True)
 
 if sys.platform == "emscripten":    
     platform.document.body.style.background = "#050a36"
 
-screen.fill((0, 0, 255))
+screen.fill("#020626")
+loading_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
+loading_text = loading_font.render("Loading...", True, ("#71d6f5"))
+loading_rect = loading_text.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
+screen.blit(loading_text, loading_rect)
 pygame.display.update()
 
 async def game_init():
-    try:
-        print("Game initializing...")
-        weather_data = await read_weather_file()
-        if weather_data is None:
-            print("No weather data found. Using default values.")
-            weather_data = {"weather_code": 0, "temperature": 70, "windspeed": 0}  # Defaults
-        print("Game initialized.")
-        return weather_data
-    except Exception as e:
-        print(f"Error initializing game: {e}")
-        return {"weather_code": 0, "temperature": 70, "windspeed": 0}  # Fallback
+    if not TEST_WEATHER:
+        try:
+            weather_data = await read_weather_file()
+            if weather_data is None:
+                print("No weather data found. Using default values.")
+                weather_data = {"weather_code": 0, "temperature": 70, "windspeed": 0}  # Defaults
+            return weather_data
+        except Exception as e:
+            return {"weather_code": 0, "temperature": 70, "windspeed": 0}  # Fallback
+    else:
+        print(f"Using test weather data: {TEST_WEATHER}")
+        return TEST_WEATHER
 
 async def load_json_file(filepath):
     if WEB_ENVIRONMENT:
@@ -62,61 +66,59 @@ async def load_json_file(filepath):
     return keys_data
 
 async def read_weather_file():
-
-    try:
-        
-        from js import eval as eval_js
-        # JavaScript code to fetch data from localStorage
-        js_code = """
-            (function() {
-                try {
-                    const data = localStorage.getItem("weather_data");
-                    if (data) {
-                        console.log("Weather data found in localStorage:", data);
-                        console.log("returning data to python");
-                        return data; // Return as string
-                    } else {
-                        console.log("No weather data found in localStorage.");
+    if not TEST_WEATHER:
+        try:
+            
+            from js import eval as eval_js
+            # JavaScript code to fetch data from localStorage
+            js_code = """
+                (function() {
+                    try {
+                        const data = localStorage.getItem("weather_data");
+                        if (data) {
+                            console.log("Weather data found in localStorage:", data);
+                            console.log("returning data to python");
+                            return data; // Return as string
+                        } else {
+                            console.log("No weather data found in localStorage.");
+                            return null;
+                        }
+                    } catch (error) {
+                        console.error("Error accessing localStorage:", error);
                         return null;
                     }
-                } catch (error) {
-                    console.error("Error accessing localStorage:", error);
-                    return null;
-                }
-            })()
-        """
-        
-        # Execute JavaScript code using eval_js
-        weather_data = eval_js(js_code)
-        
-        if weather_data:
-            print(f"Raw weather data retrieved: {weather_data}")
-            # Parse JSON string into a Python dictionary
-            try:
-                weather_data = json.loads(weather_data)
-                print(f"Parsed weather data: {weather_data}")
-                return weather_data
-            except json.JSONDecodeError:
-                print("Error decoding weather data. Using default values.")
-    except ImportError as e:
-        print(f"Error importing JavaScript module: {e}")
-        return None
-    except json.JSONDecodeError as e:
-        print(f"Error decoding JSON data: {e}")
-        return None
-    except Exception as e:
-        print(f"Unexpected error retrieving weather data: {e}")
-        return None
-        
-    except Exception as e:
-        print(f"Error retrieving weather data: {e}")
-        return None
+                })()
+            """
+            
+            # Execute JavaScript code using eval_js
+            weather_data = eval_js(js_code)
+            
+            if weather_data:
+                # Parse JSON string into a Python dictionary
+                try:
+                    weather_data = json.loads(weather_data)
+                    print(f"weather data: {weather_data}")
+                    return weather_data
+                except json.JSONDecodeError:
+                    print("Error decoding weather data. Using default values.")
+        except ImportError as e:
+            print(f"Error importing JavaScript module: {e}")
+            return None
+        except json.JSONDecodeError as e:
+            print(f"Error decoding JSON data: {e}")
+            return None
+        except Exception as e:
+            print(f"Unexpected error retrieving weather data: {e}")
+            return None
+            
+        except Exception as e:
+            print(f"Error retrieving weather data: {e}")
+            return None
 
 
 
 async def load_level(level_name, num_of_players):
 
-    current_weather = await game_init()
     keys_data = await load_json_file('Players/player_controls.json')
     
     # Select tutorial_level, demo_level, or home
@@ -183,7 +185,7 @@ async def load_level(level_name, num_of_players):
         next_checkpoint = None
         checkpoint_increment = None
 
-    return current_weather, show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint
+    return show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint
 
 async def load_cutscene(canvas):
 
@@ -198,7 +200,7 @@ async def load_cutscene(canvas):
     show_skip2 = font.render("s to skip", True, ("#ffffff"))
     show_skip1_rect = show_skip1.get_rect(topleft=(10, 10))
     show_skip2_rect = show_skip2.get_rect(topleft=(10, 50))
-    time_to_skip = 1000 # CHANGE THIS LATER
+    time_to_skip = 8000 # CHANGE THIS LATER; should be 8000 normally
 
     while running:
         current_time = pygame.time.get_ticks()
@@ -397,6 +399,17 @@ async def pause_menu(screen, window_size, time_paused):
 
 async def main():
 
+    current_weather = await game_init()
+    weather_codes = await load_json_file('weather_codes.json')
+
+    for condition in weather_codes['weather-codes'].keys():
+
+        if current_weather['weather_code'] in weather_codes['weather-codes'][condition]:
+
+            print(condition)
+            weather_condition = condition
+            print(f"weather_condition = {weather_condition}")
+
     await load_cutscene(canvas)
 
     level_name = 'home'
@@ -407,8 +420,8 @@ async def main():
     text_color = ("#71d6f5")
 
     num_of_players = 1
-    current_weather, show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)   
-
+    show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)   
+    print(f"current weather (in main): {current_weather}")
 
     print_welcome1 = font.render("welcome to", True, (text_color))
     print_welcome2 = font.render("project AstRA", True, (text_color))
@@ -417,7 +430,7 @@ async def main():
     show_settings1 = lil_font.render("← settings", True, (text_color))
     highlight_game_controls1 = lil_font.render("these could be useful→", True, (text_color))
     yay_weather = font.render("yay weather", True, (text_color))
-    print_weather_condition = font.render(f"Current windspeed: {current_weather['windspeed']}", True, (text_color))
+    print_weather_condition = font.render(f"{weather_condition}", True, (text_color))
 
     print_welcome1_rect = print_welcome1.get_rect(center=(500, 155))
     print_welcome2_rect = print_welcome2.get_rect(center=(500, 230))
@@ -476,7 +489,7 @@ async def main():
 
                 if level_name == 'home':
                     level_name = 'tutorial_level'
-                    current_weather, show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
+                    show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
                     start_timer = pygame.time.get_ticks()
 
                 else:
