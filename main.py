@@ -3,6 +3,10 @@ import asyncio
 import json
 import time
 import sys
+import os
+# import js
+import pyodide
+import pygbag
 from PIL import Image, ImageFilter
 from sprites import Spritesheet
 from Players.player import Player
@@ -25,9 +29,26 @@ screen = pygame.display.set_mode(window_size)
 clock = pygame.time.Clock()
 
 pygame.display.set_caption("Parkour Dash")
+print("caption set", flush=True)
 
 if sys.platform == "emscripten":    
     platform.document.body.style.background = "#050a36"
+
+screen.fill((0, 0, 255))
+pygame.display.update()
+
+async def game_init():
+    try:
+        print("Game initializing...")
+        weather_data = await read_weather_file()
+        if weather_data is None:
+            print("No weather data found. Using default values.")
+            weather_data = {"weather_code": 0, "temperature": 70, "windspeed": 0}  # Defaults
+        print("Game initialized.")
+        return weather_data
+    except Exception as e:
+        print(f"Error initializing game: {e}")
+        return {"weather_code": 0, "temperature": 70, "windspeed": 0}  # Fallback
 
 async def load_json_file(filepath):
     if WEB_ENVIRONMENT:
@@ -40,13 +61,62 @@ async def load_json_file(filepath):
             keys_data = json.load(key_map)
     return keys_data
 
-async def get_weather_data():
-    path = "build/web/output/weather_data.json"
-    weather_data = await load_json_file(path)
-    return weather_data
+async def read_weather_file():
+
+    try:
+        
+        from js import eval as eval_js
+        # JavaScript code to fetch data from localStorage
+        js_code = """
+            (function() {
+                try {
+                    const data = localStorage.getItem("weather_data");
+                    if (data) {
+                        console.log("Weather data found in localStorage:", data);
+                        console.log("returning data to python");
+                        return data; // Return as string
+                    } else {
+                        console.log("No weather data found in localStorage.");
+                        return null;
+                    }
+                } catch (error) {
+                    console.error("Error accessing localStorage:", error);
+                    return null;
+                }
+            })()
+        """
+        
+        # Execute JavaScript code using eval_js
+        weather_data = eval_js(js_code)
+        
+        if weather_data:
+            print(f"Raw weather data retrieved: {weather_data}")
+            # Parse JSON string into a Python dictionary
+            try:
+                weather_data = json.loads(weather_data)
+                print(f"Parsed weather data: {weather_data}")
+                return weather_data
+            except json.JSONDecodeError:
+                print("Error decoding weather data. Using default values.")
+    except ImportError as e:
+        print(f"Error importing JavaScript module: {e}")
+        return None
+    except json.JSONDecodeError as e:
+        print(f"Error decoding JSON data: {e}")
+        return None
+    except Exception as e:
+        print(f"Unexpected error retrieving weather data: {e}")
+        return None
+        
+    except Exception as e:
+        print(f"Error retrieving weather data: {e}")
+        return None
+
+
 
 async def load_level(level_name, num_of_players):
 
+    current_weather = await game_init()
     keys_data = await load_json_file('Players/player_controls.json')
     
     # Select tutorial_level, demo_level, or home
@@ -113,7 +183,7 @@ async def load_level(level_name, num_of_players):
         next_checkpoint = None
         checkpoint_increment = None
 
-    return show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint
+    return current_weather, show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint
 
 async def load_cutscene(canvas):
 
@@ -128,7 +198,7 @@ async def load_cutscene(canvas):
     show_skip2 = font.render("s to skip", True, ("#ffffff"))
     show_skip1_rect = show_skip1.get_rect(topleft=(10, 10))
     show_skip2_rect = show_skip2.get_rect(topleft=(10, 50))
-    time_to_skip = 8000
+    time_to_skip = 1000 # CHANGE THIS LATER
 
     while running:
         current_time = pygame.time.get_ticks()
@@ -211,23 +281,18 @@ async def settings_menu(screen, window_size, time_entered_settings):
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 
                 if EXIT_SETTINGS.checkForInput(MENU_MOUSE_POS):
-                    print("exit")
                     return False
                 
                 elif ONE_PLAYER.checkForInput(MENU_MOUSE_POS):
-                    print("one p")
                     return "one player"
                 
                 elif TWO_PLAYER.checkForInput(MENU_MOUSE_POS):
-                    print("2p")
                     return "two players"
 
                 elif THREE_PLAYER.checkForInput(MENU_MOUSE_POS):
-                    print("3p")
                     return "three players"
                 
                 elif FOUR_PLAYER.checkForInput(MENU_MOUSE_POS):
-                    print("4p")
                     return "four players"
         
         blurred_image = pil_image.filter(ImageFilter.GaussianBlur(radius=blur_radius))
@@ -298,7 +363,7 @@ async def pause_menu(screen, window_size, time_paused):
                     return "level restart"
                 
                 elif DISPLAY_CONTROLS.checkForInput(MENU_MOUSE_POS):
-                    print("display controls")
+                    pass
 
                 elif SETTINGS.checkForInput(MENU_MOUSE_POS):
                     return "go to settings"
@@ -341,6 +406,10 @@ async def main():
     lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25)
     text_color = ("#71d6f5")
 
+    num_of_players = 1
+    current_weather, show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)   
+
+
     print_welcome1 = font.render("welcome to", True, (text_color))
     print_welcome2 = font.render("project AstRA", True, (text_color))
     show_tutorial_level1 = lil_font.render("jump here for tutorial", True, (text_color))
@@ -348,6 +417,7 @@ async def main():
     show_settings1 = lil_font.render("← settings", True, (text_color))
     highlight_game_controls1 = lil_font.render("these could be useful→", True, (text_color))
     yay_weather = font.render("yay weather", True, (text_color))
+    print_weather_condition = font.render(f"Current windspeed: {current_weather['windspeed']}", True, (text_color))
 
     print_welcome1_rect = print_welcome1.get_rect(center=(500, 155))
     print_welcome2_rect = print_welcome2.get_rect(center=(500, 230))
@@ -356,10 +426,7 @@ async def main():
     show_settings1_rect = show_settings1.get_rect(center=(125, 475))
     highlight_game_controls1_rect = highlight_game_controls1.get_rect(center=(435, 50))
     yay_weather_rect = yay_weather.get_rect(center=(500, 350))
-
-    weather = get_weather_data()
-    num_of_players = 1
-    show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)   
+    weather_condition_rect = print_weather_condition.get_rect(center=(500, 400))
 
     running = True
     fixed_delta_time = 1 / 60
@@ -409,7 +476,7 @@ async def main():
 
                 if level_name == 'home':
                     level_name = 'tutorial_level'
-                    show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
+                    current_weather, show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
                     start_timer = pygame.time.get_ticks()
 
                 else:
@@ -638,8 +705,10 @@ async def main():
                 screen.blit(show_settings1, show_settings1_rect)
                 screen.blit(highlight_game_controls1, highlight_game_controls1_rect)
 
-            elif weather:
+            if current_weather:
                 screen.blit(yay_weather, yay_weather_rect)
+                screen.blit(print_weather_condition, weather_condition_rect)
+
                 
             for button in [RELOAD, PAUSE]:
                 button.changeColor(pygame.mouse.get_pos())

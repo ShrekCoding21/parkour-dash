@@ -458,10 +458,9 @@ frameborder="1"
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
-    
     <script type="application/javascript">
 
-        async function initPyodide() {
+    async function initPyodide() {
         console.log("Initializing Pyodide...");
         window.pyodide = await loadPyodide();
 
@@ -472,81 +471,105 @@ frameborder="1"
 
         console.log("Pyodide initialized and files loaded!");
     }
+    initPyodide()
 
-        async function custom_onload(debug_hidden) {
-            console.log("Running custom_onload...");
-            // UI adjustments
-            pyconsole.hidden = debug_hidden;
-            system.hidden = debug_hidden;
-            transfer.hidden = debug_hidden;
-            info.hidden = debug_hidden;
-            box.hidden = debug_hidden;
+    async function custom_onload(debug_hidden) {
+        // This is called before anything Python is loaded
+        // Make your JavaScript customizations here
+        console.log(__FILE__, "custom_onload");
+        window.onbeforeunload = null;
+        pyconsole.hidden = debug_hidden;
+        system.hidden = debug_hidden;
+        transfer.hidden = debug_hidden;
+        info.hidden = debug_hidden;
+        box.hidden = debug_hidden;
 
-            // Helper functions
-            async function getCoordinates(cityName) {
-                const url = "https://nominatim.openstreetmap.org/search";
-                const params = {
-                    q: cityName,
-                    format: "json",
-                    limit: 1
-                };
-                const headers = { "User-Agent": "YourAppName/1.0 (your_email@example.com)" };
+        async function getCoordinates(cityName) {
+            const url = "https://nominatim.openstreetmap.org/search";
+            const params = {
+                q: cityName,
+                format: "json",
+                limit: 1
+            };
+            const headers = { "User-Agent": "YourAppName/1.0 (your_email@example.com)" };
 
+            try {
                 const response = await axios.get(url, { params, headers });
                 if (!response.data || response.data.length === 0) {
                     throw new Error("Empty response from API. Try again later.");
                 }
+
                 const location = response.data[0];
                 return [parseFloat(location.lat), parseFloat(location.lon)];
+            } catch (error) {
+                throw new Error(`Request Error: ${error.message}`);
             }
-
-            async function fetchWeatherData(lat, lon) {
-                const url = "https://api.open-meteo.com/v1/forecast";
-                const params = {
-                    latitude: lat,
-                    longitude: lon,
-                    current_weather: true,
-                    hourly: "is_day",
-                    temperature_unit: "fahrenheit",
-                    wind_speed_unit: "mph",
-                    precipitation_unit: "inch",
-                    timezone: "America/New_York",
-                };
-                const response = await axios.get(url, { params });
-                return response.data;
-            }
-
-            function processWeather(data) {
-                const current = data.current_weather;
-                return {
-                    weather_code: current.weathercode,
-                    temperature: current.temperature,
-                    windspeed: current.windspeed,
-                };
-            }
-
-            // Main process
-            const city = "Atlanta";
-            getCoordinates(city)
-                .then(async ([lat, lon]) => {
-                    const weatherData = await fetchWeatherData(lat, lon);
-                    const currentWeather = processWeather(weatherData);
-
-                    console.log("saving data to file");
-
-                    pyodide.FS.writeFile('/output/weather_data.json', JSON.stringify({
-                        weather_code: currentWeather.weather_code
-                    }))
-                })
-                .catch(error => {
-                    console.error("Error:", error.message);
-                });
         }
 
+        async function fetchWeatherData(lat, lon) {
+            const url = "https://api.open-meteo.com/v1/forecast";
+            const params = {
+                latitude: lat,
+                longitude: lon,
+                current_weather: true,
+                hourly: "is_day",
+                temperature_unit: "fahrenheit",
+                wind_speed_unit: "mph",
+                precipitation_unit: "inch",
+                timezone: "America/New_York",
+            };
+            const response = await axios.get(url, { params });
+            return response.data;
+        }
 
-    // Initialize Pyodide and run custom_onload
-    initPyodide().then(() => custom_onload(false));
+        function processWeather(data) {
+            const current = data.current_weather;
+            return {
+                weather_code: current.weathercode,
+                temperature: current.temperature,
+                windspeed: current.windspeed,
+            };
+        }
 
+        const city = "Atlanta";
+        getCoordinates(city)
+            .then(async ([lat, lon]) => {
+                console.log(`Coordinates for ${city}: Latitude ${lat}, Longitude ${lon}`);
+                const weatherData = await fetchWeatherData(lat, lon);
+                const currentWeather = processWeather(weatherData);
+
+                console.log(`Weather Code: ${currentWeather.weather_code}`);
+                console.log(`Temperature: ${currentWeather.temperature} °F`);
+                console.log(`Wind Speed: ${currentWeather.windspeed} mph`);
+
+                const weatherJson = {
+                    weather_code: currentWeather.weather_code,
+                    temperature: currentWeather.temperature,
+                    windspeed: currentWeather.windspeed
+                };
+
+                const data = localStorage.getItem("weather_data");
+                
+                if (data) {
+                    pyodide.runPythonAsync(`
+                        import json
+                        weather_data = json.loads('${data.replace("'", "\\'")}')
+                        print("Injected weather data into Python:", weather_data)
+                    `);
+                }
+
+                // Save the JSON data to localStorage
+                localStorage.setItem("weather_data", JSON.stringify(weatherJson));
+
+                console.log("Weather data saved to localStorage.");
+            })
+            .catch(error => {
+                console.error(error.message);
+            });
+
+
+
+    }
 
 
     function custom_prerun(){
