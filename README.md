@@ -14,6 +14,14 @@ TSA Video game design competition code for RLC.
 
 *How to create levels*
 
+1) How to create and setup json file (basic)
+2) How to add images and movement to json file
+2) How to open level in main.py
+
+
+
+1) Create json file (if not already added); define location and properties of each platform
+2) Open it in python main.py file (if you go to around line 491 with the really long comment you can change level name to go to your level)
 *How to create custom platform behavior*
 
 # *Useful resources*
