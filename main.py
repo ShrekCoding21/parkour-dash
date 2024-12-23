@@ -14,7 +14,7 @@ from game_init import load_platforms, level_complete, introduce_controls, reload
 
 # Change this to whatever weather you want to test or leave as None to use API data
 TEST_WEATHER = None
-
+MAIN_LEVELS = ["demo_level", "home", "tutorial_level"]
 WEB_ENVIRONMENT = False
 try:
     import pygbag.fs # type: ignore
@@ -123,7 +123,7 @@ async def load_level(level_name, num_of_players):
     
     # Select tutorial_level, demo_level, or home
 
-    levels_data = await load_json_file(f'Levels/{level_name}.json')
+    levels_data = await load_json_file(f'Levels/{level_name}.json') if level_name in MAIN_LEVELS else await load_json_file(f'Levels/Main levels/{level_name}/{level_name}.json')
 
     player1_controls = keys_data['controls']['players']['player1']
     player2_controls = keys_data['controls']['players']['player2']
@@ -162,20 +162,19 @@ async def load_level(level_name, num_of_players):
     for player in active_players:
         reset_positions.append(spawn_point)
 
-    introduced_controls_state = {"introduced_jumping": False, "introduced_sliding": False}
+    introduced_controls_state = {"introduced_jumping": True, "introduced_sliding": True}
 
     if level_type == 'scrolling':
         
         level_width, level_height = levels_data[level_name]['camera_dimensions'][0], levels_data[level_name]['camera_dimensions'][1]
         camera = Camera(width=level_width, height=level_height, window_size=window_size)
         camera.is_active = True
-        
-        if level_name == 'tutorial_level':
+        next_checkpoint = next_checkpoints[checkpoint_increment]
 
-            next_checkpoint = next_checkpoints[checkpoint_increment]
-
+        if level_name == "tutorial_level":
             for player in active_players:
                 player.can_jump, player.can_slide = False, False
+                introduced_controls_state["introduced_jumping"], introduced_controls_state["introduced_sliding"] = False, False
 
     else:
         level_width, level_height = 1000, 700
@@ -200,7 +199,7 @@ async def load_cutscene(canvas):
     show_skip2 = font.render("s to skip", True, ("#ffffff"))
     show_skip1_rect = show_skip1.get_rect(topleft=(10, 10))
     show_skip2_rect = show_skip2.get_rect(topleft=(10, 50))
-    time_to_skip = 8000 # CHANGE THIS LATER; should be 8000 normally
+    time_to_skip = 1000 # CHANGE THIS LATER; should be 8000 normally
 
     while running:
         current_time = pygame.time.get_ticks()
@@ -488,7 +487,7 @@ async def main():
             if player.position.y > level_height + 100:
 
                 if level_name == 'home':
-                    level_name = 'tutorial_level' # change this to level currently being developed for testing; if you fall in pit in home screen, you teleport to that level; make sure this is json file name as well
+                    level_name = 'terus1' # change this to level currently being developed for testing; if you fall in pit in home screen, you teleport to that level; make sure this is json file name as well
                     show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
                     start_timer = pygame.time.get_ticks()
 

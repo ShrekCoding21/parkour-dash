@@ -59,7 +59,7 @@ def load_platforms(platform_data, level_name):
         platforms.append(platform)
         list_item += 1
 
-
+    print(platforms)
     return platforms
 
 
@@ -307,6 +307,7 @@ def get_special_platforms(platforms, level_name):
             spawn_point = (platform.position.x + (platform.dimensions[0] / 2), platform.position.y - platform.dimensions[1])
 
         elif platform.name == f"checkpoint{checkpoint_num}":
+            print(platform)
             next_checkpoints.append(platform)
             checkpoint_num += 1
 
@@ -339,7 +340,7 @@ def get_special_platforms(platforms, level_name):
         
         
         else:
-            intro_to_jumping, intro_to_sliding, intro_to_jumpslide, next_checkpoints, show_settings = None, None, None, None, None
+            intro_to_jumping, intro_to_sliding, intro_to_jumpslide, show_settings = None, None, None, None
 
     return spawn_point, intro_to_jumping, intro_to_sliding, intro_to_jumpslide, deathforms, show_settings, next_checkpoints, finish_line
 
