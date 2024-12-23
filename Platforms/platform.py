@@ -1,10 +1,11 @@
 import pygame
 
-class Platform():
-    
+class Platform:
+    __slots__ = ['name', 'position', 'start_position', 'is_moving', 'movement_range', 'speed', 'animation_frames', 'current_frame', 'frame_count', 'direction', 'start_direction', 'previous_direction', 'image_path', 'color', 'dimensions', 'velocity', 'image']
+
+    _image_cache = {}
 
     def __init__(self, name, position, is_moving, movement_range, speed, direction, image_path, dimensions, color):
-
         self.name = name
         self.position = pygame.Vector2(position)
         self.start_position = pygame.Vector2(position)
@@ -22,16 +23,20 @@ class Platform():
         self.dimensions = dimensions
         self.velocity = pygame.Vector2(0, 0)
         
-        try:
-            self.image = pygame.image.load(image_path).convert_alpha() if image_path else None
-        except FileNotFoundError:
-            self.image = None
+        self.image = self.load_image(image_path)
 
+    def load_image(self, image_path):
+        if not image_path:
+            return None
+        if image_path not in Platform._image_cache:
+            try:
+                Platform._image_cache[image_path] = pygame.image.load(image_path).convert_alpha()
+            except FileNotFoundError:
+                Platform._image_cache[image_path] = None
+        return Platform._image_cache[image_path]
 
     def update(self, dt):
-        
         if self.is_moving == 'True':
-            
             movement = pygame.Vector2(
                 self.direction.x * self.movement_range.x,
                 self.direction.y * self.movement_range.y
@@ -53,15 +58,11 @@ class Platform():
             pygame.draw.rect(screen, self.color, (*self.position, self.dimensions[0], self.dimensions[1]))
     
     def set_image(self, image_path):
-        if image_path is not None:
-            self.image = pygame.image.load(image_path)
-        else:
-            self.image = None
+        self.image = self.load_image(image_path)
 
-    
     def set_animation_frames(self, image_paths):
-        self.animation_frames = [pygame.image.load(path) for path in image_paths]
-        frame_count = len(self.animation_frames)
+        self.animation_frames = [self.load_image(path) for path in image_paths]
+        self.frame_count = len(self.animation_frames)
 
     def reset(self):
         self.position = pygame.Vector2(self.start_position)

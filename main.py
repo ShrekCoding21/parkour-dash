@@ -487,7 +487,7 @@ async def main():
             if player.position.y > level_height + 100:
 
                 if level_name == 'home':
-                    level_name = 'terus1' # change this to level currently being developed for testing; if you fall in pit in home screen, you teleport to that level; make sure this is json file name as well
+                    level_name = 'demo_level' # change this to level currently being developed for testing; if you fall in pit in home screen, you teleport to that level; make sure this is json file name as well
                     show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
                     start_timer = pygame.time.get_ticks()
 
@@ -716,11 +716,23 @@ async def main():
                 screen.blit(show_tutorial_level2, show_tutorial_level2_rect)
                 screen.blit(show_settings1, show_settings1_rect)
                 screen.blit(highlight_game_controls1, highlight_game_controls1_rect)
+            
+            # Custom logic for each main level goes here
 
-            if current_weather:
-                screen.blit(yay_weather, yay_weather_rect)
-                screen.blit(print_weather_condition, weather_condition_rect)
+            elif level_name == 'Terus1':
+                pass
 
+            elif level_name == 'Scopulosis53':
+                pass
+
+            elif level_name == 'Magnus25':
+                pass
+            
+            elif level_name == 'Nivalis36':
+                pass
+
+            elif level_name == 'Tenebris9':
+                pass
                 
             for button in [RELOAD, PAUSE]:
                 button.changeColor(pygame.mouse.get_pos())
