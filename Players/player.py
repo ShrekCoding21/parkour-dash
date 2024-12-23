@@ -24,15 +24,6 @@ class Player():
         self.slide_direction = 0
         self.slide_distance = 300
         self.controls = {action: getattr(pygame, key) for action, key in controls.items()}
-        # self.animations = self.load_animations()
-        # self.current_animation = self.animations["idle"]
-        # self.shield = False
-        # self.double_jump = False
-        # self.effects = []
-        # self.powerups = []
-
-        "temp variables until we can add player sprites"
-
         self.width, self.height = 32, 64
         self.color = color
     
