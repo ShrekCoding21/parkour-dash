@@ -7,19 +7,14 @@ TSA Video game design competition code for RLC.
 2) Include helpful information such as how to use your changes (ex: what inputs are in a function), the date of the change, and what you plan on doing to expand on it (so that other people can help)
 3) DON'T PUSH CHANGES THAT DON'T WORK TO THE REPOSITORY
 
-# Features for checkpoint 2
+# Game Documentation and tutorials
 
-1) Working tutorial level
-2) Level selection screen
+1) How to create levels
+2) How to create custom platform behavior
 
-# List of bugs
+*How to create levels*
 
-1) Restarting level; if u die, you go back to checkpoint even after reloading
-2) When on settings platform; if player chooses same number of players that there already is, it reloads settings menu
-
-# Next steps
-
-1) Finish scrolling level
+*How to create custom platform behavior*
 
 # *Useful resources*
 
