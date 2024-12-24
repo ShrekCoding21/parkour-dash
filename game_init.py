@@ -103,7 +103,7 @@ def reload_map(active_players, platforms, reset_positions):
         for player, position in zip(active_players, reset_positions):
             player.reload(position)
 
-def display_controls(introduced_controls_state, counting_string, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, timer_color):
+def display_controls(show_controls, introduced_controls_state, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active):
     
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25)
     
@@ -127,7 +127,6 @@ def display_controls(introduced_controls_state, counting_string, print_player1_c
 
         elif p2_active and not p3_active:
             p2_controls = [full_p2_controls[0], full_p2_controls[1]]
-
 
     
     elif not introduced_controls_state["introduced_sliding"] and introduced_controls_state["introduced_jumping"]:
@@ -169,54 +168,50 @@ def display_controls(introduced_controls_state, counting_string, print_player1_c
         ]
 
         
+    if show_controls:
+        x_position = 20
+        vertical_displacement = 150
         
-    x_position = 20
-    vertical_displacement = 150
-    
-    for p1_control in p1_controls:
-        print_p1_controls = font.render(p1_control, True, ("#9EBA01"))
-        p1_control_rect = print_p1_controls.get_rect(topleft=(x_position, vertical_displacement))
-        screen.blit(print_p1_controls, p1_control_rect)
-        vertical_displacement += 30
-
-    if p2_active:
-
-        for p2_control in p2_controls:
-            print_p2_controls = font.render(p2_control, True, ("#2276c9"))
-            p2_control_rect = print_p2_controls.get_rect(topleft=(x_position, vertical_displacement))
-            screen.blit(print_p2_controls, p2_control_rect)
+        for p1_control in p1_controls:
+            print_p1_controls = font.render(p1_control, True, ("#9EBA01"))
+            p1_control_rect = print_p1_controls.get_rect(topleft=(x_position, vertical_displacement))
+            screen.blit(print_p1_controls, p1_control_rect)
             vertical_displacement += 30
 
-    x_position = 990
-    vertical_displacement = 10
+        if p2_active:
 
-    for general_control in general_controls:
-        print_general_controls = font.render(general_control, True, ("#ffffff"))
-        general_control_rect = print_general_controls.get_rect(topright=(x_position, vertical_displacement))
-        screen.blit(print_general_controls, general_control_rect)
-        vertical_displacement += 30
+            for p2_control in p2_controls:
+                print_p2_controls = font.render(p2_control, True, ("#2276c9"))
+                p2_control_rect = print_p2_controls.get_rect(topleft=(x_position, vertical_displacement))
+                screen.blit(print_p2_controls, p2_control_rect)
+                vertical_displacement += 30
 
-    print_timer = font.render(counting_string, True, (timer_color))
-    timer_rect = print_timer.get_rect(topright=(x_position, vertical_displacement))
-    screen.blit(print_timer, timer_rect)
+        x_position = 990
+        vertical_displacement = 10
 
-    vertical_displacement = 450
-
-    if p3_active:
-
-        for p3_control in p3_controls:
-            print_p3_controls = font.render(p3_control, True, ("#c7b61a"))
-            p3_control_rect = print_p3_controls.get_rect(topright=(x_position, vertical_displacement))
-            screen.blit(print_p3_controls, p3_control_rect)
+        for general_control in general_controls:
+            print_general_controls = font.render(general_control, True, ("#ffffff"))
+            general_control_rect = print_general_controls.get_rect(topright=(x_position, vertical_displacement))
+            screen.blit(print_general_controls, general_control_rect)
             vertical_displacement += 30
 
-    if p4_active:
+        vertical_displacement = 450
 
-        for p4_control in p4_controls:
-            print_p4_controls = font.render(p4_control, True, ("#c7281a"))
-            p4_control_rect = print_p4_controls.get_rect(topright=(x_position, vertical_displacement))
-            screen.blit(print_p4_controls, p4_control_rect)
-            vertical_displacement += 30
+        if p3_active:
+
+            for p3_control in p3_controls:
+                print_p3_controls = font.render(p3_control, True, ("#c7b61a"))
+                p3_control_rect = print_p3_controls.get_rect(topright=(x_position, vertical_displacement))
+                screen.blit(print_p3_controls, p3_control_rect)
+                vertical_displacement += 30
+
+        if p4_active:
+
+            for p4_control in p4_controls:
+                print_p4_controls = font.render(p4_control, True, ("#c7281a"))
+                p4_control_rect = print_p4_controls.get_rect(topright=(x_position, vertical_displacement))
+                screen.blit(print_p4_controls, p4_control_rect)
+                vertical_displacement += 30
 
 def determine_blitted_controls(active_players, p1_controls, p3_controls, p4_controls):
 

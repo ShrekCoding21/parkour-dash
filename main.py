@@ -16,6 +16,7 @@ from game_init import load_platforms, level_complete, introduce_controls, reload
 TEST_WEATHER = None
 MAIN_LEVELS = ["demo_level", "home", "tutorial_level"]
 WEB_ENVIRONMENT = False
+
 try:
     import pygbag.fs # type: ignore
     WEB_ENVIRONMENT = True
@@ -115,8 +116,6 @@ async def read_weather_file():
             print(f"Error retrieving weather data: {e}")
             return None
 
-
-
 async def load_level(level_name, num_of_players):
 
     keys_data = await load_json_file('Players/player_controls.json')
@@ -130,7 +129,10 @@ async def load_level(level_name, num_of_players):
 
     else:
         levels_data = await load_json_file(f'Levels/Main levels/{level_name}/{level_name}.json')
-        bg_image = pygame.image.load("assets")
+        # bg_image = pygame.image.load("assets")
+
+    bg_image = pygame.image.load("assets/parkour_dash_background.png").convert_alpha()
+    bg_image = pygame.transform.scale(bg_image, window_size)
 
     player1_controls = keys_data['controls']['players']['player1']
     player2_controls = keys_data['controls']['players']['player2']
@@ -170,6 +172,7 @@ async def load_level(level_name, num_of_players):
         reset_positions.append(spawn_point)
 
     introduced_controls_state = {"introduced_jumping": True, "introduced_sliding": True}
+    show_controls = True if level_name in MAIN_LEVELS else False
 
     if level_type == 'scrolling':
         
@@ -191,7 +194,7 @@ async def load_level(level_name, num_of_players):
         next_checkpoint = None
         checkpoint_increment = None
 
-    return bg_image, show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint
+    return show_controls, bg_image, show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint
 
 async def load_cutscene(canvas):
 
@@ -248,7 +251,7 @@ async def load_cutscene(canvas):
 
 async def settings_menu(screen, window_size, time_entered_settings):
 
-    blur_duration = 0.85
+    blur_duration = 0
     max_blur_radius = 10
     screen_surface = pygame.image.tobytes(screen, "RGBA")
     pil_image = Image.frombytes("RGBA", screen.get_size(), screen_surface)
@@ -322,9 +325,9 @@ async def settings_menu(screen, window_size, time_entered_settings):
         pygame.display.flip()
         await asyncio.sleep(0)
 
-async def pause_menu(screen, window_size, time_paused):
+async def pause_menu(screen, level_name, show_controls, window_size, time_paused):
 
-    blur_duration = 0.85
+    blur_duration = 0
     max_blur_radius = 10
     screen_surface = pygame.image.tobytes(screen, "RGBA")
     pil_image = Image.frombytes("RGBA", screen.get_size(), screen_surface)
@@ -337,11 +340,20 @@ async def pause_menu(screen, window_size, time_paused):
 
     RESUME_BUTTON = Button(image=button_image, pos=(500, 260), text_input="resume", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
     RESTART_LEVEL = Button(image=button_image, pos=(500, 330), text_input="restart", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 35), base_color="#167fc9", hovering_color="#F59071")
-    DISPLAY_CONTROLS = Button(image=button_image, pos=(500, 400), text_input="controls", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30), base_color="#167fc9", hovering_color="#F59071")
-    SETTINGS = Button(image=button_image, pos=(500, 470), text_input="settings", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30), base_color="#167fc9", hovering_color="#F59071")
-    MAIN_MENU = Button(image=button_image, pos=(500, 540), text_input="home", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
 
-    buttons = [RESUME_BUTTON, RESTART_LEVEL, DISPLAY_CONTROLS, SETTINGS, MAIN_MENU]
+    if level_name in MAIN_LEVELS:
+        
+        SETTINGS = Button(image=button_image, pos=(500, 400), text_input="settings", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30), base_color="#167fc9", hovering_color="#F59071")
+        MAIN_MENU = Button(image=button_image, pos=(500, 470), text_input="home", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+        buttons = [RESUME_BUTTON, RESTART_LEVEL, SETTINGS, MAIN_MENU]
+    
+    else:
+
+        SETTINGS = Button(image=button_image, pos=(500, 470), text_input="settings", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30), base_color="#167fc9", hovering_color="#F59071")
+        MAIN_MENU = Button(image=button_image, pos=(500, 540), text_input="home", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+        DISPLAY_CONTROLS = Button(image=button_image, pos=(500, 400), text_input="controls", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30), base_color="#167fc9", hovering_color="#F59071")
+        HIDE_CONTROLS = Button(image=button_image, pos=(500, 400), text_input="hide controls", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 20), base_color="#167fc9", hovering_color="#F59071")
+        buttons = [RESUME_BUTTON, RESTART_LEVEL, HIDE_CONTROLS, SETTINGS, MAIN_MENU] if show_controls else [RESUME_BUTTON, RESTART_LEVEL, DISPLAY_CONTROLS, SETTINGS, MAIN_MENU]
 
     while True:
         
@@ -369,15 +381,17 @@ async def pause_menu(screen, window_size, time_paused):
                 
                 elif RESTART_LEVEL.checkForInput(MENU_MOUSE_POS):
                     return "level restart"
-                
-                elif DISPLAY_CONTROLS.checkForInput(MENU_MOUSE_POS):
-                    pass
 
                 elif SETTINGS.checkForInput(MENU_MOUSE_POS):
                     return "go to settings"
                 
                 elif MAIN_MENU.checkForInput(MENU_MOUSE_POS):
                     return "go to home"
+
+                if level_name not in MAIN_LEVELS:
+
+                    if DISPLAY_CONTROLS.checkForInput(MENU_MOUSE_POS) or HIDE_CONTROLS.checkForInput(MENU_MOUSE_POS):
+                        return "show controls"
 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
@@ -424,7 +438,7 @@ async def main():
     text_color = ("#71d6f5")
 
     num_of_players = 1
-    bg_image, show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)   
+    show_controls, bg_image, show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)   
     print(f"current weather (in main): {current_weather}")
 
     print_welcome1 = font.render("welcome to", True, (text_color))
@@ -457,7 +471,6 @@ async def main():
     platforms_used = []
     RELOAD = Button(image=pygame.image.load("Buttons/reload_button.png").convert_alpha(), pos=(85, 43), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
     PAUSE = Button(image=pygame.image.load("Buttons/pause_button.png").convert_alpha(), pos=(30, 35), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color=("White"), hovering_color=("White"))
-
 
 
     while running:
@@ -493,7 +506,7 @@ async def main():
 
                 if level_name == 'home':
                     level_name = 'terus1' # change this to level currently being developed for testing; if you fall in pit in home screen, you teleport to that level; make sure this is json file name as well
-                    bg_image, show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
+                    show_controls, bg_image, show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
                     start_timer = pygame.time.get_ticks()
 
                 else:
@@ -592,7 +605,7 @@ async def main():
                 
                 elif paused or game_finished:
 
-                    if event.key == pygame.K_u or not pause_menu(screen, window_size, time_paused):
+                    if event.key == pygame.K_u or not pause_menu(screen, level_name, show_controls, window_size, time_paused):
                         paused = False
                     
                     elif event.key == pygame.K_r:
@@ -607,7 +620,7 @@ async def main():
 
         if paused:
             
-            action = await pause_menu(screen, window_size, time_paused)
+            action = await pause_menu(screen, level_name, show_controls, window_size, time_paused)
 
             if action == False:
                 paused = False
@@ -639,7 +652,7 @@ async def main():
             elif action == "go to home":
 
                 level_name = 'home'
-                bg_image, show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
+                show_controls, bg_image, show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
                 paused = False
                 start_timer = pygame.time.get_ticks()
 
@@ -649,6 +662,15 @@ async def main():
                 print("show settings (via pause menu)")
                 paused = False
                 editing_settings = True
+            
+            elif action == "show controls":
+
+                if level_name not in MAIN_LEVELS:
+                    show_controls = True if not show_controls else False
+                
+                paused = False
+
+                
 
         elif editing_settings:
 
@@ -662,7 +684,7 @@ async def main():
                 
                 if len(active_players) != 1:
                     num_of_players = 1
-                    bg_image, show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
+                    show_controls, bg_image, show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
                     reload_players = True
                     
                 editing_settings = False
@@ -671,7 +693,7 @@ async def main():
 
                 if len(active_players) != 2:
                     num_of_players = 2
-                    bg_image, show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
+                    show_controls, bg_image, show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
                     reload_players = True
 
                 editing_settings = False
@@ -680,7 +702,7 @@ async def main():
 
                 if len(active_players) != 3:
                     num_of_players = 3
-                    bg_image, show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
+                    show_controls, bg_image, show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
                     reload_players = True
 
                 editing_settings = False
@@ -689,7 +711,7 @@ async def main():
 
                 if len(active_players) != 4:
                     num_of_players = 4
-                    bg_image, show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
+                    show_controls, bg_image, show_settings, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
                     reload_players = True
 
                 editing_settings = False
@@ -711,8 +733,14 @@ async def main():
             counting_string = update_timer(start_timer)
             screen.blit(bg_image, (0, 0))
             render_game_objects(platforms, active_players, camera)
-            display_controls(introduced_controls_state, counting_string, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, timer_color=("#32854b"))
-            introduce_controls(blit_jumpslide)
+            display_controls(show_controls, introduced_controls_state, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active)
+            
+            print_timer = lil_font.render(counting_string, True, ("#32854b"))
+            timer_rect = print_timer.get_rect(topright=(990, 100))
+            screen.blit(print_timer, timer_rect)
+
+            if level_name in MAIN_LEVELS:
+                introduce_controls(blit_jumpslide)
 
             if level_name == 'home':
                 screen.blit(print_welcome1, print_welcome1_rect)
@@ -725,7 +753,7 @@ async def main():
             # Custom logic for each main level goes here
 
             elif level_name == 'terus1':
-                print("hi")
+                pass
 
             elif level_name == 'scopulosis53':
                 pass
