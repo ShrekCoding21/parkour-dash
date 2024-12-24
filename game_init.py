@@ -309,6 +309,11 @@ def get_special_platforms(platforms, level_name):
         elif platform.name == "finish-line":
             finish_line = platform
 
+        elif platform.name == f"death-form{deathpoint_num}":
+            deathforms.append(platform)
+            print("death form found")
+            deathpoint_num += 1
+
         if level_name == "tutorial_level":
             
             if platform.name == "introduce-jumping":
@@ -319,25 +324,11 @@ def get_special_platforms(platforms, level_name):
 
             elif platform.name == "introduce-jumpsliding":
                 intro_to_jumpslide = platform
-
-            elif platform.name == f"death-form{deathpoint_num}":
-                deathforms.append(platform)
-                deathpoint_num += 1
-
-            show_settings = None
-
-        elif level_name == "home":
-
-            if platform.name == "settings":
-                show_settings = platform
-                intro_to_jumping, intro_to_sliding, intro_to_jumpslide, next_checkpoints = None, None, None, None
-
-        
         
         else:
-            intro_to_jumping, intro_to_sliding, intro_to_jumpslide, show_settings = None, None, None, None
+            intro_to_jumping, intro_to_sliding, intro_to_jumpslide = None, None, None
 
-    return spawn_point, intro_to_jumping, intro_to_sliding, intro_to_jumpslide, deathforms, show_settings, next_checkpoints, finish_line
+    return spawn_point, intro_to_jumping, intro_to_sliding, intro_to_jumpslide, deathforms, next_checkpoints, finish_line
 
 def render_game_objects(platforms, active_players, camera):
 

@@ -4,12 +4,12 @@ from Platforms.platform import Platform
 
 class Camera():
     
-    def __init__(self, width, height, window_size):
+    def __init__(self, width, height, window_size, zoom):
         self.camera_rect = pygame.Rect(0, 0, width, height)
         self.width = width
         self.height = height
         self.window_size = window_size
-        self.zoom = 1
+        self.zoom = zoom
         self.margin = 100
         self.is_active = True
 
