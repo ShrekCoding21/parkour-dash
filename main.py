@@ -589,32 +589,26 @@ async def terus1(active_players, weather_condition):
 
             elif settings_action == "one player":
                 
-                active_players = await newPlayerCount(1 ,active_players, level_name)
-                    
+                new_num_of_players = 1
+                active_players = await newPlayerCount(new_num_of_players ,active_players, level_name)
                 editing_settings = False
             
             elif settings_action == "two players":
 
-                if len(active_players) != 2:
-                    num_of_players = 2
-                    show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
-
+                new_num_of_players = 2
+                active_players = await newPlayerCount(new_num_of_players ,active_players, level_name)
                 editing_settings = False
             
             elif settings_action == "three players":
 
-                if len(active_players) != 3:
-                    num_of_players = 3
-                    show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
-
+                new_num_of_players = 3
+                active_players = await newPlayerCount(new_num_of_players ,active_players, level_name)
                 editing_settings = False
             
             elif settings_action == "four players":
 
-                if len(active_players) != 4:
-                    num_of_players = 4
-                    show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
-
+                new_num_of_players = 4
+                active_players = await newPlayerCount(new_num_of_players ,active_players, level_name)
                 editing_settings = False
 
             
@@ -922,38 +916,26 @@ async def main():
 
             elif settings_action == "one player":
                 
-                if len(active_players) != 1:
-                    num_of_players = 1
-                    show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
-                    reload_players = True
-                    
+                new_num_of_players = 1
+                active_players = await newPlayerCount(new_num_of_players ,active_players, level_name)
                 editing_settings = False
             
             elif settings_action == "two players":
 
-                if len(active_players) != 2:
-                    num_of_players = 2
-                    show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
-                    reload_players = True
-
+                new_num_of_players = 2
+                active_players = await newPlayerCount(new_num_of_players ,active_players, level_name)
                 editing_settings = False
             
             elif settings_action == "three players":
 
-                if len(active_players) != 3:
-                    num_of_players = 3
-                    show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
-                    reload_players = True
-
+                new_num_of_players = 3
+                active_players = await newPlayerCount(new_num_of_players ,active_players, level_name)
                 editing_settings = False
             
             elif settings_action == "four players":
 
-                if len(active_players) != 4:
-                    num_of_players = 4
-                    show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, introduce_jumping, introduce_sliding, OG_spawn_point, introduce_jumpsliding, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active, next_checkpoint = await load_level(level_name, num_of_players)
-                    reload_players = True
-
+                new_num_of_players = 4
+                active_players = await newPlayerCount(new_num_of_players ,active_players, level_name)
                 editing_settings = False
 
             
