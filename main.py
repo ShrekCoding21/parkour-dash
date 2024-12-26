@@ -431,10 +431,10 @@ async def terus1(active_players, weather_condition):
         
         if platform.name == "show-slide":
             show_slide = platform
-            print(show_slide.name)
+            print(show_slide)
     
-    show_slide = font.render("← slide...", True, ("#0c4701"))
-    show_slide_rect = show_slide.get_rect(center=(500, 350))
+    print_show_slide = font.render("← slide...", True, ("#0c4701"))
+    show_slide_rect = print_show_slide.get_rect(center=(500, 350))
 
     running = True
     fixed_delta_time = 1 / 60
@@ -443,6 +443,7 @@ async def terus1(active_players, weather_condition):
     paused = False
     editing_settings = False
     game_finished = False
+    blit_show_slide = False
     best_player_num = None
     platforms_used = []
     RELOAD = Button(image=pygame.image.load("Buttons/reload_button.png").convert_alpha(), pos=(85, 43), text_input=None, font=lil_font, base_color="#167fc9", hovering_color="#F59071")
@@ -464,11 +465,16 @@ async def terus1(active_players, weather_condition):
                 # print(player.position)
 
                 if player.on_platform:
-                    current_platform = player.on_platform.name
+                    current_platform = player.on_platform
                     # print(current_platform)
 
                     if current_platform not in platforms_used:
                         platforms_used.append(current_platform)
+
+            if player.on_platform == show_slide:
+                blit_show_slide = True
+            else:
+                blit_show_slide = False
 
             if player.position.y > level_height + 100:
                 
@@ -487,10 +493,6 @@ async def terus1(active_players, weather_condition):
 
             elif player.on_platform in death_platforms:
                 player.reload(spawn_point)
-            
-            if player.on_platform == show_slide:
-                print("show slide")
-                screen.blit(show_slide, show_slide_rect)
 
             if player.on_platform == next_checkpoint:
                 spawn_point = (next_checkpoint.position.x + (next_checkpoint.dimensions[0] / 2), next_checkpoint.start_position.y - next_checkpoint.dimensions[1])
@@ -618,6 +620,8 @@ async def terus1(active_players, weather_condition):
             counting_string = update_timer(start_timer)
             # screen.blit(bg_image, (0, 0))
             render_game_objects(platforms, active_players, camera, flashlight)
+            if blit_show_slide:
+                screen.blit(print_show_slide, show_slide_rect)
             display_controls(len(active_players), show_controls, introduced_controls_state, print_player1_controls, print_player3_controls, print_player4_controls)
             
             print_timer = lil_font.render(counting_string, True, ("#32854b"))
