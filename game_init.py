@@ -62,7 +62,6 @@ def load_platforms(platform_data, level_name):
     print(platforms)
     return platforms
 
-
 def level_complete(screen, clock, window_size, counting_string, best_player_num, text_color):
 
     text1 = f'player {best_player_num} wins!'
@@ -103,63 +102,62 @@ def reload_map(active_players, platforms, reset_positions):
         for player, position in zip(active_players, reset_positions):
             player.reload(position)
 
-def display_controls(show_controls, introduced_controls_state, print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active):
+def display_controls(num_of_players, show_controls, introduced_controls_state, print_player1_controls, print_player3_controls, print_player4_controls):
     
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25)
     
     full_p1_controls = print_player1_controls
-    full_p2_controls = print_player2_controls
+    full_p2_controls = [
+            '←: left',
+            '→: right',
+            '↑: jump',
+            '↓: slide'
+        ]
     full_p3_controls = print_player3_controls
     full_p4_controls = print_player4_controls
 
+    p1_controls = []
+    p2_controls = []
+    p3_controls = []
+    p4_controls = []
+
     if not introduced_controls_state["introduced_jumping"]:
-        
         p1_controls = [full_p1_controls[0], full_p1_controls[1]]
-        
-        if p4_active:
+
+        if num_of_players > 1:
             p2_controls = [full_p2_controls[0], full_p2_controls[1]]
+        if num_of_players > 2:
             p3_controls = [full_p3_controls[0], full_p3_controls[1]]
+        if num_of_players > 3:
             p4_controls = [full_p4_controls[0], full_p4_controls[1]]
 
-        elif p3_active and not p4_active:
-            p3_controls = [full_p3_controls[0], full_p3_controls[1]]
-            p2_controls = [full_p2_controls[0], full_p2_controls[1]]
-
-        elif p2_active and not p3_active:
-            p2_controls = [full_p2_controls[0], full_p2_controls[1]]
 
     
     elif not introduced_controls_state["introduced_sliding"] and introduced_controls_state["introduced_jumping"]:
 
         p1_controls = [full_p1_controls[0], full_p1_controls[1], full_p1_controls[2]]
         
-        if p4_active:
+        if num_of_players > 1:
             p2_controls = [full_p2_controls[0], full_p2_controls[1], full_p2_controls[2]]
-            p3_controls = [full_p3_controls[0], full_p3_controls[1], full_p3_controls[2]]
-            p4_controls = [full_p4_controls[0], full_p4_controls[1], full_p4_controls[2]]
-        
-        elif p3_active and not p4_active:
-            p2_controls = [full_p2_controls[0], full_p2_controls[1], full_p2_controls[2]]
+
+        if num_of_players > 2:
             p3_controls = [full_p3_controls[0], full_p3_controls[1], full_p3_controls[2]]
 
-        elif p2_active and not p3_active:
-            p2_controls = [full_p2_controls[0], full_p2_controls[1], full_p2_controls[2]]          
+        if num_of_players > 3:
+            p4_controls = [full_p4_controls[0], full_p4_controls[1], full_p4_controls[2]]        
         
     else:
 
         p1_controls = full_p1_controls       
         
-        if p4_active:
-            p2_controls = full_p2_controls       
-            p3_controls = full_p3_controls
-            p4_controls = full_p4_controls
-
-        elif p3_active and not p4_active:
-            p2_controls = full_p2_controls       
-            p3_controls = full_p3_controls
-
-        elif p2_active and not p3_active:
+        if num_of_players > 1:
             p2_controls = full_p2_controls
+        
+        if num_of_players > 2:       
+            p3_controls = full_p3_controls
+        
+        if num_of_players > 3:
+            p4_controls = full_p4_controls
     
     general_controls = [
         'p: game pause',
@@ -178,7 +176,7 @@ def display_controls(show_controls, introduced_controls_state, print_player1_con
             screen.blit(print_p1_controls, p1_control_rect)
             vertical_displacement += 30
 
-        if p2_active:
+        if num_of_players > 1:
 
             for p2_control in p2_controls:
                 print_p2_controls = font.render(p2_control, True, ("#2276c9"))
@@ -197,7 +195,7 @@ def display_controls(show_controls, introduced_controls_state, print_player1_con
 
         vertical_displacement = 450
 
-        if p3_active:
+        if num_of_players > 2:
 
             for p3_control in p3_controls:
                 print_p3_controls = font.render(p3_control, True, ("#c7b61a"))
@@ -205,7 +203,7 @@ def display_controls(show_controls, introduced_controls_state, print_player1_con
                 screen.blit(print_p3_controls, p3_control_rect)
                 vertical_displacement += 30
 
-        if p4_active:
+        if num_of_players > 3:
 
             for p4_control in p4_controls:
                 print_p4_controls = font.render(p4_control, True, ("#c7281a"))
@@ -213,62 +211,22 @@ def display_controls(show_controls, introduced_controls_state, print_player1_con
                 screen.blit(print_p4_controls, p4_control_rect)
                 vertical_displacement += 30
 
-def determine_blitted_controls(active_players, p1_controls, p3_controls, p4_controls):
+def determine_blitted_controls(p1_controls, p3_controls, p4_controls):
 
     print_player1_controls = []
-    print_player2_controls = []
     print_player3_controls = []
     print_player4_controls = []
-
-    p2_active = False
-    p3_active = False
-    p4_active = False
 
     for action, key in p1_controls.items():
         print_player1_controls.append(f'{action}: {key}')
 
-    if len(active_players) >= 4:    
-        p4_active = True
-        p3_active = True
-        p2_active = True
-        
-        for action, key in p4_controls.items():
+    for action, key in p3_controls.items():
+        print_player3_controls.append(f'{action}: {key}')
+
+    for action, key in p4_controls.items():
             print_player4_controls.append(f'{action}: {key}')
 
-        for action, key in p3_controls.items():
-            print_player3_controls.append(f'{action}: {key}')
-
-        print_player2_controls = [
-            '←: left',
-            '→: right',
-            '↑: jump',
-            '↓: slide'
-        ]
-
-    elif len(active_players) >= 3 and not p4_active:
-        p3_active = True
-        p2_active = True
-
-        for action, key in p3_controls.items():
-            print_player3_controls.append(f'{action}: {key}')
-
-        print_player2_controls = [
-            '←: left',
-            '→: right',
-            '↑: jump',
-            '↓: slide'
-        ]
-
-    elif len(active_players) >= 2 and not p3_active:
-        p2_active = True
-        print_player2_controls = [
-            '←: left',
-            '→: right',
-            '↑: jump',
-            '↓: slide'
-        ]
-
-    return print_player1_controls, print_player2_controls, print_player3_controls, print_player4_controls, p2_active, p3_active, p4_active
+    return print_player1_controls, print_player3_controls, print_player4_controls
             
 def update_game_logic(delta_time, active_players, platforms, keys, position):
 
@@ -311,7 +269,6 @@ def get_special_platforms(platforms, level_name):
 
         elif platform.name == f"death-form{deathpoint_num}":
             deathforms.append(platform)
-            print("death form found")
             deathpoint_num += 1
 
         if level_name == "tutorial_level":
@@ -330,27 +287,73 @@ def get_special_platforms(platforms, level_name):
 
     return spawn_point, intro_to_jumping, intro_to_sliding, intro_to_jumpslide, deathforms, next_checkpoints, finish_line
 
-def render_game_objects(platforms, active_players, camera):
+def is_flashlight_touching_platform(flashlight_beam, platform_rect, flashlight):
+    """
+    Checks for collision between the flashlight beam and a platform.
+
+    Args:
+        flashlight_beam: The rotated surface of the flashlight beam.
+        platform_rect: The pygame.Rect object representing the platform's position.
+        flashlight: Flashlight object (if applicable).
+
+    Returns:
+        True if the beam collides with the platform, False otherwise.
+    """
+
+    # Get the rectangle of the beam surface
+    beam_rect = flashlight_beam.get_rect()
+
+    # Calculate the center of the beam rectangle based on the flashlight's position
+    beam_center_x = flashlight.pos.x - beam_rect.width // 2
+    beam_center_y = flashlight.pos.y - beam_rect.height // 2
+    beam_rect.center = (beam_center_x, beam_center_y)
+
+    # Check for collision between the beam rectangle and platform rectangle
+    return beam_rect.colliderect(platform_rect)
+
+
+def render_game_objects(platforms, active_players, camera, flashlight):
+    if flashlight.on:
+        flashlight.draw(camera)  # Draw the flashlight beam first
 
     for platform in platforms:
-        
         platform_rect = camera.apply(platform)
-                
-        if platform.image:  # If the platform has an image
-            
+
+        # Create a temporary surface for platform rendering
+        platform_surface = pygame.Surface((platform_rect.width, platform_rect.height), pygame.SRCALPHA) 
+        platform_surface.fill((0, 0, 0, 0))  # Transparent initially
+
+        if platform.image:
             scaled_image = pygame.transform.scale(
                 platform.image,
                 (int(platform_rect.width), int(platform_rect.height))
-
             )
-            
-            screen.blit(scaled_image, platform_rect)
-        
-        else:  # Fallback to solid color if no image
-            pygame.draw.rect(screen, platform.color, platform_rect)
+            platform_surface.blit(scaled_image, (0, 0)) 
+        else:
+            pygame.draw.rect(platform_surface, platform.color, (0, 0, platform_rect.width, platform_rect.height))
 
+        # Check for flashlight illumination
+        if flashlight.on:
+            is_hit = is_flashlight_touching_platform(flashlight.rotated_beam, platform_rect, flashlight)
+
+            # Create a mask for the flashlight beam
+            mask = pygame.mask.from_surface(flashlight.rotated_beam)
+
+            # Create a mask for the platform
+            platform_mask = pygame.mask.from_surface(platform_surface)
+
+            # Use pygame.mask.to_surface to get the intersection of the masks
+            intersection = mask.to_surface()
+
+            # Apply a darker blending to the platform surface
+            darkened_color = (255 * 0.5, 255 * 0.5, 255 * 0.5)  # Darker version of the platform color
+            platform_surface.blit(intersection, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+            platform_surface.fill(darkened_color, special_flags=pygame.BLEND_RGBA_MULT)
+
+        screen.blit(platform_surface, platform_rect)
+
+    # Render players
     for player in active_players:
-
         player_rect = camera.apply(player)
         scaled_rect = pygame.Rect(
             player_rect.x,
@@ -359,6 +362,8 @@ def render_game_objects(platforms, active_players, camera):
             int(player_rect.height)
         )
         pygame.draw.rect(screen, player.color, scaled_rect)
+
+
 
 def update_tutorial_controls(active_players, introduce_jumping, introduce_sliding, introduced_controls_state):
     """Allow players to use new controls when reaching new section and tell display_controls function to display new controls"""

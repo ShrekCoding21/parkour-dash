@@ -24,7 +24,16 @@
 
         "jump-platform2": {
             "x-position": 790,
-            "y-position": 265,
+            "y-position": 205,
+            "width": 130,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+
+        "show-slide": {
+            "x-position": 1030,
+            "y-position": 280,
             "width": 130,
             "height": 30,
             "is_moving": "False",
@@ -32,16 +41,7 @@
         },
 
         "jump-platform3": {
-            "x-position": 1030,
-            "y-position": 450,
-            "width": 130,
-            "height": 30,
-            "is_moving": "False",
-            "color": "#b04e15"
-        },
-
-        "jump-platform4": {
-            "x-position": 600,
+            "x-position": 630,
             "y-position": 700,
             "width": 130,
             "height": 30,
@@ -49,8 +49,8 @@
             "color": "#b04e15"
         },
 
-        "jump-platform5": {
-            "x-position": 320,
+        "jump-platform4": {
+            "x-position": 300,
             "y-position": 750,
             "width": 130,
             "height": 30,
@@ -58,7 +58,7 @@
             "color": "#b04e15"
         },
 
-        "jump-platform6": {
+        "jump-platform5": {
             "x-position": 600,
             "y-position": 830,
             "width": 50,
@@ -76,7 +76,7 @@
             "color": "#9ff084"
         },
 
-        "jump-platform7": {
+        "jump-platform6": {
             "x-position": 1150,
             "y-position": 1600,
             "width": 130,
@@ -85,7 +85,7 @@
             "color": "#b04e15"
         },
 
-        "jump-platform8": {
+        "jump-platform7": {
             "x-position": 1430,
             "y-position": 1500,
             "width": 130,
