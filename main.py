@@ -161,7 +161,7 @@ async def load_level(level_name, num_of_players):
         bg_image = pygame.transform.scale(bg_image, window_size)
 
     else:
-        levels_data = await load_json_file(f'Levels/Main levels/{level_name}/{level_name}.json')
+        levels_data = await load_json_file(f'Levels/{level_name}/{level_name}.json')
         # bg_image = pygame.image.load(f'Levels/Main levels/{level_name}/assets')
 
     bg_image = pygame.image.load("assets/parkour_dash_background.png").convert_alpha()
@@ -462,7 +462,7 @@ async def terus1(active_players, weather_condition):
     show_checkpoint2_reached = platform_dict.get("checkpoint2")
     introduce_flashlight = platform_dict.get("starting-platform")
     
-    artifact_image1 = pygame.image.load("Levels/Main levels/Terus1/assets/artifact1.png")
+    artifact_image1 = pygame.image.load("Levels/Terus1/assets/artifact1.png")
     artifact_data = [{"image": artifact_image1, "position": (900, 1480), "name": "Golden Idol"}]
     artifacts = pygame.sprite.Group(Artifact(data["image"], data["position"], data["name"]) for data in artifact_data)
 
@@ -668,7 +668,7 @@ async def tutorial_level(active_players):
         player.can_jump, player.can_slide = False, False
         introduced_controls_state["introduced_jumping"], introduced_controls_state["introduced_sliding"] = False, False
 
-    artifact_image1 = pygame.image.load("Levels/Main levels/Terus1/assets/artifact1.png")
+    artifact_image1 = pygame.image.load("Levels/Terus1/assets/artifact1.png")
     artifact_data = [
         {"image": artifact_image1, "position": (2500, 270), "name": "Golden Idol"},
         {"image": artifact_image1, "position": (500, 450), "name": "Ancient Vase"}
@@ -860,7 +860,7 @@ async def main():
         if platform.name == 'settings':
             show_settings = platform
     
-    artifact_image1 = pygame.image.load("Levels/Main levels/Terus1/assets/artifact1.png")
+    artifact_image1 = pygame.image.load("Levels/Terus1/assets/artifact1.png")
 
     # Define artifact data
     artifact_data = [
