@@ -107,6 +107,19 @@ def reload_map(active_players, platforms, reset_positions, artifacts):
 
 
 def display_controls(num_of_players, show_controls, introduced_controls_state, print_player1_controls, print_player3_controls, print_player4_controls):
+    """
+    Displays the control instructions for players on the game screen.
+    Parameters:
+    num_of_players (int): The number of players in the game.
+    show_controls (bool): Flag to determine whether to show the controls on the screen.
+    introduced_controls_state (dict): A dictionary indicating which controls have been introduced.
+        Keys include "introduced_jumping" and "introduced_sliding".
+    print_player1_controls (list): List of control instructions for player 1.
+    print_player3_controls (list): List of control instructions for player 3.
+    print_player4_controls (list): List of control instructions for player 4.
+    Returns:
+    None
+    """
     
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25)
     
