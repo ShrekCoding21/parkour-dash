@@ -13,6 +13,16 @@
             "color": "#b04e15"
         },
 
+        "death-form1": {
+            "x-position": 370,
+            "y-position": 280,
+            "width": 410,
+            "height": 10,
+            "is_moving": "False",
+            "image_path": "Platforms/transparent_platform1.png",
+            "color": "#ffffff"
+        },
+
         "jump-platform1": {
             "x-position": 530,
             "y-position": 130,
@@ -40,6 +50,16 @@
             "color": "#b04e15"
         },
 
+        "death-form2": {
+            "x-position": 900,
+            "y-position": 700,
+            "width": 1000,
+            "height": 10,
+            "is_moving": "False",
+            "image_path": "Platforms/transparent_platform1.png",
+            "color": "#ffffff"
+        },
+
         "jump-platform3": {
             "x-position": 630,
             "y-position": 700,
@@ -50,7 +70,7 @@
         },
 
         "jump-platform4": {
-            "x-position": 300,
+            "x-position": 330,
             "y-position": 750,
             "width": 130,
             "height": 30,
@@ -78,7 +98,7 @@
 
         "jump-platform6": {
             "x-position": 1150,
-            "y-position": 1600,
+            "y-position": 1550,
             "width": 130,
             "height": 30,
             "is_moving": "False",
@@ -96,7 +116,7 @@
 
         "checkpoint2": {
             "x-position": 1710,
-            "y-position": 1600,
+            "y-position": 1550,
             "width": 150,
             "height": 30,
             "is_moving": "False",

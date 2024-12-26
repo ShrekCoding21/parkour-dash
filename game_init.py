@@ -94,13 +94,17 @@ def introduce_controls(blit_jumpslide):
         screen.blit(print_jumpslide_tutorial1, jumpslide_tutorial_rect1)
         screen.blit(print_jumpslide_tutorial2, jumpslide_tutorial_rect2)
 
-def reload_map(active_players, platforms, reset_positions):
+def reload_map(active_players, platforms, reset_positions, artifacts):
         
         for platform in platforms:
             platform.reset()
 
         for player, position in zip(active_players, reset_positions):
             player.reload(position)
+        
+        for artifact in artifacts:
+            artifact.reset()
+
 
 def display_controls(num_of_players, show_controls, introduced_controls_state, print_player1_controls, print_player3_controls, print_player4_controls):
     
@@ -228,10 +232,10 @@ def determine_blitted_controls(p1_controls, p3_controls, p4_controls):
 
     return print_player1_controls, print_player3_controls, print_player4_controls
             
-def update_game_logic(delta_time, active_players, platforms, keys, position):
+def update_game_logic(delta_time, active_players, platforms, keys, position, popup_active):
 
     for player in active_players:
-        player.update(delta_time, keys, platforms, position)
+        player.update(delta_time, keys, platforms, position, popup_active)
         player.collisions(platforms)
 
     for platform in platforms:
@@ -271,21 +275,7 @@ def get_special_platforms(platforms, level_name):
             deathforms.append(platform)
             deathpoint_num += 1
 
-        if level_name == "tutorial_level":
-            
-            if platform.name == "introduce-jumping":
-                intro_to_jumping = platform
-
-            elif platform.name == "introduce-sliding":
-                intro_to_sliding = platform
-
-            elif platform.name == "introduce-jumpsliding":
-                intro_to_jumpslide = platform
-        
-        else:
-            intro_to_jumping, intro_to_sliding, intro_to_jumpslide = None, None, None
-
-    return spawn_point, intro_to_jumping, intro_to_sliding, intro_to_jumpslide, deathforms, next_checkpoints, finish_line
+    return spawn_point, deathforms, next_checkpoints, finish_line
 
 def is_flashlight_touching_platform(flashlight_beam, platform_rect, flashlight):
     """
@@ -313,14 +303,15 @@ def is_flashlight_touching_platform(flashlight_beam, platform_rect, flashlight):
 
 
 def render_game_objects(platforms, active_players, camera, flashlight):
+    # If the flashlight is on, draw the beam first
     if flashlight.on:
-        flashlight.draw(camera)  # Draw the flashlight beam first
+        flashlight.draw(camera)
 
     for platform in platforms:
         platform_rect = camera.apply(platform)
 
         # Create a temporary surface for platform rendering
-        platform_surface = pygame.Surface((platform_rect.width, platform_rect.height), pygame.SRCALPHA) 
+        platform_surface = pygame.Surface((platform_rect.width, platform_rect.height), pygame.SRCALPHA)
         platform_surface.fill((0, 0, 0, 0))  # Transparent initially
 
         if platform.image:
@@ -328,28 +319,30 @@ def render_game_objects(platforms, active_players, camera, flashlight):
                 platform.image,
                 (int(platform_rect.width), int(platform_rect.height))
             )
-            platform_surface.blit(scaled_image, (0, 0)) 
+            platform_surface.blit(scaled_image, (0, 0))
         else:
-            pygame.draw.rect(platform_surface, platform.color, (0, 0, platform_rect.width, platform_rect.height))
+            # If flashlight is enabled, platforms are black
+            platform_color = (0, 0, 0) if flashlight.enabled else platform.color
+            pygame.draw.rect(platform_surface, platform_color, (0, 0, platform_rect.width, platform_rect.height))
 
-        # Check for flashlight illumination
+        # Perform flashlight intersection calculations only if the flashlight is on
         if flashlight.on:
             is_hit = is_flashlight_touching_platform(flashlight.rotated_beam, platform_rect, flashlight)
 
-            # Create a mask for the flashlight beam
-            mask = pygame.mask.from_surface(flashlight.rotated_beam)
+            if is_hit:
+                # Create masks for the flashlight beam and platform
+                mask = pygame.mask.from_surface(flashlight.rotated_beam)
+                platform_mask = pygame.mask.from_surface(platform_surface)
 
-            # Create a mask for the platform
-            platform_mask = pygame.mask.from_surface(platform_surface)
+                # Get the intersection of the masks
+                intersection = mask.to_surface()
 
-            # Use pygame.mask.to_surface to get the intersection of the masks
-            intersection = mask.to_surface()
+                # Apply a darker blending to the platform surface
+                darkened_color = (255 * 0.5, 255 * 0.5, 255 * 0.5)  # Darker version of the platform color
+                platform_surface.blit(intersection, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+                platform_surface.fill(darkened_color, special_flags=pygame.BLEND_RGBA_MULT)
 
-            # Apply a darker blending to the platform surface
-            darkened_color = (255 * 0.5, 255 * 0.5, 255 * 0.5)  # Darker version of the platform color
-            platform_surface.blit(intersection, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
-            platform_surface.fill(darkened_color, special_flags=pygame.BLEND_RGBA_MULT)
-
+        # Draw the platform on the screen
         screen.blit(platform_surface, platform_rect)
 
     # Render players
@@ -364,6 +357,18 @@ def render_game_objects(platforms, active_players, camera, flashlight):
         pygame.draw.rect(screen, player.color, scaled_rect)
 
 
+def render_artifacts(artifacts, camera):
+
+    for artifact in artifacts:
+        if not artifact.collected:
+            artifact_rect = camera.apply(artifact)  # Apply camera transformation
+            artifact_scaled_rect = pygame.Rect(
+                artifact_rect.x,
+                artifact_rect.y,
+                int(artifact_rect.width * camera.zoom),
+                int(artifact_rect.height * camera.zoom)
+            )
+            screen.blit(artifact.image, artifact_scaled_rect.topleft)  # Draw artifact image at top-left of scaled rect
 
 def update_tutorial_controls(active_players, introduce_jumping, introduce_sliding, introduced_controls_state):
     """Allow players to use new controls when reaching new section and tell display_controls function to display new controls"""

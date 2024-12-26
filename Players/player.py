@@ -64,12 +64,6 @@ class Player():
                         self.velocity.y = 0
 
             player_rect = self.rect
-  
-    def load_animations(self):
-        pass
-
-    def update_animations(self):
-        pass
 
     def momentum(self):
         return self.mass * self.velocity
@@ -89,7 +83,10 @@ class Player():
             self.start_slide = self.position.x
     
 
-    def handle_controls(self, keys, delta_time, position):
+    def handle_controls(self, keys, delta_time, position, popup_active):
+        
+        if popup_active:
+            return
         
         ACCELERATION = self.acceleration * delta_time
         DECELERATION = self.deceleration * delta_time
@@ -168,10 +165,10 @@ class Player():
                 self.under_platform = True
                 break
 
-    def update(self, delta_time, keys, platforms, position):
+    def update(self, delta_time, keys, platforms, position, popup_active):
         
         self.gravity_and_motion(delta_time)
-        self.handle_controls(keys, delta_time, position)
+        self.handle_controls(keys, delta_time, position, popup_active)
         self.detect_headbumps(platforms)
 
         if self.on_platform and self.on_platform.is_moving:

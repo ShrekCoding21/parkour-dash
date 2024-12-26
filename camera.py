@@ -1,6 +1,7 @@
 import pygame
 from Players.player import Player
 from Platforms.platform import Platform
+from artifacts import Artifact
 
 class Camera():
     
@@ -33,7 +34,16 @@ class Camera():
                     obj.dimensions[1] * self.zoom
                 )
                 return scaled_rect
-        
+            
+            elif isinstance(obj, Artifact):
+                # Apply camera transformations to the artifact rect
+                scaled_rect = obj.rect.copy()
+                scaled_rect.x = (scaled_rect.x - self.camera_rect.x) * self.zoom
+                scaled_rect.y = (scaled_rect.y - self.camera_rect.y) * self.zoom
+                scaled_rect.width *= self.zoom
+                scaled_rect.height *= self.zoom
+                return scaled_rect
+
         else:
 
             if isinstance(obj, Player):
