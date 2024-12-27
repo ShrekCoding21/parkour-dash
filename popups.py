@@ -3,17 +3,20 @@ from Buttons.buttons import Button
 from PIL import Image, ImageFilter
 
 class Popup:
-    def __init__(self, screen, text, theme_color, button_text, max_line_length=40):
+    def __init__(self, name, screen, text, theme_color, button_text, visible, max_line_length=40):
         """
         Initialize the Popup object.
 
         Args:
+            name (str): The name of the popup
             screen (pygame.Surface): The screen surface where the popup will be displayed.
             text (str): The message text for the popup.
             theme_color (str): The hex color code for the popup background and button.
             button_text (str): The text to display on the OK button.
             max_line_length (int): Maximum character length for each line of text.
+            visible (bool): Should the platform be visible yet or not
         """
+        self.name = name
         self.screen = screen
         self.text = text
         self.theme_color = theme_color
@@ -27,7 +30,7 @@ class Popup:
                              font=self.font,
                              base_color=self.theme_color,
                              hovering_color="#F59071")
-        self.visible = True
+        self.visible = bool(visible)
 
     def draw(self):
         """Draw the popup on the screen."""

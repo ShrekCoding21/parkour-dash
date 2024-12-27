@@ -82,7 +82,7 @@
             "x-position": 600,
             "y-position": 830,
             "width": 50,
-            "height": 10,
+            "height": 30,
             "is_moving": "False",
             "color": "#b04e15"
         },

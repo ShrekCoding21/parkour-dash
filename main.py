@@ -458,21 +458,43 @@ async def terus1(active_players, weather_condition):
     
     platform_dict = {platform.name: platform for platform in platforms}
     show_slide = platform_dict.get("show-slide")
+    show_slide2 = platform_dict.get("jump-platform4")
     show_checkpoint1_reached = platform_dict.get("checkpoint1")
     show_checkpoint2_reached = platform_dict.get("checkpoint2")
-    introduce_flashlight = platform_dict.get("starting-platform")
     
     artifact_image1 = pygame.image.load("Levels/Terus1/assets/artifact1.png")
     artifact_data = [{"image": artifact_image1, "position": (900, 1480), "name": "Golden Idol"}]
     artifacts = pygame.sprite.Group(Artifact(data["image"], data["position"], data["name"]) for data in artifact_data)
 
+    popup_data = [{
+        "name": "introduce_flashlight",
+        "screen": screen,
+        "text": "press 'f' to use the flashlight. only one player has access to the flashlight",
+        "theme_color": text_color,
+        "button_text": "ok",
+        "visible": True
+    },
+
+    {
+        "name": "flashlight_broken",
+        "screen": screen,
+        "text": "it looks like the flashlight is broken",
+        "theme_color": text_color,
+        "button_text": "ok",
+        "visible": False
+        }]
+    
+    popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in popup_data]
+
     print_show_slide = font.render("← slide...", True, text_color)
+    print_show_slide2 = font.render("slide... →", True, text_color)
     show_slide_rect = print_show_slide.get_rect(center=(500, 350))
+    show_slide2_rect = print_show_slide2.get_rect(center=(500, 350))
     print_checkpoint1 = lil_font.render("checkpoint1 reached", True, text_color)
     print_checkpoint2 = lil_font.render("checkpoint2 reached", True, text_color)
     show_checkpoint1 = print_checkpoint1.get_rect(center=(500, 350))
     show_checkpoint2 = print_checkpoint2.get_rect(center=(500, 350))
-    flashlight_popup = Popup(screen, "press 'f' to use the flashlight. keep in mind that only one person can use the flashlight", text_color, "ok")
+    
 
     running = True
     fixed_delta_time = 1 / 60
@@ -488,6 +510,7 @@ async def terus1(active_players, weather_condition):
     PAUSE = Button(image=pygame.image.load("Buttons/pause_button.png").convert_alpha(), pos=(30, 35), text_input=None, font=lil_font, base_color=("White"), hovering_color=("White"))
     flashlight = Flashlight(screen)
     flashlight.enabled = True
+    flashlight_broken = False
 
     while running:
         dt = clock.tick(60) / 1000.0
@@ -495,7 +518,12 @@ async def terus1(active_players, weather_condition):
         keys = pygame.key.get_pressed()
         MENU_MOUSE_POS = pygame.mouse.get_pos()
 
-        popup_active = flashlight_popup.visible
+        for popup in popups:
+            if popup.visible:
+                popup_active = True
+                break
+            else:
+                popup_active = False
 
         for player in active_players:
             flashlight.flipped = True if player.facing == -1 else False
@@ -504,8 +532,18 @@ async def terus1(active_players, weather_condition):
                 platforms_used.append(player.on_platform)
 
             blit_show_slide = player.on_platform == show_slide
+            blit_show_slide2 = player.on_platform == show_slide2
             blit_checkpoint1_reached = player.on_platform == show_checkpoint1_reached
             blit_checkpoint2_reached = player.on_platform == show_checkpoint2_reached
+            
+            if player.on_platform == show_checkpoint2_reached and not flashlight_broken:
+                for popup in popups:
+                    if popup.name == "flashlight_broken":
+                        popup.visible = True
+                flashlight_broken = True               
+            
+            if flashlight_broken:
+                flashlight.on = False
 
             if player.position.y > level_height + 100:
                 player.reload(spawn_point)
@@ -538,7 +576,9 @@ async def terus1(active_players, weather_condition):
                     print(artifacts_collected)
 
         for event in pygame.event.get():
-            flashlight_popup.handle_event(event)
+            
+            for popup in popups:
+                popup.handle_event(event)
 
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -558,7 +598,7 @@ async def terus1(active_players, weather_condition):
                     paused = True
             
             elif event.type == pygame.KEYDOWN and not popup_active:
-                if event.key == pygame.K_f:
+                if event.key == pygame.K_f and not flashlight_broken:
                     flashlight.on = not flashlight.on
 
                 if event.key == pygame.K_r:
@@ -592,8 +632,10 @@ async def terus1(active_players, weather_condition):
                 paused = False
             elif action == "level restart":
                 show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
+                flashlight_broken = False
+                popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in popup_data]
                 start_timer = pygame.time.get_ticks()
-                flashlight_popup.visible = True
+                    
                 paused = False
             elif action == "go to home":
                 level_name = 'home'
@@ -629,10 +671,14 @@ async def terus1(active_players, weather_condition):
             counting_string = update_timer(start_timer)
             render_game_objects(platforms, active_players, camera, flashlight)
             render_artifacts(artifacts, camera)
-            flashlight_popup.update()
+            
+            for popup in popups:
+                popup.update()
 
             if blit_show_slide:
                 screen.blit(print_show_slide, show_slide_rect)
+            elif blit_show_slide2:
+                screen.blit(print_show_slide2, show_slide2_rect)
             elif blit_checkpoint1_reached:
                 screen.blit(print_checkpoint1, show_checkpoint1)
             elif blit_checkpoint2_reached:
