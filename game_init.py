@@ -1,5 +1,6 @@
 import pygame
 from Platforms.platform import Platform
+from artifacts import Artifact
 
 WEB_ENVIRONMENT = False
 try:
@@ -62,7 +63,7 @@ def load_platforms(platform_data, level_name):
     print(platforms)
     return platforms
 
-def level_complete(screen, clock, window_size, counting_string, best_player_num, text_color):
+def level_completed(screen, clock, window_size, counting_string, best_player_num, text_color):
 
     text1 = f'player {best_player_num} wins!'
     text2 = 'press (r) to restart game'
@@ -264,6 +265,11 @@ def update_timer(start_timer):
 
     return counting_string
 
+def render_timer(font, text_color, counting_string):
+    print_timer = font.render(counting_string, True, text_color)
+    timer_rect = print_timer.get_rect(topright=(990, 100))
+    screen.blit(print_timer, timer_rect)
+
 def get_special_platforms(platforms, level_name):
 
     next_checkpoints = list()
@@ -314,8 +320,7 @@ def is_flashlight_touching_platform(flashlight_beam, platform_rect, flashlight):
     # Check for collision between the beam rectangle and platform rectangle
     return beam_rect.colliderect(platform_rect)
 
-
-def render_game_objects(platforms, active_players, camera, flashlight):
+def render_game_objects(platforms, active_players, camera, flashlight, death_platforms):
     # If the flashlight is on, draw the beam first
     if flashlight.on:
         flashlight.draw(camera)
@@ -327,15 +332,24 @@ def render_game_objects(platforms, active_players, camera, flashlight):
         platform_surface = pygame.Surface((platform_rect.width, platform_rect.height), pygame.SRCALPHA)
         platform_surface.fill((0, 0, 0, 0))  # Transparent initially
 
-        if platform.image:
-            scaled_image = pygame.transform.scale(
-                platform.image,
-                (int(platform_rect.width), int(platform_rect.height))
-            )
-            platform_surface.blit(scaled_image, (0, 0))
+        if platform in death_platforms:
+            # Death platforms and transparent platforms remain transparent
+            platform_color = (0, 0, 0, 0)
         else:
-            # If flashlight is enabled, platforms are black
-            platform_color = (0, 0, 0) if flashlight.enabled else platform.color
+            if flashlight.enabled:
+                # If flashlight is on, platforms are black
+                platform_color = (0, 0, 0)
+            else:
+                # If flashlight is off and the platform has an image, draw the image
+                if hasattr(platform, 'image') and platform.image:
+                    platform_surface.blit(platform.image, (0, 0))
+                    platform_color = None  # Image will be rendered; no need for a color fill
+                else:
+                    # Otherwise, use the platform's color
+                    platform_color = platform.color
+
+        # Draw the platform color if no image is rendered
+        if platform_color:
             pygame.draw.rect(platform_surface, platform_color, (0, 0, platform_rect.width, platform_rect.height))
 
         # Perform flashlight intersection calculations only if the flashlight is on
@@ -370,6 +384,30 @@ def render_game_objects(platforms, active_players, camera, flashlight):
         pygame.draw.rect(screen, player.color, scaled_rect)
 
 
+def getArtifacts(platforms):
+    artifact_platform_num = 1
+    artifact_platforms = []
+
+    # Identify platforms that should have artifacts
+    for platform in platforms:
+        if platform.name == f"artifact-platform{artifact_platform_num}":
+            artifact_platforms.append(platform)
+            artifact_platform_num += 1
+
+    # Artifact image
+    artifact_image1 = pygame.image.load("Levels/Terus1/assets/artifact1.png")
+
+    # Create Artifact objects and add them to a sprite group
+    artifacts = pygame.sprite.Group()
+    for i, platform in enumerate(artifact_platforms):
+        artifact_name = f"Artifact {i + 1}"  # Generate a unique name
+        artifact_position = (
+            platform.position.x + platform.dimensions[0] // 2 - 50,
+            platform.position.y - 100
+        )
+        artifacts.add(Artifact(artifact_image1, artifact_position, artifact_name))
+    return artifacts
+
 def render_artifacts(artifacts, camera):
 
     for artifact in artifacts:
@@ -381,7 +419,12 @@ def render_artifacts(artifacts, camera):
                 int(artifact_rect.width * camera.zoom),
                 int(artifact_rect.height * camera.zoom)
             )
-            screen.blit(artifact.image, artifact_scaled_rect.topleft)  # Draw artifact image at top-left of scaled rect
+            screen.blit(artifact.image, artifact_scaled_rect.center)  # Draw artifact image at top-left of scaled rect
+
+def render_artifact_count(text_color, artifacts_collected, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 20)):
+    print_artifacts_collected = font.render(f"artifact fragments collected: {artifacts_collected}", True, text_color)
+    artifact_counter_rect = print_artifacts_collected.get_rect(center=(window_size[0] // 2 - 20, 20))
+    screen.blit(print_artifacts_collected, artifact_counter_rect)
 
 def update_tutorial_controls(active_players, introduce_jumping, introduce_sliding, introduced_controls_state):
     """Allow players to use new controls when reaching new section and tell display_controls function to display new controls"""

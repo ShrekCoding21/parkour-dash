@@ -105,7 +105,7 @@
             "color": "#b04e15"
         },
 
-        "jump-platform7": {
+        "artifact-platform1": {
             "x-position": 1430,
             "y-position": 1500,
             "width": 130,
@@ -123,9 +123,113 @@
             "color": "#9ff084"
         },
 
+        "death-form3": {
+            "x-position": 900,
+            "y-position": 1630,
+            "width": 1240,
+            "height": 10,
+            "is_moving": "False",
+            "image_path": "Platforms/transparent_platform1.png",
+            "color": "#ffffff"
+        },
+
+        "jump-platform8": {
+            "x-position": 2060,
+            "y-position": 1570,
+            "width": 130,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+
+        "moving-platform1": {
+            "x-position": 2370,
+            "y-position": 2090,
+            "width": 130,
+            "height": 30,
+            "is_moving": "True",
+            "speed": 200,
+            "x-direction": 0,
+            "y-direction": 1,
+            "x-movement_range": 0,
+            "y-movement_range": 500,
+            "color": "#b04e15"
+        },
+
+        "artifact-platform2": {
+            "x-position": 2060,
+            "y-position": 1840,
+            "width": 130,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+
+        "death-form4": {
+            "x-position": 2100,
+            "y-position": 2180,
+            "width": 900,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#ffffff"
+        },
+
+        "moving-platform2": {
+            "x-position": 1830,
+            "y-position": 2860,
+            "width": 130,
+            "height": 30,
+            "is_moving": "True",
+            "speed": 250,
+            "x-direction": 0,
+            "y-direction": 1,
+            "x-movement_range": 0,
+            "y-movement_range": 1000,
+            "image_path": "Platforms/transparent_platform1.png",
+            "color": "#000000"
+        },
+
+        "death-form5": {
+            "x-position": 1550,
+            "y-position": 2450,
+            "width": 245,
+            "height": 20,
+            "is_moving": "False",
+            "image_path": "Platforms/transparent_platform1.png",
+            "color": "#ffffff"
+        },
+
+        "death-form6": {
+            "x-position": 1995,
+            "y-position": 2450,
+            "width": 300,
+            "height": 20,
+            "is_moving": "False",
+            "image_path": "Platforms/transparent_platform1.png",
+            "color": "#ffffff"
+        },
+
+        "main-artifact-platform": {
+            "x-position": 1500,
+            "y-position": 2950,
+            "width": 1500,
+            "height": 400,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+
+        "artifact-platform3": {
+            "x-position": 2500,
+            "y-position": 2920,
+            "width": 150,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+
         "finish-line": {
-            "x-position": 1111,
-            "y-position": 2240,
+            "x-position": 2800,
+            "y-position": 2920,
             "width": 150,
             "height": 30,
             "is_moving": "False",
