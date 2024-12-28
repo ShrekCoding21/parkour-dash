@@ -160,14 +160,13 @@ async def load_level(level_name, num_of_players):
 
     if level_name in MAIN_LEVELS:
         levels_data = await load_json_file((f'Levels/{level_name}.json'))
-        bg_image = pygame.image.load("assets/parkour_dash_background.png").convert_alpha()
-        bg_image = pygame.transform.scale(bg_image, window_size)
+        bg_image = pygame.image.load("assets/parkour_dash_background.jpg").convert_alpha()
 
     else:
         levels_data = await load_json_file(f'Levels/{level_name}/{level_name}.json')
         bg_image = pygame.image.load(f'Levels/{level_name}/assets/bg_image.png').convert_alpha()
 
-    bg_image = pygame.transform.scale(bg_image, window_size)
+    # bg_image = pygame.transform.scale(bg_image, window_size)
 
     player1_controls = keys_data['controls']['players']['player1']
     player2_controls = keys_data['controls']['players']['player2']
@@ -603,8 +602,6 @@ async def terus1(active_players, weather_condition):
                         level_complete = False
                         best_player_num = None
                         text_color = ("#71d6f5")
-                        if level_name == 'tutorial_level' and spawn_point == OG_spawn_point or level_name == 'demo_level':
-                            start_timer = pygame.time.get_ticks()
 
         if paused:
             action = await pause_menu(screen, level_name, show_controls, window_size, time_paused)
@@ -613,7 +610,11 @@ async def terus1(active_players, weather_condition):
             elif action == "level restart":
                 show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
                 popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in popup_data]
-                start_timer = pygame.time.get_ticks()          
+                artifacts_collected = 0
+                collected_artifacts = []
+                start_timer = pygame.time.get_ticks()
+                flashlight.enabled = True
+                flashlight.on = False          
                 paused = False
             elif action == "go to home":
                 level_name = 'home'
@@ -929,6 +930,7 @@ async def main():
                     current_platform = player.on_platform.name
                     if current_platform not in platforms_used:
                         platforms_used.append(current_platform)
+                print(player.position)
 
             if player.position.y > level_height + 100:
                 player.reload(OG_spawn_point)

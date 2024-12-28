@@ -11,8 +11,8 @@ def rescale_image(input_path, output_path, resolution):
         print(f"An error occurred: {e}")
 
 if __name__ == "__main__":
-    input_path = "bg_image.png"  # Replace with your input image path
-    output_path = "bg_image.png"  # Replace with your desired output path
+    input_path = "assets/parkour_dash_background.jpg"  # Replace with your input image path
+    output_path = "assets/parkour_dash_background.jpg"  # Replace with your desired output path
     resolution = (1000, 700)  # Replace with your desired resolution (width, height)
 
     rescale_image(input_path, output_path, resolution)
