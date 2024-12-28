@@ -26,9 +26,10 @@ TSA Video game design competition code for RLC.
     - starting-platform (REQUIRED): Player will spawn in the center of this platform at beginning of level
     - checkpoint{num} (REQUIRED): If player lands on this platform, it will turn dark green meaning player has reached a checkpoint
     - finish-line (REQUIRED for now): Level will be completed if player lands on this platform
-    - death-form{num} (not required FOR NOW): If player lands on this platform, they respawn at last checkpoint or starting-platform (not supported in levels other than tutorial level yet)
+    - death-form{num} (not required): If player lands on this platform, they respawn at last checkpoint or starting-platform (not supported in levels other than tutorial level yet)
+    - artifact-platform{num} (not required): Tells game to load artifact on those platforms (if you run getArtifacts)
 
-2) If you would like to add custom behaviors to these platforms, then please do so in the python file that was created for each platform. This is the code ran at level initialization, so more custom behaviors can be baesd off of this (located in game_init.py).
+2) If you would like to add custom behaviors to these platforms, then please do so in the python file that was created for each platform. This is the code ran at level initialization, so more custom behaviors can be baesd off of this (located in level_init.py).
  
 ![image](https://github.com/user-attachments/assets/e7f63945-6c23-4f44-8024-241736217825)
 
@@ -84,28 +85,36 @@ Example of properly defined platform with image
 
 *Step 3 - Opening and testing your level in main.py*
 
-There is already code in main.py to help you test your level in such a way that if you fall into the pit in main menu, you will go to your test level instead of the tutorial. Look for the block of code in the image below in main.py.
+If you want to test your level, you can add an if statement in the for event in events loop in main.py and set it so if you press a
+certain keyboard key it opens your level's function and runs it. Make sure that when you create your level function, when the player presses the home button in the pause menu, it simply stops running your loop, since this automatically takes the player to the home page.
 
-![image](https://github.com/user-attachments/assets/8a9c1686-80c1-41b8-90ff-36815ad252fb)
+![image](https://github.com/user-attachments/assets/eee6ea8c-678e-4c66-ad48-4659810fdfbb)
 
 *How to create custom platform behavior*
 
 Either use the platforms from the important info section or create your own based off of the structure
 
-Example: Making a platform that removes player ability to jump if they stand on it
+Example: Making a platform that prints something when u are on it
 
-1) Define a new function in game_init.py and name it something good (Ex: Terus1_platforms)
-2) Write code to define a platform object with a specific key to a variable (Ex: no_jumping)
-3) (in main.py load_level function) Define no_jumping platform locally and return it to main loop
-4) (In main game loop) Write code to prevent player from jumping when on platform (using built in player.can_jump variable)
+1) Define the platform using a function in the level_init.py file
 
-Example of function for finding no-jumping platform (can't show full thing since it takes too long)
+![image](https://github.com/user-attachments/assets/8a32515e-21dd-4a9d-97d3-fedd8d236d3a)
 
-![image](https://github.com/user-attachments/assets/77a9f1f3-6fa3-4f1e-8af6-28487ccd4aac)
+2) Import that function in your level initialization
 
-Player can_jump and can_slide variables
+![image](https://github.com/user-attachments/assets/88908e97-43a1-4992-8896-c69693b456cd)
 
-![image](https://github.com/user-attachments/assets/537da5bd-f214-4ec9-b376-55c8d6bcef99)
+3) Setup the text that you want to print as well as the surface you want it to be printed on
+
+![image](https://github.com/user-attachments/assets/6c76f54a-c9e3-4eb8-b5b4-28f3613f0c2b)
+
+4) Define a boolean variable that is true if player is on platform, false if they are not (in game loop)
+
+![image](https://github.com/user-attachments/assets/3e2d4275-6738-46a8-b191-129a6bfca411)
+
+5) Define logic to blit the text on the screen if the boolean variable is true (alongside player rendering and stuff)
+
+![image](https://github.com/user-attachments/assets/04c41b75-8892-4511-a171-e318412c4fdd)
 
 # *Useful resources*
 
