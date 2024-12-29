@@ -63,25 +63,6 @@ def load_platforms(platform_data, level_name):
     print(platforms)
     return platforms
 
-def level_completed(screen, clock, window_size, counting_string, best_player_num, text_color):
-
-    text1 = f'player {best_player_num} wins!'
-    text2 = 'press (r) to restart game'
-    text3 = f'completion time: {counting_string}'
-
-    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 35)
-    texts = [text1, text2, text3]
-
-    offset = 30
-    for text in texts:
-        printtext = font.render(text, True, (text_color))
-        text_rect = printtext.get_rect(center=(window_size[0] // 2, window_size[1] // 2 - offset))
-        screen.blit(printtext, text_rect)
-        offset -= 60
-
-    pygame.display.flip()
-    clock.tick(10)
-
 def introduce_controls(blit_jumpslide):
 
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30)
@@ -384,7 +365,7 @@ def render_game_objects(platforms, active_players, camera, flashlight, death_pla
         pygame.draw.rect(screen, player.color, scaled_rect)
 
 
-def getArtifacts(platforms):
+def getArtifacts(platforms, level_name):
     artifact_platform_num = 1
     artifact_platforms = []
 
@@ -395,7 +376,7 @@ def getArtifacts(platforms):
             artifact_platform_num += 1
 
     # Artifact image
-    artifact_image1 = pygame.image.load("Levels/Terus1/assets/artifact1.png")
+    artifact_image1 = pygame.image.load(f"Levels/{level_name}/assets/artifact1.png")
 
     # Create Artifact objects and add them to a sprite group
     artifacts = pygame.sprite.Group()

@@ -1,5 +1,5 @@
 
-{"tutorial_level": {
+{"Tutorial_level": {
         
     "level_type": "scrolling",
     "camera_dimensions": [3000, 3000],
@@ -65,7 +65,7 @@
             "color": "#11519e"
         },
 
-        "jump-platform3": {
+        "artifact-platform1": {
             "x-position": 2450,
             "y-position": 290,
             "width": 150,
@@ -117,7 +117,7 @@
             "color": "#96c748"
         },
 
-        "jump-platform6": {
+        "artifact-platform2": {
             "x-position": 1840,
             "y-position": 810,
             "width": 150,
@@ -283,7 +283,7 @@
             "color": "#96c748"
         },
 
-        "jump-platform8": {
+        "artifact-platform3": {
             "x-position": 2165,
             "y-position": 2180,
             "width": 130,

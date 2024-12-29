@@ -2,7 +2,7 @@ import pygame
 import math
 
 class Flashlight:
-    def __init__(self, screen, radius=300, intensity=100, beam_width=75, flipped=False):
+    def __init__(self, screen, intensity, radius=300, beam_width=75, flipped=False):
         self.screen = screen
         self.radius = radius
         self.intensity = intensity

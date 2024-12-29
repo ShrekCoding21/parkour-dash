@@ -3,7 +3,7 @@ from Buttons.buttons import Button
 from PIL import Image, ImageFilter
 
 class Popup:
-    def __init__(self, name, screen, text, theme_color, button_text, visible, max_line_length=40):
+    def __init__(self, name, screen, text, theme_color, button_text, visible, max_line_length=35, font_size=30):
         """
         Initialize the Popup object.
 
@@ -14,38 +14,49 @@ class Popup:
             theme_color (str): The hex color code for the popup background and button.
             button_text (str): The text to display on the OK button.
             max_line_length (int): Maximum character length for each line of text.
-            visible (bool): Should the platform be visible yet or not
+            visible (bool): Should the platform be visible yet or not.
+            font_size (int): The font size for the text to be displayed in.
         """
         self.name = name
         self.screen = screen
         self.text = text
         self.theme_color = theme_color
         self.button_text = button_text
-        self.font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30)  # Font for the popup text
+        self._font_size = font_size
+        self.font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', self._font_size)  # Font for the popup text
         self.max_line_length = max_line_length  # Maximum character length per line
-
         # Create the button
-        self.button = Button(image=None, pos=(self.screen.get_width() // 2, self.screen.get_height() // 2 + 100),
+        self.button = Button(image=None, pos=(self.screen.get_width() // 2, self.screen.get_height() // 2 + 165),
                              text_input=self.button_text,
                              font=self.font,
                              base_color=self.theme_color,
                              hovering_color="#F59071")
         self.visible = bool(visible)
 
+    @property
+    def font_size(self):
+        return self._font_size
+
+    @font_size.setter
+    def font_size(self, value):
+        self._font_size = value
+        self.font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', self._font_size)
+    
     def draw(self):
         """Draw the popup on the screen."""
         if self.visible:
             self._draw_blurred_background()
             self._draw_text()
+            self.button.changeColor(pygame.mouse.get_pos())
             self.button.update(self.screen)
 
     def _draw_blurred_background(self):
         """Draw a blurred background behind the popup."""
-        popup_rect = pygame.Rect(self.screen.get_width() // 2 - 200, self.screen.get_height() // 2 - 100, 400, 200)
+        popup_rect = pygame.Rect(self.screen.get_width() // 2 - 400, self.screen.get_height() // 2 - 100, 800, 300)
         
         # Create an off-screen surface to apply Gaussian blur
         background_surface = pygame.Surface((popup_rect.width, popup_rect.height), pygame.SRCALPHA)
-        background_surface.fill((0, 0, 0, 128))  # Semi-transparent black background
+        background_surface.fill((0, 0, 0, 200))  # Semi-transparent black background
         
         # Apply Gaussian blur using PIL
         image_pil = Image.frombytes('RGBA', background_surface.get_size(), pygame.image.tostring(background_surface, 'RGBA'))

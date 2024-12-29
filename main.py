@@ -14,11 +14,6 @@ sys.path.append(base_dir)  # Add current directory to sys.path
 sys.path.append(os.path.join(base_dir, 'Players'))  # Add specific folders if needed
 sys.path.append(os.path.join(base_dir, 'Buttons'))  # Add other specific folders if necessary
 
-# Debugging: Verify paths and imports
-print("sys.path:", sys.path)
-print("Base Directory:", base_dir)
-print("Attempting to locate 'Players':", os.path.exists(os.path.join(base_dir, "Players", "player.py")))
-
 # Local imports
 from flashlight import Flashlight
 from sprites import Spritesheet
@@ -32,7 +27,6 @@ from game_init import (
     render_artifacts,
     render_artifact_count,
     load_platforms,
-    level_completed,
     introduce_controls,
     reload_map,
     display_controls,
@@ -45,14 +39,9 @@ from game_init import (
     update_tutorial_controls,
 )
 
-
-# Debugging: Verify the paths and imports
-print("sys.path:", sys.path)
-print("Base Directory:", base_dir)
-
 # Change this to whatever weather you want to test or leave as None to use API data
 TEST_WEATHER = None
-MAIN_LEVELS = ["demo_level", "home", "tutorial_level"]
+
 WEB_ENVIRONMENT = False
 
 try:
@@ -158,15 +147,9 @@ async def load_level(level_name, num_of_players):
 
     keys_data = await load_json_file('Players/player_controls.json')
 
-    if level_name in MAIN_LEVELS:
-        levels_data = await load_json_file((f'Levels/{level_name}.json'))
-        bg_image = pygame.image.load("assets/parkour_dash_background.jpg").convert_alpha()
-
-    else:
-        levels_data = await load_json_file(f'Levels/{level_name}/{level_name}.json')
-        bg_image = pygame.image.load(f'Levels/{level_name}/assets/bg_image.png').convert_alpha()
-
-    # bg_image = pygame.transform.scale(bg_image, window_size)
+    levels_data = await load_json_file(f'Levels/{level_name}/{level_name}.json')
+    bg_image = pygame.image.load(f'Levels/{level_name}/assets/bg_image.png').convert_alpha()
+    bg_image = pygame.transform.scale(bg_image, window_size)
 
     player1_controls = keys_data['controls']['players']['player1']
     player2_controls = keys_data['controls']['players']['player2']
@@ -206,7 +189,7 @@ async def load_level(level_name, num_of_players):
         reset_positions.append(spawn_point)
 
     introduced_controls_state = {"introduced_jumping": True, "introduced_sliding": True}
-    show_controls = True if level_name in MAIN_LEVELS else False
+    show_controls = True if level_name in ["Home", "Tutorial_level"] else False
 
     if level_type == 'scrolling':
         
@@ -376,7 +359,7 @@ async def pause_menu(screen, level_name, show_controls, window_size, time_paused
     RESUME_BUTTON = Button(image=button_image, pos=(500, 260), text_input="resume", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
     RESTART_LEVEL = Button(image=button_image, pos=(500, 330), text_input="restart", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 35), base_color="#167fc9", hovering_color="#F59071")
 
-    if level_name in MAIN_LEVELS:
+    if level_name in ["Home", "Tutorial_level"]:
         
         SETTINGS = Button(image=button_image, pos=(500, 400), text_input="settings", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30), base_color="#167fc9", hovering_color="#F59071")
         MAIN_MENU = Button(image=button_image, pos=(500, 470), text_input="home", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
@@ -423,7 +406,7 @@ async def pause_menu(screen, level_name, show_controls, window_size, time_paused
                 elif MAIN_MENU.checkForInput(MENU_MOUSE_POS):
                     return "go to home"
 
-                if level_name not in MAIN_LEVELS:
+                if level_name not in ["Home", "Tutorial_level"]:
 
                     if DISPLAY_CONTROLS.checkForInput(MENU_MOUSE_POS) or HIDE_CONTROLS.checkForInput(MENU_MOUSE_POS):
                         return "show controls"
@@ -435,8 +418,6 @@ async def pause_menu(screen, level_name, show_controls, window_size, time_paused
         screen.blit(blurred_surface, (0, 0))
         
         if paused_time_elapsed >= blur_duration:
-            printtext = font.render("Paused", True, ("#71d6f5"))
-            text_rect = printtext.get_rect(center=(window_size[0] // 2, window_size[1] // 2 - 200))
             screen.blit(printtext, text_rect)
             
             for button in buttons:
@@ -446,43 +427,122 @@ async def pause_menu(screen, level_name, show_controls, window_size, time_paused
         pygame.display.flip()
         await asyncio.sleep(0)
 
+async def level_completed(screen, level_name, text_color, window_size, popup_text, time_finished):
+    
+    blur_duration = 0
+    max_blur_radius = 10
+    screen_surface = pygame.image.tobytes(screen, "RGBA")
+    pil_image = Image.frombytes("RGBA", screen.get_size(), screen_surface)
+
+    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 55)
+    button_image = pygame.image.load("Buttons/tutorial_button.png").convert_alpha()
+
+    printtext = font.render(f"{level_name} complete!", True, ("#71d6f5"))
+    text_rect = printtext.get_rect(center=(window_size[0] // 2, window_size[1] // 2 - 200))
+    base_color = "#167fc9"
+    hovering_color = "#F59071"
+
+    artifact_information = Popup(name="artifact_info", screen=screen, text=popup_text, theme_color=text_color, button_text="cool", visible=False)
+    artifact_information.font_size, artifact_information.max_line_length = 23, 40
+
+    RESTART_LEVEL = Button(image=button_image, pos=(500, 260), text_input="restart", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 35), base_color=base_color, hovering_color=hovering_color)
+    ARTIFACT_INFO = Button(image=button_image, pos=(500, 330), text_input="artifact info", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 18), base_color=base_color, hovering_color=hovering_color)
+    MAIN_MENU = Button(image=button_image, pos=(500, 400), text_input="home", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color=base_color, hovering_color=hovering_color)
+    buttons = [RESTART_LEVEL, ARTIFACT_INFO, MAIN_MENU]
+
+    while True:
+        
+        MENU_MOUSE_POS = pygame.mouse.get_pos()
+        time_elapsed = time.time() - time_finished
+
+        if time_elapsed < blur_duration:
+            blur_radius = (time_elapsed / blur_duration) * max_blur_radius
+        else:
+            blur_radius = max_blur_radius
+        
+        blurred_image = pil_image.filter(ImageFilter.GaussianBlur(radius=blur_radius))
+        blurred_surface = pygame.image.frombytes(blurred_image.tobytes(), screen.get_size(), "RGBA")
+        
+        for event in pygame.event.get():
+            
+            artifact_information.handle_event(event)
+
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                
+                if RESTART_LEVEL.checkForInput(MENU_MOUSE_POS) and not artifact_information.visible:
+                    return "level restart"
+                
+                elif ARTIFACT_INFO.checkForInput(MENU_MOUSE_POS) and not artifact_information.visible:
+                    artifact_information.visible = True
+                
+                elif MAIN_MENU.checkForInput(MENU_MOUSE_POS) and not artifact_information.visible:
+                    return "go to home"
+
+        screen.blit(blurred_surface, (0, 0))
+        
+        if time_elapsed >= blur_duration:
+            screen.blit(printtext, text_rect)
+            
+            for button in buttons:
+                button.changeColor(pygame.mouse.get_pos())
+                button.update(screen)
+                artifact_information.update()
+
+        pygame.display.flip()
+        await asyncio.sleep(0)
+
 async def terus1(active_players, weather_condition):
+
+    from level_init import terusPlatformsInit
 
     level_name = 'Terus1'
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 60)
     lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30)
     text_color = ("#0c4701")
+    magnetite_information = await load_json_file(f"Levels/{level_name}/artifact_info.json")
+    post_mission_briefing = magnetite_information['magnetite-info']['after-level-info']
 
     num_of_players = len(active_players)
     show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)   
     print(f"weather condition: {weather_condition}")
-    platform_dict = {platform.name: platform for platform in platforms}
-    show_slide = platform_dict.get("show-slide")
-    show_slide2 = platform_dict.get("jump-platform4")
-    show_checkpoint1_reached = platform_dict.get("checkpoint1")
-    show_checkpoint2_reached = platform_dict.get("checkpoint2")
-    brighten_scene = platform_dict.get("main-artifact-platform")
-    artifacts = getArtifacts(platforms)
+    show_slide, show_slide2, show_checkpoint1_reached, show_checkpoint2_reached, brighten_scene, artifacts = terusPlatformsInit(platforms, level_name)
 
-    popup_data = [{
-        "name": "introduce_flashlight",
+    popup_data = [
+
+        {"name": "introduce_flashlight",
         "screen": screen,
         "text": "press 'f' to use the flashlight. only one player has access to the flashlight",
         "theme_color": text_color,
         "button_text": "ok",
         "visible": True
+    },
+    
+        {"name": "flashlight_broken",
+         "screen": screen,
+         "text": "it looks like the flashlight is facing external interference. better hurry",
+         "theme_color": text_color,
+         "button_text": "got it",
+         "visible": False
     }]
     
     popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in popup_data]
+    
+    for popup in popups:
+        
+        if popup.name == "pre_mission_briefing":
+            popup.max_line_length = 50
+            popup.font_size = 20
 
     print_show_slide = font.render("← slide...", True, text_color)
     print_show_slide2 = font.render("slide... →", True, text_color)
     show_slide_rect = print_show_slide.get_rect(center=(500, 350))
     show_slide2_rect = print_show_slide2.get_rect(center=(500, 350))
     print_checkpoint1 = lil_font.render("checkpoint1 reached", True, text_color)
-    print_checkpoint2 = lil_font.render("checkpoint2 reached", True, text_color)
     show_checkpoint1 = print_checkpoint1.get_rect(center=(500, 350))
-    show_checkpoint2 = print_checkpoint2.get_rect(center=(500, 350))
     
     running = True
     fixed_delta_time = 1 / 60
@@ -491,12 +551,12 @@ async def terus1(active_players, weather_condition):
     paused = False
     editing_settings = False
     level_complete = False
-    best_player_num = None
+    flashlight_broken = False
     artifacts_collected = 0
     collected_artifacts = []
     RELOAD = Button(image=pygame.image.load("Buttons/reload_button.png").convert_alpha(), pos=(85, 43), text_input=None, font=lil_font, base_color="#167fc9", hovering_color="#F59071")
     PAUSE = Button(image=pygame.image.load("Buttons/pause_button.png").convert_alpha(), pos=(30, 35), text_input=None, font=lil_font, base_color=("White"), hovering_color=("White"))
-    flashlight = Flashlight(screen)
+    flashlight = Flashlight(screen, intensity=100)
     flashlight.enabled = True
     scene_brightened = False
 
@@ -518,18 +578,26 @@ async def terus1(active_players, weather_condition):
             blit_show_slide = player.on_platform == show_slide
             blit_show_slide2 = player.on_platform == show_slide2
             blit_checkpoint1_reached = player.on_platform == show_checkpoint1_reached
-            blit_checkpoint2_reached = player.on_platform == show_checkpoint2_reached
             
             if player.on_platform == brighten_scene and not scene_brightened:
                 flashlight.enabled = False
                 scene_brightened = True
+
+            if player.on_platform == show_checkpoint2_reached and not flashlight_broken:
+
+                for popup in popups:
+                    if popup.name == "flashlight_broken":
+                        popup.visible = True
+
+                flashlight = Flashlight(screen, intensity=40)
+                flashlight.enabled = True
+                flashlight_broken = True
 
             if player.position.y > level_height + 100:
                 player.reload(spawn_point)
 
             if player.on_platform == finish_line:
                 reset_positions = [spawn_point] * num_of_players
-                best_player_num = player.id
                 level_complete = True
                 text_color = player.color
                 checkpoint_increment = 0
@@ -550,7 +618,6 @@ async def terus1(active_players, weather_condition):
             for artifact in artifacts:
                 if player.rect.colliderect(artifact.rect) and not artifact.collected and artifact not in collected_artifacts:
                     artifact.collect()
-                    print(f"Collected: {artifact.name}")
                     artifacts_collected += 1
                     collected_artifacts.append(artifact)
 
@@ -566,7 +633,6 @@ async def terus1(active_players, weather_condition):
             elif event.type == pygame.MOUSEBUTTONDOWN and not popup_active:
                 if RELOAD.checkForInput(MENU_MOUSE_POS):
                     reload_map(active_players, platforms, reset_positions, artifacts)
-                    best_player_num = None
                     level_complete = False
                     text_color = ("#71d6f5")
                     if spawn_point == OG_spawn_point or not next_checkpoints:
@@ -582,7 +648,6 @@ async def terus1(active_players, weather_condition):
 
                 if event.key == pygame.K_r:
                     reload_map(active_players, platforms, reset_positions, artifacts)  
-                    best_player_num = None
                     level_complete = False
                     text_color = ("#71d6f5")
                     if spawn_point == OG_spawn_point or not next_checkpoints:
@@ -591,39 +656,36 @@ async def terus1(active_players, weather_condition):
                 if event.key == pygame.K_p:
                     time_paused = time.time()
                     paused = True
-                
-                elif paused or level_complete:
-                    if event.key == pygame.K_u or not pause_menu(screen, level_name, show_controls, window_size, time_paused):
-                        paused = False
-                    
-                    elif event.key == pygame.K_r:
-                        reload_map(active_players, platforms, reset_positions, artifacts)
-                        paused = False
-                        level_complete = False
-                        best_player_num = None
-                        text_color = ("#71d6f5")
 
         if paused:
             action = await pause_menu(screen, level_name, show_controls, window_size, time_paused)
+            
             if action == False:
                 paused = False
+            
             elif action == "level restart":
                 show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
                 popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in popup_data]
                 artifacts_collected = 0
                 collected_artifacts = []
                 start_timer = pygame.time.get_ticks()
+                flashlight_broken = False
+                flashlight = Flashlight(screen, intensity=100)
                 flashlight.enabled = True
-                flashlight.on = False          
+                flashlight.on = False
+                show_slide, show_slide2, show_checkpoint1_reached, show_checkpoint2_reached, brighten_scene, artifacts = terusPlatformsInit(platforms, level_name)      
                 paused = False
+            
             elif action == "go to home":
                 level_name = 'home'
                 start_timer = pygame.time.get_ticks()
                 running = False
+            
             elif action == "go to settings" and not editing_settings:
                 time_entered_settings = time.time()
                 paused = False
                 editing_settings = True
+            
             elif action == "show controls":
                 show_controls = not show_controls
                 paused = False
@@ -634,10 +696,27 @@ async def terus1(active_players, weather_condition):
                 editing_settings = False
             elif isinstance(settings_action, int):
                 active_players = await newPlayerCount(settings_action, active_players, level_name)
+                num_of_players = len(active_players)
                 editing_settings = False
 
         elif level_complete:
-            level_completed(screen, clock, window_size, counting_string, best_player_num, text_color)
+            action = await level_completed(screen, level_name, text_color, window_size, post_mission_briefing, time_finished=time.time())
+
+            if action == "level restart":
+                show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
+                popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in popup_data]
+                artifacts_collected = 0
+                collected_artifacts = []
+                start_timer = pygame.time.get_ticks()
+                flashlight_broken = False
+                flashlight = Flashlight(screen, intensity=100)
+                flashlight.enabled = True
+                flashlight.on = False
+                show_slide, show_slide2, show_checkpoint1_reached, show_checkpoint2_reached, brighten_scene, artifacts = terusPlatformsInit(platforms, level_name)      
+                level_complete = False
+
+            elif action == "go to home":
+                running = False
 
         else:
             while accumulator >= fixed_delta_time:
@@ -647,7 +726,7 @@ async def terus1(active_players, weather_condition):
                 flashlight.pos = pygame.Vector2(player.rect.center)
 
             screen.fill((0, 0, 0))
-            # screen.blit(bg_image, (0, 0))
+            screen.blit(bg_image, (0, 0))
             counting_string = update_timer(start_timer)
             render_game_objects(platforms, active_players, camera, flashlight, death_platforms)
             render_artifacts(artifacts, camera)
@@ -663,8 +742,6 @@ async def terus1(active_players, weather_condition):
                 screen.blit(print_show_slide2, show_slide2_rect)
             elif blit_checkpoint1_reached:
                 screen.blit(print_checkpoint1, show_checkpoint1)
-            elif blit_checkpoint2_reached:
-                screen.blit(print_checkpoint2, show_checkpoint2)
 
             display_controls(len(active_players), show_controls, introduced_controls_state, print_player1_controls, print_player3_controls, print_player4_controls)
                 
@@ -677,28 +754,52 @@ async def terus1(active_players, weather_condition):
         await asyncio.sleep(0)
 
 async def tutorial_level(active_players):
-    level_name = 'tutorial_level'
+
+    from level_init import tutorialPlatformsInit
+
+    level_name = 'Tutorial_level'
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 60)
     lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25)
     text_color = ("#71d6f5")
 
     num_of_players = len(active_players)
     show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
-
-    intro_to_jumping = next((p for p in platforms if p.name == "introduce-jumping"), None)
-    intro_to_sliding = next((p for p in platforms if p.name == "introduce-sliding"), None)
-    intro_to_jumpslide = next((p for p in platforms if p.name == "introduce-jumpsliding"), None)
+    intro_to_jumping, intro_to_sliding, intro_to_jumpslide, artifacts = tutorialPlatformsInit(platforms, level_name)
 
     for player in active_players:
         player.can_jump, player.can_slide = False, False
         introduced_controls_state["introduced_jumping"], introduced_controls_state["introduced_sliding"] = False, False
+    
+    intitial_popups = [
 
-    artifact_image1 = pygame.image.load("Levels/Terus1/assets/artifact1.png")
-    artifact_data = [
-        {"image": artifact_image1, "position": (2500, 270), "name": "Golden Idol"},
-        {"image": artifact_image1, "position": (500, 450), "name": "Ancient Vase"}
-    ]
-    artifacts = pygame.sprite.Group(Artifact(data["image"], data["position"], data["name"]) for data in artifact_data)
+        {"name": "welcome",
+        "screen": screen,
+        "text": "welcome to training",
+        "theme_color": text_color,
+        "button_text": "next",
+        "visible": True
+    },
+    
+        {"name": "purpose",
+         "screen": screen,
+         "text": "here, you will learn the basics required to go out on missions",
+         "theme_color": text_color,
+         "button_text": "next",
+         "visible": False
+    },
+
+        {"name": "get_started",
+         "screen": screen,
+         "text": "to get started, walk forward",
+         "theme_color": text_color,
+         "button_text": "got it",
+         "visible": False
+    }]
+    
+    popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in intitial_popups]
+
+    background_darkener = pygame.Surface((window_size[0], window_size[1]), pygame.SRCALPHA)
+    background_darkener.fill((0, 0, 0, 129))
 
     running = True
     fixed_delta_time = 1 / 60
@@ -708,21 +809,30 @@ async def tutorial_level(active_players):
     editing_settings = False
     artifacts_collected = 0
     collected_artifacts = []
-    reload_players = False
     level_complete = False
-    best_player_num = None
     platforms_used = []
+    popup_index = 0
     RELOAD = Button(image=pygame.image.load("Buttons/reload_button.png").convert_alpha(), pos=(85, 43), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
     PAUSE = Button(image=pygame.image.load("Buttons/pause_button.png").convert_alpha(), pos=(30, 35), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color=("White"), hovering_color=("White"))
-    flashlight = Flashlight(screen)
+    flashlight = Flashlight(screen, intensity=100)
 
     while running:
         dt = clock.tick(60) / 1000.0
         accumulator += dt
         keys = pygame.key.get_pressed()
         MENU_MOUSE_POS = pygame.mouse.get_pos()
-
         update_tutorial_controls(active_players, intro_to_jumping, intro_to_sliding, introduced_controls_state)
+
+        for popup in popups:
+            if popup.visible:
+                popup_active = True
+                break
+            else:
+                popup_active = False
+
+        if not popups[popup_index].visible and popup_index + 1 < len(intitial_popups):
+            popups[popup_index + 1].visible = True
+            popup_index += 1
 
         for player in active_players:
             if player.id == 1 and player.on_platform:
@@ -737,13 +847,13 @@ async def tutorial_level(active_players):
 
             if player.on_platform == finish_line:
                 reset_positions = [spawn_point] * num_of_players
-                best_player_num = player.id
                 level_complete = True
                 text_color = player.color
                 checkpoint_increment = 0
                 spawn_point = OG_spawn_point
-                next_checkpoint = next_checkpoints[checkpoint_increment]
+
                 introduced_controls_state["introduced_jumping"], introduced_controls_state['introduced_sliding'] = False, False
+                
                 for platform in next_checkpoints:
                     platform.color = "#9ff084"
                 for player in active_players:
@@ -767,14 +877,17 @@ async def tutorial_level(active_players):
                     artifacts_collected += 1
 
         for event in pygame.event.get():
+
+            for popup in popups:
+                popup.handle_event(event)
+
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN and not popup_active:
                 if RELOAD.checkForInput(MENU_MOUSE_POS):
                     reload_map(active_players, platforms, reset_positions, artifacts)
-                    best_player_num = None
                     level_complete = False
                     text_color = ("#71d6f5")
                     if spawn_point == OG_spawn_point or not next_checkpoints:
@@ -784,10 +897,9 @@ async def tutorial_level(active_players):
                     time_paused = time.time()
                     paused = True
 
-            elif event.type == pygame.KEYDOWN:
+            elif event.type == pygame.KEYDOWN and not popup_active:
                 if event.key == pygame.K_r:
                     reload_map(active_players, platforms, reset_positions, artifacts)
-                    best_player_num = None
                     level_complete = False
                     text_color = ("#71d6f5")
                     if spawn_point == OG_spawn_point or not next_checkpoints:
@@ -796,18 +908,6 @@ async def tutorial_level(active_players):
                 if event.key == pygame.K_p:
                     time_paused = time.time()
                     paused = True
-
-                elif paused or level_complete:
-                    if event.key == pygame.K_u or not pause_menu(screen, level_name, show_controls, window_size, time_paused):
-                        paused = False
-                    elif event.key == pygame.K_r:
-                        reload_map(active_players, platforms, reset_positions, artifacts)
-                        paused = False
-                        level_complete = False
-                        best_player_num = None
-                        text_color = ("#71d6f5")
-                        if spawn_point == OG_spawn_point:
-                            start_timer = pygame.time.get_ticks()
 
         if paused:
             action = await pause_menu(screen, level_name, show_controls, window_size, time_paused)
@@ -826,7 +926,6 @@ async def tutorial_level(active_players):
         elif editing_settings:
             settings_action = await settings_menu(screen, window_size, time_entered_settings)
             if not settings_action:
-                reload_players = True
                 editing_settings = False
             elif isinstance(settings_action, int):
                 active_players = await newPlayerCount(settings_action, active_players, level_name)
@@ -834,23 +933,28 @@ async def tutorial_level(active_players):
                 editing_settings = False
 
         elif level_complete:
-            level_completed(screen, clock, window_size, counting_string, best_player_num, text_color)
+            
+            action = await level_completed(screen, level_name, text_color, window_size, popup_text="nobody loves you", time_finished=time.time())
 
         else:
             while accumulator >= fixed_delta_time:
-                update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active=False)
+                update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active)
                 accumulator -= fixed_delta_time
                 camera.update(active_players, player)
 
             screen.fill((0, 0, 0))
             counting_string = update_timer(start_timer)
             screen.blit(bg_image, (0, 0))
+            screen.blit(background_darkener, (0, 0))
             render_game_objects(platforms, active_players, camera, flashlight, death_platforms)
             render_artifacts(artifacts, camera)
             render_artifact_count(("#56911f"), artifacts_collected)
             render_timer(lil_font, "#32854b", counting_string)
             display_controls(len(active_players), show_controls, introduced_controls_state, print_player1_controls, print_player3_controls, print_player4_controls)
             introduce_controls(blit_jumpslide)
+
+            for popup in popups:
+                popup.update()
 
             for button in [RELOAD, PAUSE]:
                 button.changeColor(pygame.mouse.get_pos())
@@ -871,7 +975,7 @@ async def main():
 
     await load_cutscene(canvas)
 
-    level_name = 'home'
+    level_name = 'Home'
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 60)
     lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25)
     text_color = "#71d6f5"
@@ -914,7 +1018,7 @@ async def main():
     level_complete = False
     best_player_num = None
     platforms_used = []
-    flashlight = Flashlight(screen)
+    flashlight = Flashlight(screen, intensity=100)
     RELOAD = Button(image=pygame.image.load("Buttons/reload_button.png").convert_alpha(), pos=(85, 43), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
     PAUSE = Button(image=pygame.image.load("Buttons/pause_button.png").convert_alpha(), pos=(30, 35), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="White", hovering_color="White")
 
@@ -930,7 +1034,7 @@ async def main():
                     current_platform = player.on_platform.name
                     if current_platform not in platforms_used:
                         platforms_used.append(current_platform)
-                print(player.position)
+                # print(player.position)
 
             if player.position.y > level_height + 100:
                 player.reload(OG_spawn_point)
@@ -961,6 +1065,7 @@ async def main():
                     paused = True
 
             elif event.type == pygame.KEYDOWN:
+
                 if event.key == pygame.K_1:
                     await terus1(active_players, weather_condition)
 
