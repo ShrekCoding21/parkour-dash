@@ -16,7 +16,6 @@ sys.path.append(os.path.join(base_dir, 'Buttons'))  # Add other specific folders
 
 # Local imports
 from flashlight import Flashlight
-from sprites import Spritesheet
 from Players.player import Player
 from camera import Camera
 from artifacts import Artifact
@@ -213,59 +212,6 @@ async def newPlayerCount(new_num_of_players ,active_players, level_name):
         num_of_players = new_num_of_players
         show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
     return active_players
-
-async def load_cutscene(canvas):
-
-    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
-    cutscene = Spritesheet('assets/parkour_dash_intro_sprite.png', 1000, 700)
-    cutscene_frames, cutscene_total_frames, animation_speed = cutscene.get_all_frames('cutscene.png')
-    index = 0
-    animation_start_time = pygame.time.get_ticks()
-    last_update_time = pygame.time.get_ticks()
-    running = True
-    show_skip1 = font.render("Press space or", True, ("#ffffff"))
-    show_skip2 = font.render("s to skip", True, ("#ffffff"))
-    show_skip1_rect = show_skip1.get_rect(topleft=(10, 10))
-    show_skip2_rect = show_skip2.get_rect(topleft=(10, 50))
-    time_to_skip = 1000 # CHANGE THIS LATER; should be 8000 normally
-
-    while running:
-        current_time = pygame.time.get_ticks()
-        time_playing = current_time - animation_start_time
-
-        if current_time - last_update_time > animation_speed:
-            index = (index + 1) % cutscene_total_frames
-            last_update_time = current_time
-
-            if index == 289:
-                running = False
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
-
-            elif time_playing >= time_to_skip and event.type == pygame.KEYDOWN:
-                
-                if event.key == pygame.K_s or event.key == pygame.K_SPACE:
-                    running = False
-
-        canvas.fill((0, 0, 0))
-        
-        current_frame = cutscene_frames[index]
-        
-        frame_rect = current_frame.get_rect(center=(canvas.get_width() // 2, canvas.get_height() // 2))
-        canvas.blit(current_frame, frame_rect.topleft)
-
-        screen.blit(canvas, (0, 0))
-
-        if time_playing >= time_to_skip:
-
-            screen.blit(show_skip1, show_skip1_rect)
-            screen.blit(show_skip2, show_skip2_rect)
-
-        pygame.display.update()
-        await asyncio.sleep(0)
 
 async def settings_menu(screen, window_size, time_entered_settings):
 
@@ -934,7 +880,7 @@ async def tutorial_level(active_players):
 
         elif level_complete:
             
-            action = await level_completed(screen, level_name, text_color, window_size, popup_text="nobody loves you", time_finished=time.time())
+            action = await level_completed(screen, level_name, text_color, window_size, popup_text="nobody loves you :(", time_finished=time.time())
 
         else:
             while accumulator >= fixed_delta_time:
@@ -972,8 +918,6 @@ async def main():
         (condition for condition, codes in weather_codes['weather-codes'].items() if current_weather['weather_code'] in codes),
         None
     )
-
-    await load_cutscene(canvas)
 
     level_name = 'Home'
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 60)
