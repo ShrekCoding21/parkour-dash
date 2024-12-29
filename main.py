@@ -899,7 +899,7 @@ async def tutorial_level(active_players):
 
         elif level_complete:
             if artifacts_collected == 3:
-                action = await level_completed(screen, level_name, text_color, window_size, popup_text="nobody loves you :(", time_finished=time.time())
+                action = await level_completed(screen, level_name, text_color, window_size, popup_text="Hello. Nothing here, yet :)", time_finished=time.time())
                 if action == "level restart":
                     show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
                     intro_to_jumping, intro_to_sliding, intro_to_jumpslide, artifacts = tutorialPlatformsInit(platforms, level_name)
