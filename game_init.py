@@ -389,10 +389,18 @@ def getArtifacts(platforms, level_name):
         artifacts.add(Artifact(artifact_image1, artifact_position, artifact_name))
     return artifacts
 
-def render_artifacts(artifacts, camera):
+def render_artifacts(artifacts, camera, collected_artifacts):
+    """
+    Renders artifacts for a given level
+
+    Args:
+        artifacts (dict): List of all artifacts in the level to be rendered
+        camera (Camera object): Current level camera so camera movement is properly applied to artifacts
+        collected_artifacts (list): List of artifacts that have already been collected so they are not rendered again
+    """
 
     for artifact in artifacts:
-        if not artifact.collected:
+        if artifact not in collected_artifacts and not artifact.collected:
             artifact_rect = camera.apply(artifact)  # Apply camera transformation
             artifact_scaled_rect = pygame.Rect(
                 artifact_rect.x,

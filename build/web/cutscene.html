@@ -61,6 +61,7 @@
     </video>
 
     <script>
+        const skipTime = 4000
         window.onload = function() {
             const video = document.getElementById('cutscene');
             const skipText = document.getElementById('skip-text');
@@ -73,7 +74,7 @@
             // Show the "Press space or s to skip" text after 8 seconds
             setTimeout(() => {
                 skipText.style.display = 'block';
-            }, 8000);
+            }, skipTime);
 
             // Redirect to game.html when the video ends
             video.addEventListener('ended', function() {
@@ -85,7 +86,7 @@
             let skipEnabled = false;
             setTimeout(() => {
                 skipEnabled = true;
-            }, 8000);
+            }, skipTime);
 
             window.addEventListener('keydown', function(event) {
                 if (skipEnabled && (event.code === 'Space' || event.key.toLowerCase() === 's')) {
