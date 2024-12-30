@@ -10,7 +10,7 @@
             "width": 400,
             "height": 30,
             "is_moving": "False",
-            "color": "#b04e15"
+            "color": "#373045"
         },
 
         "death-form1": {
@@ -29,7 +29,7 @@
             "width": 130,
             "height": 30,
             "is_moving": "False",
-            "color": "#b04e15"
+            "color": "#373045"
         },
 
         "jump-platform2": {
@@ -38,7 +38,7 @@
             "width": 130,
             "height": 30,
             "is_moving": "False",
-            "color": "#b04e15"
+            "color": "#373045"
         },
 
         "show-slide": {
@@ -47,7 +47,7 @@
             "width": 130,
             "height": 30,
             "is_moving": "False",
-            "color": "#b04e15"
+            "color": "#373045"
         },
 
         "death-form2": {
@@ -66,7 +66,7 @@
             "width": 130,
             "height": 30,
             "is_moving": "False",
-            "color": "#b04e15"
+            "color": "#373045"
         },
 
         "jump-platform4": {
@@ -75,7 +75,7 @@
             "width": 130,
             "height": 30,
             "is_moving": "False",
-            "color": "#b04e15"
+            "color": "#373045"
         },
 
         "jump-platform5": {
@@ -84,7 +84,7 @@
             "width": 50,
             "height": 30,
             "is_moving": "False",
-            "color": "#b04e15"
+            "color": "#373045"
         },
 
         "checkpoint1": {
@@ -102,7 +102,7 @@
             "width": 130,
             "height": 30,
             "is_moving": "False",
-            "color": "#b04e15"
+            "color": "#373045"
         },
 
         "artifact-platform1": {
@@ -111,7 +111,7 @@
             "width": 130,
             "height": 30,
             "is_moving": "False",
-            "color": "#b04e15"
+            "color": "#373045"
         },
 
         "checkpoint2": {
@@ -139,7 +139,7 @@
             "width": 130,
             "height": 30,
             "is_moving": "False",
-            "color": "#b04e15"
+            "color": "#373045"
         },
 
         "moving-platform1": {
@@ -153,7 +153,7 @@
             "y-direction": 1,
             "x-movement_range": 0,
             "y-movement_range": 500,
-            "color": "#b04e15"
+            "color": "#373045"
         },
 
         "artifact-platform2": {
@@ -162,7 +162,7 @@
             "width": 130,
             "height": 30,
             "is_moving": "False",
-            "color": "#b04e15"
+            "color": "#373045"
         },
 
         "death-form4": {
@@ -215,7 +215,7 @@
             "width": 1500,
             "height": 400,
             "is_moving": "False",
-            "color": "#b04e15"
+            "color": "#373045"
         },
 
         "artifact-platform3": {
@@ -224,7 +224,7 @@
             "width": 150,
             "height": 30,
             "is_moving": "False",
-            "color": "#b04e15"
+            "color": "#373045"
         },
 
         "finish-line": {

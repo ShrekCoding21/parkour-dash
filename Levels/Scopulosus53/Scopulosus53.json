@@ -1,0 +1,179 @@
+{"Scopulosus53": {
+
+    "level_type": "scrolling",
+    "camera_dimensions": [10000, 3000],
+    "platforms": {
+
+        "starting-platform": {
+            "x-position": 0,
+            "y-position": 2800,
+            "width": 100,
+            "height": 5,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+
+        "base-platform": {
+            "x-position": 0,
+            "y-position": 2800,
+            "width": 500,
+            "height": 200,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+
+        "jump-platform1": {
+            "x-position": 630,
+            "y-position": 2740,
+            "width": 130,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+
+        "introduce-volcano": {
+            "x-position": 890,
+            "y-position": 2860,
+            "width": 130,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+
+        "jump-platform2": {
+            "x-position": 1400,
+            "y-position": 2175,
+            "width": 130,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+
+        "jump-platform3": {
+            "x-position": 1700,
+            "y-position": 2325,
+            "width": 130,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+
+        "moving-platform1": {
+            "x-position": 2300,
+            "y-position": 1625,
+            "width": 130,
+            "height": 30,
+            "is_moving": "True",
+            "speed": 150,
+            "x-direction": 1,
+            "y-direction": 0,
+            "x-movement_range": 200,
+            "y-movement_range": 0,
+            "color": "#b04e15"
+        },
+
+        "moving-platform2": {
+            "x-position": 2630,
+            "y-position": 1625,
+            "width": 130,
+            "height": 30,
+            "is_moving": "True",
+            "speed": 150,
+            "x-direction": 1,
+            "y-direction": 0,
+            "x-movement_range": 200,
+            "y-movement_range": 0,
+            "color": "#b04e15"
+        },
+
+        "volcano-platform": {
+            "x-position": 2700,
+            "y-position": 2350,
+            "width": 700,
+            "height": 800,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+
+        "cliff-platform1": {
+            "x-position": 3400,
+            "y-position": 1350,
+            "width": 800,
+            "height": 2000,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+
+        "pedestal-base": {
+            "x-position": 3500,
+            "y-position": 1320,
+            "width": 600,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+
+        "pedestal-middle": {
+            "x-position": 3650,
+            "y-position": 1290,
+            "width": 300,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+
+        "artifact-platform1": {
+            "x-position": 3725,
+            "y-position": 1260,
+            "width": 150,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+
+        "checkpoint1": {
+            "x-position": 4450,
+            "y-position": 1550,
+            "width": 150,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#9ff084"
+        },
+
+        "jump-platform4": {
+            "x-position": 4700,
+            "y-position": 1490,
+            "width": 130,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+
+        "artifact-platform2": {
+            "x-position": 5200,
+            "y-position": 1090,
+            "width": 130,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+
+        "jump-platform5": {
+            "x-position": 5700,
+            "y-position": 690,
+            "width": 130,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+
+        "finish-line": {
+            "x-position": 2800,
+            "y-position": 2920,
+            "width": 150,
+            "height": 30,
+            "is_moving": "False",
+            "image_path": "Platforms/finish-line.png",
+            "color": "#ffffff"
+        }
+    }}}
