@@ -19,7 +19,6 @@ class Volcano:
 
         # Load and stretch the volcano image
         self.original_volcano_image = pygame.image.load("Levels/Scopulosus53/assets/volcano.png").convert_alpha()
-        print(self.stretch_size)
         self.volcano_image = pygame.transform.scale(self.original_volcano_image, (self.stretch_size))
 
         # Create the rectangle for the volcano
@@ -63,6 +62,7 @@ class Volcano:
         cloud_y = steam_y - cloud_height + 5
 
         return pygame.Rect(steam_x, steam_y, steam_width, steam_height), pygame.Rect(cloud_x, cloud_y, cloud_width, cloud_height)
+
 
     def _calculate_next_toggle_delay(self):
         """Calculate the next delay for toggling steam on/off."""

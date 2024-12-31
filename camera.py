@@ -86,11 +86,11 @@ class Camera:
 
         return obj
 
-    def update(self, players):
+    def update(self, player):
         """
         Updates the camera's position and zoom based on the mode.
 
-        :param players: A list of players to track.
+        :param player: The player to track.
         """
         if self.manual_mode:
             # Use manual settings for position
@@ -100,11 +100,11 @@ class Camera:
                 max(0, min(y, self.height - self.window_size[1] / self.zoom))
             )
         else:
-            if players:
-                min_x = min(player.position.x for player in players) - self.margin
-                max_x = max(player.position.x for player in players) + self.margin
-                min_y = min(player.position.y for player in players) - self.margin
-                max_y = max(player.position.y for player in players) + self.margin
+            if player:
+                min_x = player.position.x - self.margin
+                max_x = player.position.x + self.margin
+                min_y = player.position.y - self.margin
+                max_y = player.position.y + self.margin
 
                 center_x = (min_x + max_x) / 2
                 center_y = (min_y + max_y) / 2

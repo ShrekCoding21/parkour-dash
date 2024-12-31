@@ -193,13 +193,13 @@ async def load_level(level_name, num_of_players):
     if level_type == 'scrolling':
         
         level_width, level_height = levels_data[level_name]['camera_dimensions'][0], levels_data[level_name]['camera_dimensions'][1]
-        camera = Camera(width=level_width, height=level_height, window_size=window_size, zoom=1)
+        camera = Camera(width=level_width, height=level_height, window_size=window_size)
         camera.is_active = True
         next_checkpoint = next_checkpoints[checkpoint_increment]
 
     else:
         level_width, level_height = 1000, 700
-        camera = Camera(width=level_width, height=level_height, window_size=window_size, zoom=1)
+        camera = Camera(width=level_width, height=level_height, window_size=window_size)
         camera.is_active = False
         introduced_controls_state["introduced_jumping"], introduced_controls_state['introduced_sliding'] = True, True
         next_checkpoint = None
@@ -676,7 +676,9 @@ async def terus1(active_players, weather_condition):
             while accumulator >= fixed_delta_time:
                 update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active)
                 accumulator -= fixed_delta_time
-                camera.update(active_players)
+                for player in active_players:
+                    if player.id == 1:
+                        camera.update(player)
                 flashlight.pos = pygame.Vector2(player.rect.center)
 
             screen.fill((0, 0, 0))
@@ -807,7 +809,6 @@ async def scopulosus53(active_players):
         keys = pygame.key.get_pressed()
         MENU_MOUSE_POS = pygame.mouse.get_pos()
 
-        print(camera.player_far_away)
         for popup in popups:
             if popup.visible:
                 popup_active = True
@@ -941,7 +942,9 @@ async def scopulosus53(active_players):
             while accumulator >= fixed_delta_time:
                 update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active)
                 accumulator -= fixed_delta_time
-                camera.update(active_players)
+                for player in active_players:
+                    if player.id == 1:
+                        camera.update(player)
 
             screen.fill((0, 0, 0))
             counting_string = update_timer(start_timer)
@@ -1180,7 +1183,9 @@ async def tutorial_level(active_players):
             while accumulator >= fixed_delta_time:
                 update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active)
                 accumulator -= fixed_delta_time
-                camera.update(active_players)
+                for player in active_players:
+                    if player.id == 1:
+                        camera.update(player)
 
             screen.fill((0, 0, 0))
             counting_string = update_timer(start_timer)
@@ -1350,10 +1355,11 @@ async def main():
             while accumulator >= fixed_delta_time:
                 update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active=False)
                 accumulator -= fixed_delta_time
-                camera.update(active_players)
+                for player in active_players:
+                    if player.id == 1:
+                        camera.update(player)
 
             screen.fill((0, 0, 0))
-            counting_string = update_timer(start_timer)
             screen.blit(bg_image, (0, 0))
             screen.blit(background_darkener, (0, 0))
             render_game_objects(platforms, active_players, camera, flashlight, death_platforms=[])
