@@ -979,6 +979,7 @@ async def tutorial_level(active_players):
     text_color = ("#71d6f5")
 
     num_of_players = len(active_players)
+    num_of_players = 4
     show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
     intro_to_jumping, intro_to_sliding, intro_to_jumpslide, artifacts = tutorialPlatformsInit(platforms, level_name)
 
@@ -1186,13 +1187,48 @@ async def tutorial_level(active_players):
                 for player in active_players:
                     if player.id == 1:
                         camera.update(player)
+            
+            p1_camera = pygame.Rect(0, 0, window_size[0] // 2, window_size[1] // 2)
+            p2_camera = pygame.Rect(window_size[0] // 2, 0, window_size[0] // 2, window_size[1] // 2)
+            p3_camera = pygame.Rect(0, window_size[1] // 2, window_size[0] // 2, window_size[1] // 2)
+            p4_camera = pygame.Rect(window_size[0] // 2, window_size[1] // 2, window_size[0] // 2, window_size[1] // 2)
 
-            screen.fill((0, 0, 0))
+            # Create a canvas to draw on (optional, but can improve performance)
+            canvas = pygame.Surface((window_size[0], window_size[1]))
+            canvas.fill((0, 0, 0))  # Fill the canvas with black
+
+            # Create subsurface objects for each player's view
+            sub1 = canvas.subsurface(p1_camera)
+            sub2 = canvas.subsurface(p2_camera)
+            sub3 = canvas.subsurface(p3_camera)
+            sub4 = canvas.subsurface(p4_camera)
+
+            subscreens = [sub1, sub2, sub3, sub4]
+
+            for i, sub in enumerate(subscreens):
+                if i < len(active_players):
+                    player = active_players[i]
+                    camera.update(player)
+                    bg_image = pygame.transform.scale(bg_image, (sub.get_size()))
+                    sub.blit(bg_image, (0, 0))
+                    sub.blit(background_darkener, (0, 0))
+                    render_game_objects(platforms, active_players, camera, flashlight, death_platforms, surface=sub)
+
+            
+
+            # Draw white lines to separate the views
+            pygame.draw.line(canvas, (255, 255, 255), (window_size[0] // 2, 0), (window_size[0] // 2, window_size[1]), 5)
+            pygame.draw.line(canvas, (255, 255, 255), (0, window_size[1] // 2), (window_size[0], window_size[1] // 2), 5)
+
+            # Blit the subsurfaces to the main screen
+            screen.blit(sub1, (0, 0))
+            screen.blit(sub2, (window_size[0] // 2, 0))
+            screen.blit(sub3, (0, window_size[1] // 2))
+            screen.blit(sub4, (window_size[0] // 2, window_size[1] // 2))
+
             counting_string = update_timer(start_timer)
-            screen.blit(bg_image, (0, 0))
-            screen.blit(background_darkener, (0, 0))
-            render_game_objects(platforms, active_players, camera, flashlight, death_platforms)
-            render_artifacts(artifacts, camera, collected_artifacts)
+            # render_game_objects(platforms, active_players, camera, flashlight, death_platforms)
+            # render_artifacts(artifacts, camera, collected_artifacts)
             render_artifact_count(("#56911f"), artifacts_collected)
             render_timer(lil_font, "#32854b", counting_string)
             display_controls(len(active_players), show_controls, introduced_controls_state, print_player1_controls, print_player3_controls, print_player4_controls)
@@ -1362,7 +1398,7 @@ async def main():
             screen.fill((0, 0, 0))
             screen.blit(bg_image, (0, 0))
             screen.blit(background_darkener, (0, 0))
-            render_game_objects(platforms, active_players, camera, flashlight, death_platforms=[])
+            render_game_objects(platforms, active_players, camera, flashlight, death_platforms=[], surface=screen)
             display_controls(len(active_players), show_controls, introduced_controls_state, print_player1_controls, print_player3_controls, print_player4_controls)
 
             screen.blit(print_welcome1, print_welcome1_rect)

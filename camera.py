@@ -30,7 +30,6 @@ class Camera:
         self.is_active = True
         self.manual_mode = False  # Default to tracking mode
         self.manual_position = (0, 0)
-        self.player_far_away = False  # Track if player is far away
 
     def apply(self, obj):
         """
@@ -106,7 +105,7 @@ class Camera:
                 min_y = player.position.y - self.margin
                 max_y = player.position.y + self.margin
 
-                center_x = (min_x + max_x) / 2
+                center_x = (min_x + max_x) / 2 + 300
                 center_y = (min_y + max_y) / 2
 
                 bounding_width = max_x - min_x
@@ -123,21 +122,6 @@ class Camera:
                     self.zoom += (self.target_zoom - self.zoom) * self.zoom_speed
                 else:
                     self.zoom = self.target_zoom
-
-                if max_x - min_x > self.width / self.target_zoom * 2:  # Check if zoom-out needed
-                    self.player_far_away = True
-                else:
-                    self.player_far_away = False
-
-            # If far-away player respawns, zoom out temporarily
-            if self.player_far_away and not self.manual_mode:
-                self.zoom = max(self.max_zoom_out * 10, self.target_zoom)
-
-                if self.zoom < self.max_zoom_range:
-                    self.zoom += (self.max_zoom_range - self.zoom) * self.zoom_speed
-
-            else:
-                self.player_far_away = False
 
             camera_width = self.window_size[0] / self.zoom
             camera_height = self.window_size[1] / self.zoom

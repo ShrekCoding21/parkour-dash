@@ -301,7 +301,15 @@ def is_flashlight_touching_platform(flashlight_beam, platform_rect, flashlight):
     # Check for collision between the beam rectangle and platform rectangle
     return beam_rect.colliderect(platform_rect)
 
-def render_game_objects(platforms, active_players, camera, flashlight, death_platforms):
+def render_game_objects(platforms, active_players, camera, flashlight, death_platforms, surface):
+    """
+    platforms (list): List of all platforms to be rendered in a level
+    active_players (list): List of all players to be rendered in a level
+    camera (camera obj.): Camera transformations should be applied to
+    flashlight (flashlight obj.): Flashlight to illuminate platforms if activated
+    death_platforms (list): List of platforms that will kill players when touched
+    surface (pygame surface obj.): Surface for game to be blitted on
+    """
     # If the flashlight is on, draw the beam first
     if flashlight.on:
         flashlight.draw(camera)
@@ -350,8 +358,8 @@ def render_game_objects(platforms, active_players, camera, flashlight, death_pla
                 platform_surface.blit(intersection, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
                 platform_surface.fill(darkened_color, special_flags=pygame.BLEND_RGBA_MULT)
 
-        # Draw the platform on the screen
-        screen.blit(platform_surface, platform_rect)
+        # Draw the platform on the provided surface
+        surface.blit(platform_surface, platform_rect)
 
     # Render players
     for player in active_players:
@@ -362,7 +370,7 @@ def render_game_objects(platforms, active_players, camera, flashlight, death_pla
             int(player_rect.width),
             int(player_rect.height)
         )
-        pygame.draw.rect(screen, player.color, scaled_rect)
+        pygame.draw.rect(surface, player.color, scaled_rect)
 
 
 def getArtifacts(platforms, level_name):
