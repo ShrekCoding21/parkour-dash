@@ -1,0 +1,44 @@
+{"Magnus25": {
+
+    "level_type": "scrolling",
+    "camera_dimensions": [10000, 3600],
+    "platforms": {
+
+        "starting-platform": {
+            "x-position": 0,
+            "y-position": 2800,
+            "width": 100,
+            "height": 5,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+
+        "base-platform": {
+            "x-position": 0,
+            "y-position": 2800,
+            "width": 500,
+            "height": 900,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+        "checkpoint1": {
+            "x-position": 4450,
+            "y-position": 1550,
+            "width": 150,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#9ff084"
+        },
+        
+        "finish-line": {
+            "x-position": 8560,
+            "y-position": 2920,
+            "width": 150,
+            "height": 30,
+            "is_moving": "False",
+            "image_path": "Platforms/finish-line.png",
+            "color": "#ffffff"
+        }
+    }
+}
+    }

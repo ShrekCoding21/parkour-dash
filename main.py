@@ -1037,7 +1037,205 @@ async def scopulosus53(active_players):
         await asyncio.sleep(0)
 
 async def magnus25(active_players):
-    pass
+    
+    level_name = 'Magnus25'
+    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 60)
+    lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30)
+    text_color = ("#0c4701")
+
+    num_of_players = len(active_players)
+    show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)   
+
+    popup_data = [
+
+        {"name": "popup1",
+        "screen": screen,
+        "text": "this is a popup",
+        "theme_color": text_color,
+        "button_text": "ok",
+        "visible": True
+    },
+    
+        {"name": "popup2",
+         "screen": screen,
+         "text": "this is another popup",
+         "theme_color": text_color,
+         "button_text": "got it",
+         "visible": False
+    }]
+    
+    popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in popup_data]
+
+    print_need_artifacts = font.render("you need more artifacts", True, text_color)
+    need_artifacts_rect = print_need_artifacts.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
+
+    artifacts = [] # THIS IS TEMPORARY
+    running = True
+    fixed_delta_time = 1 / 60
+    accumulator = 0
+    start_timer = pygame.time.get_ticks()
+    paused = False
+    editing_settings = False
+    artifacts_collected = 0
+    collected_artifacts = []
+    level_complete = False
+    RELOAD = Button(image=pygame.image.load("Buttons/reload_button.png").convert_alpha(), pos=(85, 43), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+    PAUSE = Button(image=pygame.image.load("Buttons/pause_button.png").convert_alpha(), pos=(30, 35), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color=("White"), hovering_color=("White"))
+    flashlight = Flashlight(screen, intensity=100)
+
+    while running:
+        dt = clock.tick(60) / 1000.0
+        accumulator += dt
+        keys = pygame.key.get_pressed()
+        MENU_MOUSE_POS = pygame.mouse.get_pos()
+
+        for popup in popups:
+            if popup.visible:
+                popup_active = True
+                break
+            else:
+                popup_active = False
+
+        for player in active_players:
+            if player.id == 1 and player.on_platform:
+                current_platform = player.on_platform.name
+
+            if player.position.y > level_height + 100:
+                player.reload(spawn_point)
+
+            if player.on_platform == finish_line:
+                reset_positions = [spawn_point] * num_of_players
+                level_complete = True
+                text_color = player.color
+                checkpoint_increment = 0
+                spawn_point = OG_spawn_point
+            
+                for platform in next_checkpoints:
+                        platform.color = "#9ff084"
+            
+            if player.on_platform in death_platforms:
+                player.reload(spawn_point)
+
+            if player.on_platform == next_checkpoint:
+                spawn_point = (next_checkpoint.position.x + (next_checkpoint.dimensions[0] / 2), next_checkpoint.start_position.y - next_checkpoint.dimensions[1])
+                next_checkpoint.color = "#228700"
+                reset_positions = [spawn_point] * num_of_players
+                if checkpoint_increment < len(next_checkpoints) - 1:
+                    checkpoint_increment += 1
+                    next_checkpoint = next_checkpoints[checkpoint_increment]
+
+            for artifact in artifacts:
+                if player.rect.colliderect(artifact.rect) and not artifact.collected and artifact not in collected_artifacts:
+                    artifact.collect()
+                    artifacts_collected += 1
+                    collected_artifacts.append(artifact)
+
+        for event in pygame.event.get():
+
+            for popup in popups:
+                popup.handle_event(event)
+
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
+            if event.type == pygame.MOUSEBUTTONDOWN and not popup_active:
+                if RELOAD.checkForInput(MENU_MOUSE_POS):
+                    reload_map(active_players, platforms, reset_positions, artifacts)
+                    level_complete = False
+                    text_color = ("#71d6f5")
+                    if spawn_point == OG_spawn_point or not next_checkpoints:
+                        start_timer = pygame.time.get_ticks()
+
+                if PAUSE.checkForInput(MENU_MOUSE_POS):
+                    time_paused = time.time()
+                    paused = True
+
+            elif event.type == pygame.KEYDOWN and not popup_active:
+                if event.key == pygame.K_r:
+                    reload_map(active_players, platforms, reset_positions, artifacts)
+                    level_complete = False
+                    text_color = ("#71d6f5")
+                    if spawn_point == OG_spawn_point or not next_checkpoints:
+                        start_timer = pygame.time.get_ticks()
+
+                if event.key == pygame.K_p:
+                    time_paused = time.time()
+                    paused = True
+
+        if paused:
+            action = await pause_menu(screen, level_name, show_controls, window_size, time_paused)
+            if action == False:
+                paused = False
+            elif action == "level restart":
+                show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
+                start_timer = pygame.time.get_ticks()
+                popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in popup_data]
+                artifacts_collected = 0
+                collected_artifacts = []
+                paused = False
+            elif action == "show controls":
+                show_controls = not show_controls
+                paused = False
+            elif action == "go to home":
+                running = False
+            elif action == "go to settings" and not editing_settings:
+                time_entered_settings = time.time()
+                paused = False
+                editing_settings = True
+        
+        elif editing_settings:
+            settings_action = await settings_menu(screen, window_size, time_entered_settings)
+            if not settings_action:
+                editing_settings = False
+            elif isinstance(settings_action, int):
+                active_players = await newPlayerCount(settings_action, active_players, level_name)
+                num_of_players = len(active_players)
+                editing_settings = False
+
+        elif level_complete:
+            if artifacts_collected == 3:
+                action = await level_completed(screen, level_name, text_color, window_size, popup_text="Hello. Nothing here, yet :)", time_finished=time.time())
+                if action == "level restart":
+                    show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
+                    start_timer = pygame.time.get_ticks()
+                    popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in popup_data]
+                    artifacts_collected = 0
+                    collected_artifacts = []
+                    level_complete = False
+                
+                elif action == "go to home":
+                    running = False
+            else:
+                screen.blit(print_need_artifacts, need_artifacts_rect)
+        
+        else:
+            while accumulator >= fixed_delta_time:
+                update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active)
+                accumulator -= fixed_delta_time
+                for player in active_players:
+                    if player.id == 1:
+                        camera.update(player, num_of_players)
+
+            screen.fill((0, 0, 0))
+            counting_string = update_timer(start_timer)
+            screen.blit(bg_image, (0, 0))
+            render_game_objects(platforms, active_players, camera, flashlight, death_platforms, screen)
+            # render_artifacts(artifacts, camera, collected_artifacts)
+            # render_artifact_count(("#56911f"), artifacts_collected)
+            render_timer(lil_font, "#32854b", counting_string)
+            display_controls(len(active_players), show_controls, introduced_controls_state, print_player1_controls, print_player3_controls, print_player4_controls)
+
+            for popup in popups:
+                popup.update()
+
+            for button in [RELOAD, PAUSE]:
+                button.changeColor(pygame.mouse.get_pos())
+                button.update(screen)
+
+            pygame.display.flip()
+
+        await asyncio.sleep(0)
 
 async def tutorial_level(active_players):
 
