@@ -722,6 +722,8 @@ async def scopulosus53(active_players):
     introduce_deathcano = platform_dict.get("jump-platform4")
     one_way = platform_dict.get("checkpoint3")
     artifacts = getArtifacts(platforms, level_name)
+    carbon_nanotube_info = await load_json_file(f"Levels/{level_name}/artifact_info.json")
+    post_mission_briefing = carbon_nanotube_info["carbon-nanotube-info"]["after-level-info"]
 
     volcano_introduction = [
     
@@ -1001,7 +1003,7 @@ async def scopulosus53(active_players):
 
         elif level_complete:
             if artifacts_collected == 3:
-                action = await level_completed(screen, level_name, text_color, window_size, popup_text="Hello. Nothing here, yet :)", time_finished=time.time())
+                action = await level_completed(screen, level_name, text_color, window_size, post_mission_briefing, time_finished=time.time())
                 if action == "level restart":
                     show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
                     start_timer = pygame.time.get_ticks()
@@ -1381,6 +1383,9 @@ async def main():
                 
                 if event.key == pygame.K_2:
                     await scopulosus53(active_players)
+                
+                if event.key == pygame.K_3:
+                    await magnus25(active_players)
 
                 if event.key == pygame.K_r:
                     reload_map(active_players, platforms, reset_positions, artifacts)
