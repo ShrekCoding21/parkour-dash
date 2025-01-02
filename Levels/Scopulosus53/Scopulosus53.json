@@ -175,7 +175,7 @@
             "x-position": 5200,
             "y-position": 1090,
             "width": 130,
-            "height": 30,
+            "height": 50,
             "is_moving": "False",
             "color": "#b04e15"
         },
@@ -189,8 +189,80 @@
             "color": "#b04e15"
         },
 
+        "checkpoint2": {
+            "x-position": 5960,
+            "y-position": 690,
+            "width": 150,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#9ff084"
+        },
+
+        "volcano-platform2": {
+            "x-position": 6240,
+            "y-position": 800,
+            "width": 130,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+
+        "jump-platform7": {
+            "x-position": 6500,
+            "y-position": 700,
+            "width": 130,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+
+        "volcano-platform3": {
+            "x-position": 6760,
+            "y-position": 800,
+            "width": 130,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+
+        "jump-platform9": {
+            "x-position": 7000,
+            "y-position": 300,
+            "width": 130,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+        
+        "jump-platform10": {
+            "x-position": 7300,
+            "y-position": 300,
+            "width": 130,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+
+        "checkpoint3": {
+            "x-position": 7600,
+            "y-position": 300,
+            "width": 150,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#9ff084"
+        },
+
+        "artifact-platform3": {
+            "x-position": 8300,
+            "y-position": 2920,
+            "width": 130,
+            "height": 50,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+
         "finish-line": {
-            "x-position": 2800,
+            "x-position": 8560,
             "y-position": 2920,
             "width": 150,
             "height": 30,

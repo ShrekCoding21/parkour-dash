@@ -715,28 +715,61 @@ async def scopulosus53(active_players):
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 60)
     lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30)
     text_color = ("#0c4701")
-
     num_of_players = len(active_players)
     show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)   
+    platform_dict = {platform.name: platform for platform in platforms}
+    introduce_volcano = platform_dict.get("introduce-volcano")
+    introduce_deathcano = platform_dict.get("jump-platform4")
     artifacts = getArtifacts(platforms, level_name)
 
-    popup_data = [
-
-        {"name": "popup1",
-        "screen": screen,
-        "text": "this is a popup",
-        "theme_color": text_color,
-        "button_text": "ok",
-        "visible": True
+    volcano_introduction = [
+    
+        {"name": "introduce_volcanoes1",
+         "screen": screen,
+         "text": "This is a volcano.",
+         "theme_color": text_color,
+         "button_text": "next",
+         "visible": False
     },
     
-        {"name": "popup2",
+        {"name": "introduce_volcanoes2",
          "screen": screen,
-         "text": "this is another popup",
+         "text": "They can be dangerous, but can also be used to your advantage.",
          "theme_color": text_color,
-         "button_text": "got it",
+         "button_text": "next",
          "visible": False
-    }]
+    },
+
+        {"name": "introduce_volcanoes3",
+         "screen": screen,
+         "text": "Use the steam to reach higher platforms.",
+         "theme_color": text_color,
+         "button_text": "i'll try it",
+         "visible": False
+    }
+    
+    ]
+
+    volcano_tips = [
+
+        {
+            "name": "volcano_tip1",
+            "screen": screen,
+            "text": "These volcanoes seem to be a lot stronger than the previous ones",
+            "theme_color": text_color,
+            "button_text": "next",
+            "visible": False
+        },
+
+        {
+            "name": "volcano_tip2",
+            "screen": screen,
+            "text": "Try not to stay in the steam for too long, or you might get pushed too high.",
+            "theme_color": text_color,
+            "button_text": "got it",
+            "visible": False
+        }
+    ]
 
     volcano_data = [
         {
@@ -760,7 +793,7 @@ async def scopulosus53(active_players):
             "position": (2700, 1850),
             "stretch_size": (1000, 500),
             "steam_height": 800,
-            "steam_correction": 10
+            "steam_correction": 20
         },
 
         {
@@ -777,10 +810,42 @@ async def scopulosus53(active_players):
             "stretch_size": (2000, 1000),
             "steam_height": 3000,
             "steam_correction": 30
+        },
+
+        {
+            "name": "obstacano3",
+            "position": (5280, 2426),
+            "stretch_size": (2000, 1000),
+            "steam_height": 3000,
+            "steam_correction": 30
+        },
+
+        {
+            "name": "obstacano4",
+            "position": (5800, 2426),
+            "stretch_size": (2000, 1000),
+            "steam_height": 3000,
+            "steam_correction": 30
+        },
+
+        {
+            "name": "gapcano1",
+            "position": (6190, 2426),
+            "stretch_size": (2000, 1000),
+            "steam_height": 3000,
+            "steam_correction": 30  
+        },
+
+        {
+            "name": "obstacano6",
+            "position": (6490, 2426),
+            "stretch_size": (2000, 1000),
+            "steam_height": 3000,
+            "steam_correction": 30
         }
     ]
     
-    popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in popup_data]
+    popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in volcano_introduction + volcano_tips]
     volcanoes = [Volcano(data["name"], data["position"], data["steam_height"], data["steam_correction"], screen, data["stretch_size"]) for data in volcano_data]
     print_need_artifacts = font.render("you need more artifacts", True, text_color)
     need_artifacts_rect = print_need_artifacts.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
@@ -791,8 +856,10 @@ async def scopulosus53(active_players):
     start_timer = pygame.time.get_ticks()
     paused = False
     editing_settings = False
+    volcano_introduction_sequence, volcano_tips_sequence = False, False
     artifacts_collected = 0
     collected_artifacts = []
+    popup_index = 0
     level_complete = False
     RELOAD = Button(image=pygame.image.load("Buttons/reload_button.png").convert_alpha(), pos=(85, 43), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
     PAUSE = Button(image=pygame.image.load("Buttons/pause_button.png").convert_alpha(), pos=(30, 35), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color=("White"), hovering_color=("White"))
@@ -810,13 +877,14 @@ async def scopulosus53(active_players):
                 break
             else:
                 popup_active = False
+        print(popup_index)
 
         for player in active_players:
-
+                
             for volcano in volcanoes:
                 volcano.interact_with_player(player, volcanoes)
 
-            if player.position.y > level_height + 100:
+            if player.position.y > level_height + 100 or player.position.y < -100:
                 player.reload(spawn_point)
 
             if player.on_platform == finish_line:
@@ -839,6 +907,16 @@ async def scopulosus53(active_players):
                 if checkpoint_increment < len(next_checkpoints) - 1:
                     checkpoint_increment += 1
                     next_checkpoint = next_checkpoints[checkpoint_increment]
+            
+            if player.on_platform == introduce_volcano and not volcano_introduction_sequence:
+                for popup in popups:
+                    if popup.name == "introduce_volcanoes1":
+                        popup.visible = True
+                volcano_introduction_sequence = True
+                
+            if volcano_introduction_sequence and not popups[popup_index].visible and popup_index + 1 < len(volcano_introduction):
+                popups[popup_index + 1].visible = True
+                popup_index += 1
 
             for artifact in artifacts:
                 if player.rect.colliderect(artifact.rect) and not artifact.collected and artifact not in collected_artifacts:
@@ -886,7 +964,7 @@ async def scopulosus53(active_players):
             elif action == "level restart":
                 show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
                 start_timer = pygame.time.get_ticks()
-                popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in popup_data]
+                popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in volcano_introduction + volcano_tips]
                 artifacts_collected = 0
                 collected_artifacts = []
                 paused = False
@@ -915,7 +993,7 @@ async def scopulosus53(active_players):
                 if action == "level restart":
                     show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
                     start_timer = pygame.time.get_ticks()
-                    popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in popup_data]
+                    popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in volcano_introduction + volcano_tips]
                     artifacts_collected = 0
                     collected_artifacts = []
                     level_complete = False
@@ -929,8 +1007,6 @@ async def scopulosus53(active_players):
             while accumulator >= fixed_delta_time:
                 update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active)
                 accumulator -= fixed_delta_time
-            for player in active_players:
-                print(player.position)
             subscreens = getSplitscreenLayout(canvas, active_players)
             canvas.fill((0, 0, 0))
             renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, platforms, camera, death_platforms, artifacts, collected_artifacts, flashlight, volcanoes, subscreens)
@@ -1009,7 +1085,6 @@ async def tutorial_level(active_players):
     artifacts_collected = 0
     collected_artifacts = []
     level_complete = False
-    platforms_used = []
     popup_index = 0
     RELOAD = Button(image=pygame.image.load("Buttons/reload_button.png").convert_alpha(), pos=(85, 43), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
     PAUSE = Button(image=pygame.image.load("Buttons/pause_button.png").convert_alpha(), pos=(30, 35), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color=("White"), hovering_color=("White"))

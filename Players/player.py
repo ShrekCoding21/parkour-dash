@@ -167,14 +167,15 @@ class Player():
 
     def update(self, delta_time, keys, platforms, position, popup_active):
         
-        self.gravity_and_motion(delta_time)
-        self.handle_controls(keys, delta_time, position, popup_active)
-        self.detect_headbumps(platforms)
+        if not popup_active:
+            self.gravity_and_motion(delta_time)
+            self.handle_controls(keys, delta_time, position, popup_active)
+            self.detect_headbumps(platforms)
 
-        if self.on_platform and self.on_platform.is_moving:
-            self.position.x += self.on_platform.velocity.x * delta_time
-        
-        self.position += self.velocity * delta_time
+            if self.on_platform and self.on_platform.is_moving:
+                self.position.x += self.on_platform.velocity.x * delta_time
+            
+            self.position += self.velocity * delta_time
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)
