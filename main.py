@@ -710,6 +710,7 @@ async def terus1(active_players, weather_condition):
 async def scopulosus53(active_players):
     
     from volcanoes import Volcano
+    from level_init import scopulosusPlatformsInit
 
     level_name = 'Scopulosus53'
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 60)
@@ -717,11 +718,7 @@ async def scopulosus53(active_players):
     text_color = ("#0c4701")
     num_of_players = len(active_players)
     show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)   
-    platform_dict = {platform.name: platform for platform in platforms}
-    introduce_volcano = platform_dict.get("introduce-volcano")
-    introduce_deathcano = platform_dict.get("jump-platform4")
-    one_way = platform_dict.get("checkpoint3")
-    artifacts = getArtifacts(platforms, level_name)
+    introduce_volcano, introduce_deathcano, one_way, artifacts = scopulosusPlatformsInit(level_name, platforms)
     carbon_nanotube_info = await load_json_file(f"Levels/{level_name}/artifact_info.json")
     post_mission_briefing = carbon_nanotube_info["carbon-nanotube-info"]["after-level-info"]
 

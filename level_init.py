@@ -16,6 +16,14 @@ def terusPlatformsInit(platforms, level_name):
     artifacts = getArtifacts(platforms, level_name)
     return show_slide, show_slide2, show_checkpoint1_reached, show_checkpoint2_reached, brighten_scene, artifacts
 
+def scopulosusPlatformsInit(level_name, platforms):
+    platform_dict = {platform.name: platform for platform in platforms}
+    introduce_volcano = platform_dict.get("introduce-volcano")
+    introduce_deathcano = platform_dict.get("jump-platform4")
+    one_way = platform_dict.get("checkpoint3")
+    artifacts = getArtifacts(platforms, level_name)
+    return introduce_volcano,introduce_deathcano,one_way,artifacts
+
 def tutorialPlatformsInit(platforms, level_name):
     platform_dict = {platform.name: platform for platform in platforms}
     intro_to_jumping = platform_dict.get("introduce-jumping")
