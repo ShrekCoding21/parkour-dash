@@ -720,6 +720,7 @@ async def scopulosus53(active_players):
     platform_dict = {platform.name: platform for platform in platforms}
     introduce_volcano = platform_dict.get("introduce-volcano")
     introduce_deathcano = platform_dict.get("jump-platform4")
+    one_way = platform_dict.get("checkpoint3")
     artifacts = getArtifacts(platforms, level_name)
 
     volcano_introduction = [
@@ -750,23 +751,23 @@ async def scopulosus53(active_players):
     
     ]
 
-    volcano_tips = [
+    level_tips = [
 
         {
             "name": "volcano_tip1",
             "screen": screen,
-            "text": "These volcanoes seem to be a lot stronger than the previous ones",
+            "text": "These volcanoes seem to be a lot stronger than the previous ones...",
             "theme_color": text_color,
-            "button_text": "next",
+            "button_text": "ok",
             "visible": False
         },
 
         {
-            "name": "volcano_tip2",
+            "name": "one_way_home",
             "screen": screen,
-            "text": "Try not to stay in the steam for too long, or you might get pushed too high.",
+            "text": "looks like theres only one way to go now →",
             "theme_color": text_color,
-            "button_text": "got it",
+            "button_text": "bet",
             "visible": False
         }
     ]
@@ -845,7 +846,7 @@ async def scopulosus53(active_players):
         }
     ]
     
-    popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in volcano_introduction + volcano_tips]
+    popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in volcano_introduction + level_tips]
     volcanoes = [Volcano(data["name"], data["position"], data["steam_height"], data["steam_correction"], screen, data["stretch_size"]) for data in volcano_data]
     print_need_artifacts = font.render("you need more artifacts", True, text_color)
     need_artifacts_rect = print_need_artifacts.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
@@ -856,7 +857,7 @@ async def scopulosus53(active_players):
     start_timer = pygame.time.get_ticks()
     paused = False
     editing_settings = False
-    volcano_introduction_sequence, volcano_tips_sequence = False, False
+    volcano_introduction_sequence, volcano_tips_sequence, near_end= False, False, False
     artifacts_collected = 0
     collected_artifacts = []
     popup_index = 0
@@ -877,7 +878,6 @@ async def scopulosus53(active_players):
                 break
             else:
                 popup_active = False
-        print(popup_index)
 
         for player in active_players:
                 
@@ -895,7 +895,7 @@ async def scopulosus53(active_players):
                 spawn_point = OG_spawn_point
             
                 for platform in next_checkpoints:
-                        platform.color = "#9ff084"
+                    platform.color = "#9ff084"
             
             if player.on_platform in death_platforms:
                 player.reload(spawn_point)
@@ -917,6 +917,18 @@ async def scopulosus53(active_players):
             if volcano_introduction_sequence and not popups[popup_index].visible and popup_index + 1 < len(volcano_introduction):
                 popups[popup_index + 1].visible = True
                 popup_index += 1
+            
+            if player.on_platform == introduce_deathcano and not volcano_tips_sequence:
+                for popup in popups:
+                    if popup.name == "volcano_tip1":
+                        popup.visible = True
+                volcano_tips_sequence = True
+
+            if player.on_platform == one_way and not near_end:
+                for popup in popups:
+                    if popup.name == "one_way_home":
+                        popup.visible = True
+                near_end = True
 
             for artifact in artifacts:
                 if player.rect.colliderect(artifact.rect) and not artifact.collected and artifact not in collected_artifacts:
@@ -964,7 +976,7 @@ async def scopulosus53(active_players):
             elif action == "level restart":
                 show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
                 start_timer = pygame.time.get_ticks()
-                popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in volcano_introduction + volcano_tips]
+                popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in volcano_introduction + level_tips]
                 artifacts_collected = 0
                 collected_artifacts = []
                 paused = False
@@ -993,7 +1005,7 @@ async def scopulosus53(active_players):
                 if action == "level restart":
                     show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
                     start_timer = pygame.time.get_ticks()
-                    popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in volcano_introduction + volcano_tips]
+                    popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in volcano_introduction + level_tips]
                     artifacts_collected = 0
                     collected_artifacts = []
                     level_complete = False
@@ -1024,6 +1036,9 @@ async def scopulosus53(active_players):
             pygame.display.flip()
 
         await asyncio.sleep(0)
+
+async def magnus25(active_players):
+    pass
 
 async def tutorial_level(active_players):
 
