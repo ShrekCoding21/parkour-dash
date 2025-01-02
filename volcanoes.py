@@ -89,21 +89,21 @@ class Volcano:
                 self.current_cloud_frame = (self.current_cloud_frame + 1) % self.total_cloud_frames
                 self.last_cloud_frame_time = current_time
 
-    def draw(self, camera):
-        """Draws the volcano, steam, and cloud on the screen."""
+    def draw(self, camera, screen):
+        """Draws the volcano, steam, and cloud on the specified screen."""
         transformed_rects = camera.apply(self)
         if transformed_rects:
             # Draw steam animation
             if self.steam_active:
                 steam_image = self.steam_frames[self.current_steam_frame]
-                self.screen.blit(steam_image, transformed_rects["steam"].topleft)
+                screen.blit(steam_image, transformed_rects["steam"].topleft)
 
                 # Draw cloud animation
                 cloud_image = self.cloud_frames[self.current_cloud_frame]
-                self.screen.blit(cloud_image, transformed_rects["cloud"].topleft)
+                screen.blit(cloud_image, transformed_rects["cloud"].topleft)
 
             # Draw volcano image
-            self.screen.blit(self.volcano_image, transformed_rects["base"].topleft)
+            screen.blit(self.volcano_image, transformed_rects["base"].topleft)
 
     def interact_with_player(self, player, volcanoes):
         """

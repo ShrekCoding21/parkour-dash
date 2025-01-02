@@ -34,6 +34,8 @@ from game_init import (
     update_timer,
     render_timer,
     get_special_platforms,
+    getSplitscreenLayout,
+    renderSplitscreenLayout,
     render_game_objects,
     update_tutorial_controls,
 )
@@ -193,13 +195,13 @@ async def load_level(level_name, num_of_players):
     if level_type == 'scrolling':
         
         level_width, level_height = levels_data[level_name]['camera_dimensions'][0], levels_data[level_name]['camera_dimensions'][1]
-        camera = Camera(width=level_width, height=level_height, window_size=window_size)
+        camera = Camera(width=level_width, height=level_height, window_size=window_size, zoom=1.0)
         camera.is_active = True
         next_checkpoint = next_checkpoints[checkpoint_increment]
 
     else:
         level_width, level_height = 1000, 700
-        camera = Camera(width=level_width, height=level_height, window_size=window_size)
+        camera = Camera(width=level_width, height=level_height, window_size=window_size, zoom=1.0)
         camera.is_active = False
         introduced_controls_state["introduced_jumping"], introduced_controls_state['introduced_sliding'] = True, True
         next_checkpoint = None
@@ -469,7 +471,7 @@ async def terus1(active_players, weather_condition):
     
         {"name": "flashlight_broken",
          "screen": screen,
-         "text": "it looks like the flashlight is facing external interference. better hurry",
+         "text": "it looks like the flashlight is facing external interference! better hurry...",
          "theme_color": text_color,
          "button_text": "got it",
          "visible": False
@@ -676,16 +678,12 @@ async def terus1(active_players, weather_condition):
             while accumulator >= fixed_delta_time:
                 update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active)
                 accumulator -= fixed_delta_time
-                for player in active_players:
-                    if player.id == 1:
-                        camera.update(player)
                 flashlight.pos = pygame.Vector2(player.rect.center)
 
-            screen.fill((0, 0, 0))
-            screen.blit(bg_image, (0, 0))
+            subscreens = getSplitscreenLayout(canvas, active_players)
+            canvas.fill((0, 0, 0))
+            renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, platforms, camera, death_platforms, artifacts, collected_artifacts, flashlight, volcanoes=None, subscreens=subscreens)
             counting_string = update_timer(start_timer)
-            render_game_objects(platforms, active_players, camera, flashlight, death_platforms)
-            render_artifacts(artifacts, camera, collected_artifacts)
             render_artifact_count(("#56911f"), artifacts_collected)
             render_timer(lil_font, "#32854b", counting_string)
 
@@ -720,8 +718,6 @@ async def scopulosus53(active_players):
 
     num_of_players = len(active_players)
     show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)   
-    platform_dict = {platform.name: platform for platform in platforms}
-    set_manual_camera = platform_dict.get("checkpoint1")
     artifacts = getArtifacts(platforms, level_name)
 
     popup_data = [
@@ -798,7 +794,6 @@ async def scopulosus53(active_players):
     artifacts_collected = 0
     collected_artifacts = []
     level_complete = False
-    manual_camera = False
     RELOAD = Button(image=pygame.image.load("Buttons/reload_button.png").convert_alpha(), pos=(85, 43), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
     PAUSE = Button(image=pygame.image.load("Buttons/pause_button.png").convert_alpha(), pos=(30, 35), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color=("White"), hovering_color=("White"))
     flashlight = Flashlight(screen, intensity=100)
@@ -818,13 +813,8 @@ async def scopulosus53(active_players):
 
         for player in active_players:
 
-            switch_to_manual = player.on_platform == set_manual_camera
-
             for volcano in volcanoes:
                 volcano.interact_with_player(player, volcanoes)
-
-            if player.id == 1 and player.on_platform:
-                current_platform = player.on_platform.name
 
             if player.position.y > level_height + 100:
                 player.reload(spawn_point)
@@ -849,9 +839,6 @@ async def scopulosus53(active_players):
                 if checkpoint_increment < len(next_checkpoints) - 1:
                     checkpoint_increment += 1
                     next_checkpoint = next_checkpoints[checkpoint_increment]
-            
-            if switch_to_manual and not manual_camera:
-                camera.set_manual_mode((set_manual_camera.position), 0.5)
 
             for artifact in artifacts:
                 if player.rect.colliderect(artifact.rect) and not artifact.collected and artifact not in collected_artifacts:
@@ -942,21 +929,14 @@ async def scopulosus53(active_players):
             while accumulator >= fixed_delta_time:
                 update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active)
                 accumulator -= fixed_delta_time
-                for player in active_players:
-                    if player.id == 1:
-                        camera.update(player)
-
-            screen.fill((0, 0, 0))
+            for player in active_players:
+                print(player.position)
+            subscreens = getSplitscreenLayout(canvas, active_players)
+            canvas.fill((0, 0, 0))
+            renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, platforms, camera, death_platforms, artifacts, collected_artifacts, flashlight, volcanoes, subscreens)
             counting_string = update_timer(start_timer)
-            screen.blit(bg_image, (0, 0))
-            for volcano in volcanoes:
-                volcano.update()
-                volcano.draw(camera)
-            render_game_objects(platforms, active_players, camera, flashlight, death_platforms)
-            render_artifacts(artifacts, camera, collected_artifacts)
             render_artifact_count(("#56911f"), artifacts_collected)
             render_timer(lil_font, "#32854b", counting_string)
-            display_controls(len(active_players), show_controls, introduced_controls_state, print_player1_controls, print_player3_controls, print_player4_controls)
 
             for popup in popups:
                 popup.update()
@@ -979,7 +959,6 @@ async def tutorial_level(active_players):
     text_color = ("#71d6f5")
 
     num_of_players = len(active_players)
-    num_of_players = 4
     show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
     intro_to_jumping, intro_to_sliding, intro_to_jumpslide, artifacts = tutorialPlatformsInit(platforms, level_name)
 
@@ -1184,51 +1163,17 @@ async def tutorial_level(active_players):
             while accumulator >= fixed_delta_time:
                 update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active)
                 accumulator -= fixed_delta_time
-                for player in active_players:
-                    if player.id == 1:
-                        camera.update(player)
             
-            p1_camera = pygame.Rect(0, 0, window_size[0] // 2, window_size[1] // 2)
-            p2_camera = pygame.Rect(window_size[0] // 2, 0, window_size[0] // 2, window_size[1] // 2)
-            p3_camera = pygame.Rect(0, window_size[1] // 2, window_size[0] // 2, window_size[1] // 2)
-            p4_camera = pygame.Rect(window_size[0] // 2, window_size[1] // 2, window_size[0] // 2, window_size[1] // 2)
+            # Determine the layout dynamically based on the number of active players
+            subscreens = getSplitscreenLayout(canvas, active_players)
 
-            # Create a canvas to draw on (optional, but can improve performance)
-            canvas = pygame.Surface((window_size[0], window_size[1]))
+            # Clear the canvas
             canvas.fill((0, 0, 0))  # Fill the canvas with black
 
-            # Create subsurface objects for each player's view
-            sub1 = canvas.subsurface(p1_camera)
-            sub2 = canvas.subsurface(p2_camera)
-            sub3 = canvas.subsurface(p3_camera)
-            sub4 = canvas.subsurface(p4_camera)
-
-            subscreens = [sub1, sub2, sub3, sub4]
-
-            for i, sub in enumerate(subscreens):
-                if i < len(active_players):
-                    player = active_players[i]
-                    camera.update(player)
-                    bg_image = pygame.transform.scale(bg_image, (sub.get_size()))
-                    sub.blit(bg_image, (0, 0))
-                    sub.blit(background_darkener, (0, 0))
-                    render_game_objects(platforms, active_players, camera, flashlight, death_platforms, surface=sub)
-
-            
-
-            # Draw white lines to separate the views
-            pygame.draw.line(canvas, (255, 255, 255), (window_size[0] // 2, 0), (window_size[0] // 2, window_size[1]), 5)
-            pygame.draw.line(canvas, (255, 255, 255), (0, window_size[1] // 2), (window_size[0], window_size[1] // 2), 5)
-
-            # Blit the subsurfaces to the main screen
-            screen.blit(sub1, (0, 0))
-            screen.blit(sub2, (window_size[0] // 2, 0))
-            screen.blit(sub3, (0, window_size[1] // 2))
-            screen.blit(sub4, (window_size[0] // 2, window_size[1] // 2))
+            # Render game objects for each active player's view
+            renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, platforms, camera, death_platforms, artifacts, collected_artifacts, flashlight, volcanoes=None, subscreens=subscreens)
 
             counting_string = update_timer(start_timer)
-            # render_game_objects(platforms, active_players, camera, flashlight, death_platforms)
-            # render_artifacts(artifacts, camera, collected_artifacts)
             render_artifact_count(("#56911f"), artifacts_collected)
             render_timer(lil_font, "#32854b", counting_string)
             display_controls(len(active_players), show_controls, introduced_controls_state, print_player1_controls, print_player3_controls, print_player4_controls)
@@ -1393,7 +1338,7 @@ async def main():
                 accumulator -= fixed_delta_time
                 for player in active_players:
                     if player.id == 1:
-                        camera.update(player)
+                        camera.update(player, num_of_players)
 
             screen.fill((0, 0, 0))
             screen.blit(bg_image, (0, 0))

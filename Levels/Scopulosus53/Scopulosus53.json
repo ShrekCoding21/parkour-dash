@@ -1,7 +1,7 @@
 {"Scopulosus53": {
 
     "level_type": "scrolling",
-    "camera_dimensions": [10000, 3000],
+    "camera_dimensions": [10000, 3600],
     "platforms": {
 
         "starting-platform": {
@@ -17,7 +17,25 @@
             "x-position": 0,
             "y-position": 2800,
             "width": 500,
-            "height": 200,
+            "height": 900,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+
+        "death-form1": {
+            "x-position": 500,
+            "y-position": 3100,
+            "width": 3000,
+            "height": 10,
+            "is_moving": "False",
+            "color": "#ffffff"
+        },
+
+        "base-platform2": {
+            "x-position": 500,
+            "y-position": 3350,
+            "width": 3000,
+            "height": 500,
             "is_moving": "False",
             "color": "#b04e15"
         },
@@ -34,7 +52,7 @@
         "introduce-volcano": {
             "x-position": 890,
             "y-position": 2860,
-            "width": 130,
+            "width": 150,
             "height": 30,
             "is_moving": "False",
             "color": "#b04e15"
@@ -51,7 +69,16 @@
 
         "jump-platform3": {
             "x-position": 1700,
-            "y-position": 2325,
+            "y-position": 2300,
+            "width": 170,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#b04e15"
+        },
+
+        "notmoving-platform1": {
+            "x-position": 2300,
+            "y-position": 1625,
             "width": 130,
             "height": 30,
             "is_moving": "False",
@@ -59,7 +86,7 @@
         },
 
         "moving-platform1": {
-            "x-position": 2300,
+            "x-position": 2590,
             "y-position": 1625,
             "width": 130,
             "height": 30,
@@ -67,23 +94,18 @@
             "speed": 150,
             "x-direction": 1,
             "y-direction": 0,
-            "x-movement_range": 200,
+            "x-movement_range": 310,
             "y-movement_range": 0,
             "color": "#b04e15"
         },
 
-        "moving-platform2": {
-            "x-position": 2630,
-            "y-position": 1625,
-            "width": 130,
-            "height": 30,
-            "is_moving": "True",
-            "speed": 150,
-            "x-direction": 1,
-            "y-direction": 0,
-            "x-movement_range": 200,
-            "y-movement_range": 0,
-            "color": "#b04e15"
+        "death-form2": {
+            "x-position": 2700,
+            "y-position": 2100,
+            "width": 700,
+            "height": 10,
+            "is_moving": "False",
+            "color": "#ffffff"
         },
 
         "volcano-platform": {

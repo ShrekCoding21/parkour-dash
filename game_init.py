@@ -301,18 +301,84 @@ def is_flashlight_touching_platform(flashlight_beam, platform_rect, flashlight):
     # Check for collision between the beam rectangle and platform rectangle
     return beam_rect.colliderect(platform_rect)
 
+def renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, platforms, camera, death_platforms, artifacts, collected_artifacts, flashlight, volcanoes, subscreens):
+    for i, sub in enumerate(subscreens):
+        if i < len(active_players):
+            player = active_players[i]
+            camera.update(player, num_of_players)
+            bg_image_scaled = pygame.transform.scale(bg_image, sub.get_size())
+            sub.blit(bg_image_scaled, (0, 0))
+            if volcanoes != None:
+                for volcano in volcanoes:
+                    volcano.update()
+                    volcano.draw(camera, sub)
+            render_game_objects(platforms, active_players, camera, flashlight, death_platforms, surface=sub)
+            render_artifacts(artifacts, camera, collected_artifacts, surface=sub)
+
+            # Draw dividing lines to separate the views
+    if len(active_players) == 2:
+        pygame.draw.line(canvas, (255, 255, 255), (window_size[0] // 2, 0), (window_size[0] // 2, window_size[1]), 5)
+    elif len(active_players) == 3:
+                # Three players: Draw two horizontal lines to divide into thirds
+        pygame.draw.line(canvas, (255, 255, 255), (0, window_size[1] // 3), (window_size[0], window_size[1] // 3), 5)
+        pygame.draw.line(canvas, (255, 255, 255), (0, (2 * window_size[1]) // 3), (window_size[0], (2 * window_size[1]) // 3), 5)
+    elif len(active_players) == 4:
+        pygame.draw.line(canvas, (255, 255, 255), (window_size[0] // 2, 0), (window_size[0] // 2, window_size[1]), 5)
+        pygame.draw.line(canvas, (255, 255, 255), (0, window_size[1] // 2), (window_size[0], window_size[1] // 2), 5)
+
+            # Blit the subsurfaces to the main screen
+    for i, sub in enumerate(subscreens):
+        if len(active_players) == 1:
+            screen.blit(sub, (0, 0))
+        elif len(active_players) == 2:
+            x = (i % 2) * (window_size[0] // 2)
+            y = 0
+            screen.blit(sub, (x, y))
+        elif len(active_players) == 3:
+            x = 0 
+            y = (i % 3) * (window_size[1] // 3)
+            screen.blit(sub, (x, y))
+        elif len(active_players) == 4:
+            x = (i % 2) * (window_size[0] // 2)
+            y = (i // 2) * (window_size[1] // 2)
+            screen.blit(sub, (x, y))
+
+def getSplitscreenLayout(canvas, active_players):
+    if len(active_players) == 1:
+        p1_camera = pygame.Rect(0, 0, window_size[0], window_size[1])
+        subscreens = [canvas.subsurface(p1_camera)]
+    elif len(active_players) == 2:
+        p1_camera = pygame.Rect(0, 0, window_size[0] // 2, window_size[1])
+        p2_camera = pygame.Rect(window_size[0] // 2, 0, window_size[0] // 2, window_size[1])
+        subscreens = [canvas.subsurface(p1_camera), canvas.subsurface(p2_camera)]
+    elif len(active_players) == 3:
+        p1_camera = pygame.Rect(0, 0, window_size[0], window_size[1] // 3)
+        p2_camera = pygame.Rect(0, window_size[1] // 3, window_size[0], window_size[1] // 3)
+        p3_camera = pygame.Rect(0, (2 * window_size[1]) // 3, window_size[0], window_size[1] // 3)
+        subscreens = [canvas.subsurface(p1_camera), canvas.subsurface(p2_camera), canvas.subsurface(p3_camera)]
+    else:
+        p1_camera = pygame.Rect(0, 0, window_size[0] // 2, window_size[1] // 2)
+        p2_camera = pygame.Rect(window_size[0] // 2, 0, window_size[0] // 2, window_size[1] // 2)
+        p3_camera = pygame.Rect(0, window_size[1] // 2, window_size[0] // 2, window_size[1] // 2)
+        p4_camera = pygame.Rect(window_size[0] // 2, window_size[1] // 2, window_size[0] // 2, window_size[1] // 2)
+        subscreens = [
+                    canvas.subsurface(p1_camera),
+                    canvas.subsurface(p2_camera),
+                    canvas.subsurface(p3_camera),
+                    canvas.subsurface(p4_camera),
+                ]
+        
+    return subscreens
+
 def render_game_objects(platforms, active_players, camera, flashlight, death_platforms, surface):
     """
-    platforms (list): List of all platforms to be rendered in a level
-    active_players (list): List of all players to be rendered in a level
-    camera (camera obj.): Camera transformations should be applied to
-    flashlight (flashlight obj.): Flashlight to illuminate platforms if activated
-    death_platforms (list): List of platforms that will kill players when touched
-    surface (pygame surface obj.): Surface for game to be blitted on
+    Renders game objects on a specific surface, respecting camera and flashlight settings.
     """
-    # If the flashlight is on, draw the beam first
+    # If the flashlight is on, draw the beam first relative to the subscreen
     if flashlight.on:
-        flashlight.draw(camera)
+        flashlight_surface = pygame.Surface(surface.get_size(), pygame.SRCALPHA)
+        flashlight.draw(camera, flashlight_surface)
+        surface.blit(flashlight_surface, (0, 0))
 
     for platform in platforms:
         platform_rect = camera.apply(platform)
@@ -322,20 +388,16 @@ def render_game_objects(platforms, active_players, camera, flashlight, death_pla
         platform_surface.fill((0, 0, 0, 0))  # Transparent initially
 
         if platform in death_platforms:
-            # Death platforms and transparent platforms remain transparent
-            platform_color = (0, 0, 0, 0)
+            platform_color = (0, 0, 0, 0)  # Transparent for death platforms
         else:
             if flashlight.enabled:
-                # If flashlight is on, platforms are black
-                platform_color = (0, 0, 0)
+                platform_color = (0, 0, 0)  # Black if flashlight is on
             else:
-                # If flashlight is off and the platform has an image, draw the image
                 if hasattr(platform, 'image') and platform.image:
                     platform_surface.blit(platform.image, (0, 0))
                     platform_color = None  # Image will be rendered; no need for a color fill
                 else:
-                    # Otherwise, use the platform's color
-                    platform_color = platform.color
+                    platform_color = platform.color  # Default platform color
 
         # Draw the platform color if no image is rendered
         if platform_color:
@@ -373,6 +435,7 @@ def render_game_objects(platforms, active_players, camera, flashlight, death_pla
         pygame.draw.rect(surface, player.color, scaled_rect)
 
 
+
 def getArtifacts(platforms, level_name):
     artifact_platform_num = 1
     artifact_platforms = []
@@ -397,7 +460,7 @@ def getArtifacts(platforms, level_name):
         artifacts.add(Artifact(artifact_image1, artifact_position, artifact_name))
     return artifacts
 
-def render_artifacts(artifacts, camera, collected_artifacts):
+def render_artifacts(artifacts, camera, collected_artifacts, surface):
     """
     Renders artifacts for a given level
 
@@ -405,6 +468,7 @@ def render_artifacts(artifacts, camera, collected_artifacts):
         artifacts (dict): List of all artifacts in the level to be rendered
         camera (Camera object): Current level camera so camera movement is properly applied to artifacts
         collected_artifacts (list): List of artifacts that have already been collected so they are not rendered again
+        surface (pygame.Surface): Surface to blit the artifacts on
     """
 
     for artifact in artifacts:
@@ -416,7 +480,7 @@ def render_artifacts(artifacts, camera, collected_artifacts):
                 int(artifact_rect.width * camera.zoom),
                 int(artifact_rect.height * camera.zoom)
             )
-            screen.blit(artifact.image, artifact_scaled_rect.center)  # Draw artifact image at top-left of scaled rect
+            surface.blit(artifact.image, artifact_scaled_rect.center)  # Draw artifact image at top-left of scaled rect
 
 def render_artifact_count(text_color, artifacts_collected, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 20)):
     print_artifacts_collected = font.render(f"artifact fragments collected: {artifacts_collected}", True, text_color)

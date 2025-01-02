@@ -23,7 +23,13 @@ class Flashlight:
                     color = (255, 255, 0, intensity)  # Yellow color
                     self.gradient_surface.set_at((x, y), color)
 
-    def draw(self, camera):
+    def draw(self, camera, surface):
+        """
+        Draws the flashlight beam onto the provided surface.
+
+        :param camera: The camera object to adjust the flashlight position.
+        :param surface: The pygame surface to draw the flashlight on.
+        """
         # Transform flashlight position based on the camera
         adjusted_pos = pygame.Vector2(
             (self.pos[0] - camera.camera_rect.x) * camera.zoom,
@@ -57,14 +63,14 @@ class Flashlight:
 
         # Flip the beam if needed
         if self.flipped:
-            beam_surface = pygame.transform.flip(beam_surface, True, False) 
+            beam_surface = pygame.transform.flip(beam_surface, True, False)
 
         # Calculate offset for centered drawing
         offset_x = beam_surface.get_width() // 2
         offset_y = beam_surface.get_height() // 2
 
-        # Store the rotated beam 
-        self.rotated_beam = beam_surface 
+        # Store the rotated beam (useful for interactions)
+        self.rotated_beam = beam_surface
 
-        # Draw the beam on the screen
-        self.screen.blit(beam_surface, (adjusted_pos[0] - offset_x, adjusted_pos[1] - offset_y))
+        # Draw the beam on the provided surface
+        surface.blit(beam_surface, (adjusted_pos[0] - offset_x, adjusted_pos[1] - offset_y))

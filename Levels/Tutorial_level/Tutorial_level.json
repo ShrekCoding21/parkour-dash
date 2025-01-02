@@ -2,7 +2,7 @@
 {"Tutorial_level": {
         
     "level_type": "scrolling",
-    "camera_dimensions": [3300, 3000],
+    "camera_dimensions": [4000, 3000],
 
     "platforms": {
 
@@ -150,6 +150,15 @@
             "color": "#000000"
         },
 
+        "middle-platform": {
+            "x-position": 1070,
+            "y-position": 820,
+            "width": 50,
+            "height": 20,
+            "is_moving": "False",
+            "color": "#94e0a8"
+        },
+
         "moving-platform3": {
             "x-position": 160,
             "y-position": 1120,
@@ -159,17 +168,15 @@
             "speed": 242,
             "x-direction": -1,
             "y-direction": 1,
-            "x-movement_range": 920,
+            "x-movement_range": 700,
             "y-movement_range": 300,
             "color": "#11519e"
         },
 
 
-
-
         "checkpoint2": {
-            "x-position": 390,
-            "y-position": 1300,
+            "x-position": 500,
+            "y-position": 1175,
             "width": 150,
             "height": 30,
             "is_moving": "False",

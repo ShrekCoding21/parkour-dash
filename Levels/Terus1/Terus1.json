@@ -1,7 +1,7 @@
 {"Terus1": {
 
     "level_type": "scrolling",
-    "camera_dimensions": [3000, 3000],
+    "camera_dimensions": [3300, 3000],
     "platforms": {
 
         "starting-platform": {

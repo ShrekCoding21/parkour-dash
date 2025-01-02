@@ -5,27 +5,20 @@ from artifacts import Artifact
 from volcanoes import Volcano
 
 class Camera:
-    def __init__(self, width, height, window_size, zoom=1.0, max_zoom_out=0.8, zoom_speed=0.03, max_zoom_range=1.0):
+    def __init__(self, width, height, window_size, zoom=1.0):
         """
         Initializes the camera.
 
         :param width: The width of the game world.
         :param height: The height of the game world.
         :param window_size: The size of the display window.
-        :param zoom: The initial zoom level of the camera.
-        :param max_zoom_out: The minimum allowable zoom level.
-        :param zoom_speed: The speed of smooth zooming.
-        :param max_zoom_range: The maximum zoom level beyond which the camera won't zoom out.
+        :param zoom: The initial and fixed zoom level of the camera.
         """
         self.camera_rect = pygame.Rect(0, 0, width, height)
         self.width = width
         self.height = height
         self.window_size = window_size
-        self.zoom = zoom
-        self.target_zoom = zoom  # For smooth zooming
-        self.max_zoom_out = max(0.1, max_zoom_out)  # Prevent invalid max zoom-out levels
-        self.zoom_speed = zoom_speed  # Determines how quickly zoom changes
-        self.max_zoom_range = max_zoom_range  # Maximum zoom level threshold
+        self.zoom = max(0.1, zoom)  # Prevent invalid zoom levels
         self.margin = 100
         self.is_active = True
         self.manual_mode = False  # Default to tracking mode
@@ -85,9 +78,9 @@ class Camera:
 
         return obj
 
-    def update(self, player):
+    def update(self, player, num_of_players):
         """
-        Updates the camera's position and zoom based on the mode.
+        Updates the camera's position based on the mode.
 
         :param player: The player to track.
         """
@@ -105,23 +98,18 @@ class Camera:
                 min_y = player.position.y - self.margin
                 max_y = player.position.y + self.margin
 
-                center_x = (min_x + max_x) / 2 + 300
+                center_x = (min_x + max_x) / 2
                 center_y = (min_y + max_y) / 2
-
-                bounding_width = max_x - min_x
-                bounding_height = max_y - min_y
-
-                zoom_x = self.window_size[0] / bounding_width
-                zoom_y = self.window_size[1] / bounding_height
-
-                # Enforce the max_zoom_out limit
-                self.target_zoom = max(min(zoom_x, zoom_y, 1.0), self.max_zoom_out)
-
-                # Smoothly interpolate the zoom
-                if abs(self.zoom - self.target_zoom) > 0.01:
-                    self.zoom += (self.target_zoom - self.zoom) * self.zoom_speed
-                else:
-                    self.zoom = self.target_zoom
+                
+                if num_of_players == 2:
+                    center_x = (min_x + max_x) / 2 + 250
+                    center_y = (min_y + max_y) / 2
+                elif num_of_players == 3:
+                    center_x = (min_x + max_x) / 2
+                    center_y = (min_y + max_y) / 2 + 295
+                elif num_of_players == 4:
+                    center_x = (min_x + max_x) / 2 + 250
+                    center_y = (min_y + max_y) / 2 + 200
 
             camera_width = self.window_size[0] / self.zoom
             camera_height = self.window_size[1] / self.zoom
@@ -132,18 +120,16 @@ class Camera:
                 camera_height
             )
 
-    def set_manual_mode(self, position=None, zoom=None):
+    def set_manual_mode(self, position, zoom):
         """
-        Enables manual mode and optionally sets position and zoom.
+        Enables manual mode and optionally sets position.
 
         :param position: A tuple (x, y) for the camera's position.
-        :param zoom: The zoom level to set.
         """
         self.manual_mode = True
         if position:
             self.manual_position = position
-        if zoom:
-            self.zoom = max(0.1, zoom)  # Prevent invalid zoom levels
+        self.zoom = zoom
 
     def set_tracking_mode(self):
         """
