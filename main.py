@@ -679,13 +679,13 @@ async def terus1(active_players, weather_condition):
 
         else:
             while accumulator >= fixed_delta_time:
-                update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active, ladders=[])
+                update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active, ladders=[], hooks=[])
                 accumulator -= fixed_delta_time
                 flashlight.pos = pygame.Vector2(player.rect.center)
 
             subscreens = getSplitscreenLayout(canvas, active_players)
             canvas.fill((0, 0, 0))
-            renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, platforms, camera, death_platforms, artifacts, collected_artifacts, flashlight, volcanoes=None, subscreens=subscreens, ladders=None)
+            renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, platforms, camera, death_platforms, artifacts, collected_artifacts, flashlight, volcanoes=None, subscreens=subscreens, ladders=None, hooks=None)
             counting_string = update_timer(start_timer)
             render_artifact_count(("#56911f"), artifacts_collected)
             render_timer(lil_font, "#32854b", counting_string)
@@ -1022,11 +1022,11 @@ async def scopulosus53(active_players):
         
         else:
             while accumulator >= fixed_delta_time:
-                update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active, ladders=[])
+                update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active, ladders=[], hooks=[])
                 accumulator -= fixed_delta_time
             subscreens = getSplitscreenLayout(canvas, active_players)
             canvas.fill((0, 0, 0))
-            renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, platforms, camera, death_platforms, artifacts, collected_artifacts, flashlight, volcanoes, subscreens=subscreens, ladders=None)
+            renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, platforms, camera, death_platforms, artifacts, collected_artifacts, flashlight, volcanoes, subscreens=subscreens, ladders=None, hooks=None)
             counting_string = update_timer(start_timer)
             render_artifact_count(("#56911f"), artifacts_collected)
             render_timer(lil_font, "#32854b", counting_string)
@@ -1492,7 +1492,7 @@ async def tutorial_level(active_players):
 
         else:
             while accumulator >= fixed_delta_time:
-                update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active, ladders=[])
+                update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active, ladders=[], hooks=[])
                 accumulator -= fixed_delta_time
             
             # Determine the layout dynamically based on the number of active players
@@ -1502,7 +1502,7 @@ async def tutorial_level(active_players):
             canvas.fill((0, 0, 0))  # Fill the canvas with black
 
             # Render game objects for each active player's view vow
-            renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, platforms, camera, death_platforms, artifacts, collected_artifacts, flashlight, volcanoes=None, subscreens=subscreens, ladders=None)
+            renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, platforms, camera, death_platforms, artifacts, collected_artifacts, flashlight, volcanoes=None, subscreens=subscreens, ladders=None, hooks=None)
 
             counting_string = update_timer(start_timer)
             render_artifact_count(("#56911f"), artifacts_collected)
