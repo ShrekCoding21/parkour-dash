@@ -6,7 +6,6 @@ import json
 import time
 import pyodide  # Necessary for browser environment
 import pygbag
-import cProfile
 from PIL import Image, ImageFilter
 
 # Dynamically adjust the system path to ensure local imports work
@@ -1446,21 +1445,23 @@ async def main():
     pygame.quit()
 
 # # Run the main function
-# asyncio.run(main())
-import pstats
+asyncio.run(main())
 
-if __name__ == "__main__":
-    # Use cProfile to profile the main function
-    profiler = cProfile.Profile()
-    profiler.enable()
+# Debugging and profiling code
+# import pstats, cProfile
 
-    asyncio.run(main())
+# if __name__ == "__main__":
+#     # Use cProfile to profile the main function
+#     profiler = cProfile.Profile()
+#     profiler.enable()
 
-    profiler.disable()
-    profiler.print_stats(sort="cumtime")
-    profiler.dump_stats("profile_data.prof")
-    stats = pstats.Stats("profile_data.prof")
-    stats.strip_dirs().sort_stats("cumtime").print_stats(20)
+#     asyncio.run(main())
+
+#     profiler.disable()
+#     profiler.print_stats(sort="cumtime")
+#     profiler.dump_stats("profile_data.prof")
+#     stats = pstats.Stats("profile_data.prof")
+#     stats.strip_dirs().sort_stats("cumtime").print_stats(20)
 
 
 """if you read this you are nice"""
