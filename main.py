@@ -497,6 +497,7 @@ async def terus1(active_players, weather_condition):
     running = True
     fixed_delta_time = 1 / 60
     accumulator = 0
+    previous_time = pygame.time.get_ticks()
     start_timer = pygame.time.get_ticks()
     paused = False
     editing_settings = False
@@ -511,7 +512,9 @@ async def terus1(active_players, weather_condition):
     scene_brightened = False
 
     while running:
-        dt = clock.tick(60) / 1000.0
+        current_time = pygame.time.get_ticks()
+        dt = (current_time - previous_time) / 1000.0
+        previous_time = current_time
         accumulator += dt
         keys = pygame.key.get_pressed()
         MENU_MOUSE_POS = pygame.mouse.get_pos()
@@ -853,6 +856,7 @@ async def scopulosus53(active_players):
     running = True
     fixed_delta_time = 1 / 60
     accumulator = 0
+    previous_time = pygame.time.get_ticks()
     start_timer = pygame.time.get_ticks()
     paused = False
     editing_settings = False
@@ -866,7 +870,9 @@ async def scopulosus53(active_players):
     flashlight = Flashlight(screen, intensity=100)
 
     while running:
-        dt = clock.tick(60) / 1000.0
+        current_time = pygame.time.get_ticks()
+        dt = (current_time - previous_time) / 1000.0
+        previous_time = current_time
         accumulator += dt
         keys = pygame.key.get_pressed()
         MENU_MOUSE_POS = pygame.mouse.get_pos()
@@ -1292,6 +1298,7 @@ async def tutorial_level(active_players):
     fixed_delta_time = 1 / 60
     accumulator = 0
     start_timer = pygame.time.get_ticks()
+    previous_time = pygame.time.get_ticks()
     paused = False
     editing_settings = False
     artifacts_collected = 0
@@ -1303,7 +1310,9 @@ async def tutorial_level(active_players):
     flashlight = Flashlight(screen, intensity=100)
 
     while running:
-        dt = clock.tick(60) / 1000.0
+        current_time = pygame.time.get_ticks()
+        dt = (current_time - previous_time) / 1000.0
+        previous_time = current_time
         accumulator += dt
         keys = pygame.key.get_pressed()
         MENU_MOUSE_POS = pygame.mouse.get_pos()
@@ -1478,6 +1487,9 @@ async def tutorial_level(active_players):
         await asyncio.sleep(0)
 
 async def main():
+
+    from level_init import mainTextInit
+
     current_weather = await game_init()
     weather_codes = await load_json_file('weather_codes.json')
 
@@ -1503,26 +1515,12 @@ async def main():
     ]
     artifacts = pygame.sprite.Group(Artifact(data["image"], data["position"], data["name"]) for data in artifact_data)
 
-    print_welcome1 = font.render("welcome to", True, text_color)
-    print_welcome2 = font.render("project AstRA", True, text_color)
-    show_tutorial_level1 = lil_font.render("jump here for tutorial", True, text_color)
-    show_tutorial_level2 = lil_font.render("↓", True, text_color)
-    show_settings1 = lil_font.render("← settings", True, text_color)
-    highlight_game_controls1 = lil_font.render("these could be useful→", True, text_color)
-    background_darkener = pygame.Surface((window_size[0], window_size[1]), pygame.SRCALPHA)
-    background_darkener.fill((0, 0, 0, 129))
-
-    print_welcome1_rect = print_welcome1.get_rect(center=(500, 155))
-    print_welcome2_rect = print_welcome2.get_rect(center=(500, 230))
-    show_tutorial_level1_rect = show_tutorial_level1.get_rect(center=(530, 525))
-    show_tutorial_level2_rect = show_tutorial_level2.get_rect(center=(500, 550))
-    show_settings1_rect = show_settings1.get_rect(center=(125, 475))
-    highlight_game_controls1_rect = highlight_game_controls1.get_rect(center=(435, 50))
+    title_screen_text = mainTextInit(font, lil_font, text_color, window_size)
 
     running = True
     fixed_delta_time = 1 / 60
     accumulator = 0
-    start_timer = pygame.time.get_ticks()
+    previous_time = pygame.time.get_ticks()
     paused = False
     editing_settings = False
     reload_players = False
@@ -1532,7 +1530,9 @@ async def main():
     PAUSE = Button(image=pygame.image.load("Buttons/pause_button.png").convert_alpha(), pos=(30, 35), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="White", hovering_color="White")
 
     while running:
-        dt = clock.tick(60) / 1000.0
+        current_time = pygame.time.get_ticks()
+        dt = (current_time - previous_time) / 1000.0
+        previous_time = current_time
         accumulator += dt
         keys = pygame.key.get_pressed()
         MENU_MOUSE_POS = pygame.mouse.get_pos()
@@ -1555,7 +1555,6 @@ async def main():
                     editing_settings = True
                 else:
                     player.reload(spawn_point)
-                    start_timer = pygame.time.get_ticks()
                     reload_players = False
 
         for event in pygame.event.get():
@@ -1626,22 +1625,12 @@ async def main():
             while accumulator >= fixed_delta_time:
                 update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active=False)
                 accumulator -= fixed_delta_time
-                for player in active_players:
-                    if player.id == 1:
-                        camera.update(player, num_of_players)
 
             screen.fill((0, 0, 0))
             screen.blit(bg_image, (0, 0))
-            screen.blit(background_darkener, (0, 0))
+            screen.blit(title_screen_text, (0, 0))
             render_game_objects(platforms, active_players, camera, flashlight, death_platforms=[], surface=screen)
             display_controls(len(active_players), show_controls, introduced_controls_state, print_player1_controls, print_player3_controls, print_player4_controls)
-
-            screen.blit(print_welcome1, print_welcome1_rect)
-            screen.blit(print_welcome2, print_welcome2_rect)
-            screen.blit(show_tutorial_level1, show_tutorial_level1_rect)
-            screen.blit(show_tutorial_level2, show_tutorial_level2_rect)
-            screen.blit(show_settings1, show_settings1_rect)
-            screen.blit(highlight_game_controls1, highlight_game_controls1_rect)
 
             for button in [RELOAD, PAUSE]:
                 button.changeColor(pygame.mouse.get_pos())
@@ -1653,7 +1642,24 @@ async def main():
 
     pygame.quit()
 
-# Run the main function
+# # Run the main function
 asyncio.run(main())
+
+# Debugging and profiling code
+# import pstats, cProfile
+
+# if __name__ == "__main__":
+#     # Use cProfile to profile the main function
+#     profiler = cProfile.Profile()
+#     profiler.enable()
+
+#     asyncio.run(main())
+
+#     profiler.disable()
+#     profiler.print_stats(sort="cumtime")
+#     profiler.dump_stats("profile_data.prof")
+#     stats = pstats.Stats("profile_data.prof")
+#     stats.strip_dirs().sort_stats("cumtime").print_stats(20)
+
 
 """if you read this you are nice"""

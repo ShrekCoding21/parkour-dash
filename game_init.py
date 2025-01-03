@@ -434,8 +434,6 @@ def render_game_objects(platforms, active_players, camera, flashlight, death_pla
         )
         pygame.draw.rect(surface, player.color, scaled_rect)
 
-
-
 def getArtifacts(platforms, level_name):
     artifact_platform_num = 1
     artifact_platforms = []
