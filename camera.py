@@ -3,6 +3,7 @@ from Players.player import Player
 from Platforms.platform import Platform
 from artifacts import Artifact
 from volcanoes import Volcano
+from ladder import Ladder
 
 class Camera:
     def __init__(self, width, height, window_size, zoom=1.0):
@@ -75,6 +76,14 @@ class Camera:
             cloud_rect.height *= self.zoom
 
             return {"base": base_rect, "steam": steam_rect, "cloud": cloud_rect}
+
+        elif isinstance(obj, Ladder):
+            rect = obj.rect.copy()
+            rect.x = (rect.x - self.camera_rect.x) * self.zoom
+            rect.y = (rect.y - self.camera_rect.y) * self.zoom
+            rect.width *= self.zoom
+            rect.height *= self.zoom
+            return rect
 
         return obj
 

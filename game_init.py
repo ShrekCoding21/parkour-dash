@@ -76,16 +76,16 @@ def introduce_controls(blit_jumpslide):
         screen.blit(print_jumpslide_tutorial1, jumpslide_tutorial_rect1)
         screen.blit(print_jumpslide_tutorial2, jumpslide_tutorial_rect2)
 
-def reload_map(active_players, platforms, reset_positions, artifacts):
-        
-        for platform in platforms:
-            platform.reset()
+def reload_map(active_players, platforms, reset_position, artifacts):
 
-        for player, position in zip(active_players, reset_positions):
-            player.reload(position)
-        
-        for artifact in artifacts:
-            artifact.reset()
+    for platform in platforms:
+        platform.reset()
+
+    for player in active_players:
+        player.reload(reset_position)
+
+    for artifact in artifacts:
+        artifact.reset()
 
 
 def display_controls(num_of_players, show_controls, introduced_controls_state, print_player1_controls, print_player3_controls, print_player4_controls):
@@ -227,10 +227,10 @@ def determine_blitted_controls(p1_controls, p3_controls, p4_controls):
 
     return print_player1_controls, print_player3_controls, print_player4_controls
             
-def update_game_logic(delta_time, active_players, platforms, keys, position, popup_active):
+def update_game_logic(delta_time, active_players, platforms, keys, position, popup_active, ladders):
 
     for player in active_players:
-        player.update(delta_time, keys, platforms, position, popup_active)
+        player.update(delta_time, keys, platforms, position, popup_active, ladders)
         player.collisions(platforms)
 
     for platform in platforms:
@@ -301,7 +301,7 @@ def is_flashlight_touching_platform(flashlight_beam, platform_rect, flashlight):
     # Check for collision between the beam rectangle and platform rectangle
     return beam_rect.colliderect(platform_rect)
 
-def renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, platforms, camera, death_platforms, artifacts, collected_artifacts, flashlight, volcanoes, subscreens):
+def renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, platforms, camera, death_platforms, artifacts, collected_artifacts, flashlight, volcanoes, ladders, subscreens):
     for i, sub in enumerate(subscreens):
         if i < len(active_players):
             player = active_players[i]
@@ -312,6 +312,9 @@ def renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, pl
                 for volcano in volcanoes:
                     volcano.update()
                     volcano.draw(camera, sub)
+            if ladders != None:
+                for ladder in ladders:
+                    ladder.draw(camera, sub)
             render_game_objects(platforms, active_players, camera, flashlight, death_platforms, surface=sub)
             render_artifacts(artifacts, camera, collected_artifacts, surface=sub)
 
@@ -387,38 +390,37 @@ def render_game_objects(platforms, active_players, camera, flashlight, death_pla
         platform_surface = pygame.Surface((platform_rect.width, platform_rect.height), pygame.SRCALPHA)
         platform_surface.fill((0, 0, 0, 0))  # Transparent initially
 
-        if platform in death_platforms:
-            platform_color = (0, 0, 0, 0)  # Transparent for death platforms
+        if hasattr(platform, 'image') and platform.image:
+            platform_surface.blit(platform.image, (0, 0))
         else:
-            if flashlight.enabled:
-                platform_color = (0, 0, 0)  # Black if flashlight is on
+            if platform in death_platforms:
+                platform_color = (0, 0, 0, 0)  # Transparent for death platforms
             else:
-                if hasattr(platform, 'image') and platform.image:
-                    platform_surface.blit(platform.image, (0, 0))
-                    platform_color = None  # Image will be rendered; no need for a color fill
+                if flashlight.enabled:
+                    platform_color = (0, 0, 0)  # Black if flashlight is on
                 else:
                     platform_color = platform.color  # Default platform color
 
-        # Draw the platform color if no image is rendered
-        if platform_color:
-            pygame.draw.rect(platform_surface, platform_color, (0, 0, platform_rect.width, platform_rect.height))
+            # Draw the platform color if no image is rendered
+            if platform_color:
+                pygame.draw.rect(platform_surface, platform_color, (0, 0, platform_rect.width, platform_rect.height))
 
-        # Perform flashlight intersection calculations only if the flashlight is on
-        if flashlight.on:
-            is_hit = is_flashlight_touching_platform(flashlight.rotated_beam, platform_rect, flashlight)
+            # Perform flashlight intersection calculations only if the flashlight is on
+            if flashlight.on:
+                is_hit = is_flashlight_touching_platform(flashlight.rotated_beam, platform_rect, flashlight)
 
-            if is_hit:
-                # Create masks for the flashlight beam and platform
-                mask = pygame.mask.from_surface(flashlight.rotated_beam)
-                platform_mask = pygame.mask.from_surface(platform_surface)
+                if is_hit:
+                    # Create masks for the flashlight beam and platform
+                    mask = pygame.mask.from_surface(flashlight.rotated_beam)
+                    platform_mask = pygame.mask.from_surface(platform_surface)
 
-                # Get the intersection of the masks
-                intersection = mask.to_surface()
+                    # Get the intersection of the masks
+                    intersection = mask.to_surface()
 
-                # Apply a darker blending to the platform surface
-                darkened_color = (255 * 0.5, 255 * 0.5, 255 * 0.5)  # Darker version of the platform color
-                platform_surface.blit(intersection, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
-                platform_surface.fill(darkened_color, special_flags=pygame.BLEND_RGBA_MULT)
+                    # Apply a darker blending to the platform surface
+                    darkened_color = (255 * 0.5, 255 * 0.5, 255 * 0.5)  # Darker version of the platform color
+                    platform_surface.blit(intersection, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+                    platform_surface.fill(darkened_color, special_flags=pygame.BLEND_RGBA_MULT)
 
         # Draw the platform on the provided surface
         surface.blit(platform_surface, platform_rect)

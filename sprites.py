@@ -20,8 +20,6 @@ class Spritesheet:
         except FileNotFoundError:
             print(f"Error: {self.meta_data} not found!")
             raise
-        
-        print(f"Successfully loaded {self.filename} and {self.meta_data}")
 
     def get_sprite(self, x, y, w, h):
         sprite = pygame.Surface((w, h), pygame.SRCALPHA)

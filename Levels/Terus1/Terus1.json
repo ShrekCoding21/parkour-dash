@@ -29,6 +29,7 @@
             "width": 130,
             "height": 30,
             "is_moving": "False",
+            "image_path": "Levels/Terus1/assets/vine-platform2.png",
             "color": "#373045"
         },
 
@@ -38,6 +39,7 @@
             "width": 130,
             "height": 30,
             "is_moving": "False",
+            "image_path": "Levels/Terus1/assets/vine-platform1.png",
             "color": "#373045"
         },
 
@@ -47,6 +49,7 @@
             "width": 130,
             "height": 30,
             "is_moving": "False",
+            "image_path": "Levels/Terus1/assets/vine-platform3.png",
             "color": "#373045"
         },
 
@@ -66,6 +69,7 @@
             "width": 130,
             "height": 30,
             "is_moving": "False",
+            "image_path": "Levels/Terus1/assets/vine-platform1.png",
             "color": "#373045"
         },
 
@@ -75,6 +79,7 @@
             "width": 130,
             "height": 30,
             "is_moving": "False",
+            "image_path": "Levels/Terus1/assets/vine-platform2.png",
             "color": "#373045"
         },
 
@@ -102,6 +107,7 @@
             "width": 130,
             "height": 30,
             "is_moving": "False",
+            "image_path": "Levels/Terus1/assets/vine-platform3.png",
             "color": "#373045"
         },
 
@@ -111,6 +117,7 @@
             "width": 130,
             "height": 30,
             "is_moving": "False",
+            "image_path": "Levels/Terus1/assets/vine-platform1.png",
             "color": "#373045"
         },
 
@@ -139,6 +146,7 @@
             "width": 130,
             "height": 30,
             "is_moving": "False",
+            "image_path": "Levels/Terus1/assets/vine-platform2.png",
             "color": "#373045"
         },
 
@@ -162,6 +170,7 @@
             "width": 130,
             "height": 30,
             "is_moving": "False",
+            "image_path": "Levels/Terus1/assets/vine-platform3.png",
             "color": "#373045"
         },
 
@@ -185,8 +194,7 @@
             "y-direction": 1,
             "x-movement_range": 0,
             "y-movement_range": 1000,
-            "image_path": "Platforms/transparent_platform1.png",
-            "color": "#000000"
+            "color": "#373045"
         },
 
         "death-form5": {
@@ -212,7 +220,7 @@
         "main-artifact-platform": {
             "x-position": 1500,
             "y-position": 2950,
-            "width": 1500,
+            "width": 2000,
             "height": 400,
             "is_moving": "False",
             "color": "#373045"

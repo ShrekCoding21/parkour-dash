@@ -550,7 +550,7 @@ async def terus1(active_players, weather_condition):
                 player.reload(spawn_point)
 
             if player.on_platform == finish_line:
-                reset_positions = [spawn_point] * num_of_players
+                
                 level_complete = True
                 text_color = player.color
                 checkpoint_increment = 0
@@ -562,7 +562,7 @@ async def terus1(active_players, weather_condition):
             if player.on_platform == next_checkpoint:
                 spawn_point = (next_checkpoint.position.x + (next_checkpoint.dimensions[0] / 2), next_checkpoint.start_position.y - next_checkpoint.dimensions[1])
                 next_checkpoint.color = "#228700"
-                reset_positions = [spawn_point] * num_of_players
+                
                 
                 if checkpoint_increment < len(next_checkpoints) - 1:
                     checkpoint_increment += 1
@@ -585,7 +585,7 @@ async def terus1(active_players, weather_condition):
 
             elif event.type == pygame.MOUSEBUTTONDOWN and not popup_active:
                 if RELOAD.checkForInput(MENU_MOUSE_POS):
-                    reload_map(active_players, platforms, reset_positions, artifacts)
+                    reload_map(active_players, platforms, spawn_point, artifacts)
                     level_complete = False
                     text_color = ("#71d6f5")
                     if spawn_point == OG_spawn_point or not next_checkpoints:
@@ -601,7 +601,7 @@ async def terus1(active_players, weather_condition):
                     flashlight.on = not flashlight.on
 
                 if event.key == pygame.K_r:
-                    reload_map(active_players, platforms, reset_positions, artifacts)  
+                    reload_map(active_players, platforms, spawn_point, artifacts)  
                     level_complete = False
                     text_color = ("#71d6f5")
                     flashlight.enabled = True
@@ -679,7 +679,7 @@ async def terus1(active_players, weather_condition):
 
         else:
             while accumulator >= fixed_delta_time:
-                update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active)
+                update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active, ladders=[])
                 accumulator -= fixed_delta_time
                 flashlight.pos = pygame.Vector2(player.rect.center)
 
@@ -893,7 +893,7 @@ async def scopulosus53(active_players):
                 player.reload(spawn_point)
 
             if player.on_platform == finish_line:
-                reset_positions = [spawn_point] * num_of_players
+                
                 level_complete = True
                 text_color = player.color
                 checkpoint_increment = 0
@@ -908,7 +908,7 @@ async def scopulosus53(active_players):
             if player.on_platform == next_checkpoint:
                 spawn_point = (next_checkpoint.position.x + (next_checkpoint.dimensions[0] / 2), next_checkpoint.start_position.y - next_checkpoint.dimensions[1])
                 next_checkpoint.color = "#228700"
-                reset_positions = [spawn_point] * num_of_players
+                
                 if checkpoint_increment < len(next_checkpoints) - 1:
                     checkpoint_increment += 1
                     next_checkpoint = next_checkpoints[checkpoint_increment]
@@ -952,7 +952,7 @@ async def scopulosus53(active_players):
 
             if event.type == pygame.MOUSEBUTTONDOWN and not popup_active:
                 if RELOAD.checkForInput(MENU_MOUSE_POS):
-                    reload_map(active_players, platforms, reset_positions, artifacts)
+                    reload_map(active_players, platforms, spawn_point, artifacts)
                     level_complete = False
                     text_color = ("#71d6f5")
                     if spawn_point == OG_spawn_point or not next_checkpoints:
@@ -964,7 +964,7 @@ async def scopulosus53(active_players):
 
             elif event.type == pygame.KEYDOWN and not popup_active:
                 if event.key == pygame.K_r:
-                    reload_map(active_players, platforms, reset_positions, artifacts)
+                    reload_map(active_players, platforms, spawn_point, artifacts)
                     level_complete = False
                     text_color = ("#71d6f5")
                     if spawn_point == OG_spawn_point or not next_checkpoints:
@@ -1022,7 +1022,7 @@ async def scopulosus53(active_players):
         
         else:
             while accumulator >= fixed_delta_time:
-                update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active)
+                update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active, ladders=[])
                 accumulator -= fixed_delta_time
             subscreens = getSplitscreenLayout(canvas, active_players)
             canvas.fill((0, 0, 0))
@@ -1044,6 +1044,7 @@ async def scopulosus53(active_players):
 
 async def magnus25(active_players):
     
+    from ladder import Ladder
     level_name = 'Magnus25'
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 60)
     lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30)
@@ -1089,6 +1090,7 @@ async def magnus25(active_players):
     RELOAD = Button(image=pygame.image.load("Buttons/reload_button.png").convert_alpha(), pos=(85, 43), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
     PAUSE = Button(image=pygame.image.load("Buttons/pause_button.png").convert_alpha(), pos=(30, 35), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color=("White"), hovering_color=("White"))
     flashlight = Flashlight(screen, intensity=100)
+    ladder = Ladder(200, 2280, 500)
 
     while running:
         current_time = pygame.time.get_ticks()
@@ -1106,14 +1108,12 @@ async def magnus25(active_players):
                 popup_active = False
 
         for player in active_players:
-            if player.id == 1 and player.on_platform:
-                current_platform = player.on_platform.name
 
             if player.position.y > level_height + 100:
                 player.reload(spawn_point)
 
             if player.on_platform == finish_line:
-                reset_positions = [spawn_point] * num_of_players
+                
                 level_complete = True
                 text_color = player.color
                 checkpoint_increment = 0
@@ -1128,7 +1128,7 @@ async def magnus25(active_players):
             if player.on_platform == next_checkpoint:
                 spawn_point = (next_checkpoint.position.x + (next_checkpoint.dimensions[0] / 2), next_checkpoint.start_position.y - next_checkpoint.dimensions[1])
                 next_checkpoint.color = "#228700"
-                reset_positions = [spawn_point] * num_of_players
+                
                 if checkpoint_increment < len(next_checkpoints) - 1:
                     checkpoint_increment += 1
                     next_checkpoint = next_checkpoints[checkpoint_increment]
@@ -1150,7 +1150,7 @@ async def magnus25(active_players):
 
             if event.type == pygame.MOUSEBUTTONDOWN and not popup_active:
                 if RELOAD.checkForInput(MENU_MOUSE_POS):
-                    reload_map(active_players, platforms, reset_positions, artifacts)
+                    reload_map(active_players, platforms, spawn_point, artifacts)
                     level_complete = False
                     text_color = ("#71d6f5")
                     if spawn_point == OG_spawn_point or not next_checkpoints:
@@ -1162,7 +1162,7 @@ async def magnus25(active_players):
 
             elif event.type == pygame.KEYDOWN and not popup_active:
                 if event.key == pygame.K_r:
-                    reload_map(active_players, platforms, reset_positions, artifacts)
+                    reload_map(active_players, platforms, spawn_point, artifacts)
                     level_complete = False
                     text_color = ("#71d6f5")
                     if spawn_point == OG_spawn_point or not next_checkpoints:
@@ -1220,16 +1220,17 @@ async def magnus25(active_players):
         
         else:
             while accumulator >= fixed_delta_time:
-                update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active)
+                update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active, ladders=[ladder])
                 accumulator -= fixed_delta_time
                 for player in active_players:
                     if player.id == 1:
                         camera.update(player, num_of_players)
 
-            screen.fill((0, 0, 0))
+            subscreens = getSplitscreenLayout(canvas, active_players)
+            canvas.fill((0, 0, 0))
+            renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, platforms, camera, death_platforms, artifacts, collected_artifacts, flashlight, volcanoes=None, ladders=[ladder], subscreens=subscreens)
             counting_string = update_timer(start_timer)
-            screen.blit(bg_image, (0, 0))
-            render_game_objects(platforms, active_players, camera, flashlight, death_platforms, screen)
+            # screen.blit(bg_image, (0, 0))
             # render_artifacts(artifacts, camera, collected_artifacts)
             # render_artifact_count(("#56911f"), artifacts_collected)
             render_timer(lil_font, "#32854b", counting_string)
@@ -1342,7 +1343,7 @@ async def tutorial_level(active_players):
                 player.reload(spawn_point)
 
             if player.on_platform == finish_line:
-                reset_positions = [spawn_point] * num_of_players
+                
                 level_complete = True
                 text_color = player.color
                 checkpoint_increment = 0
@@ -1361,7 +1362,7 @@ async def tutorial_level(active_players):
             if player.on_platform == next_checkpoint:
                 spawn_point = (next_checkpoint.position.x + (next_checkpoint.dimensions[0] / 2), next_checkpoint.start_position.y - next_checkpoint.dimensions[1])
                 next_checkpoint.color = "#228700"
-                reset_positions = [spawn_point] * num_of_players
+                
                 if checkpoint_increment < len(next_checkpoints) - 1:
                     checkpoint_increment += 1
                     next_checkpoint = next_checkpoints[checkpoint_increment]
@@ -1383,7 +1384,7 @@ async def tutorial_level(active_players):
 
             if event.type == pygame.MOUSEBUTTONDOWN and not popup_active:
                 if RELOAD.checkForInput(MENU_MOUSE_POS):
-                    reload_map(active_players, platforms, reset_positions, artifacts)
+                    reload_map(active_players, platforms, spawn_point, artifacts)
                     level_complete = False
                     text_color = ("#71d6f5")
                     if spawn_point == OG_spawn_point or not next_checkpoints:
@@ -1395,7 +1396,7 @@ async def tutorial_level(active_players):
 
             elif event.type == pygame.KEYDOWN and not popup_active:
                 if event.key == pygame.K_r:
-                    reload_map(active_players, platforms, reset_positions, artifacts)
+                    reload_map(active_players, platforms, spawn_point, artifacts)
                     level_complete = False
                     text_color = ("#71d6f5")
                     if spawn_point == OG_spawn_point or not next_checkpoints:
@@ -1460,7 +1461,7 @@ async def tutorial_level(active_players):
 
         else:
             while accumulator >= fixed_delta_time:
-                update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active)
+                update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active, ladders=[])
                 accumulator -= fixed_delta_time
             
             # Determine the layout dynamically based on the number of active players
@@ -1566,7 +1567,7 @@ async def main():
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if RELOAD.checkForInput(MENU_MOUSE_POS):
-                    reload_map(active_players, platforms, reset_positions, artifacts)
+                    reload_map(active_players, platforms, spawn_point, artifacts)
                     text_color = "#71d6f5"
 
                 if PAUSE.checkForInput(MENU_MOUSE_POS):
@@ -1585,7 +1586,7 @@ async def main():
                     await magnus25(active_players)
 
                 if event.key == pygame.K_r:
-                    reload_map(active_players, platforms, reset_positions, artifacts)
+                    reload_map(active_players, platforms, spawn_point, artifacts)
                     text_color = "#71d6f5"
 
                 if event.key == pygame.K_p:
@@ -1596,7 +1597,7 @@ async def main():
                     if event.key == pygame.K_u or not pause_menu(screen, level_name, show_controls, window_size, time_paused):
                         paused = False
                     elif event.key == pygame.K_r:
-                        reload_map(active_players, platforms, reset_positions, artifacts)
+                        reload_map(active_players, platforms, spawn_point, artifacts)
                         paused = False
                         text_color = "#71d6f5"
 
@@ -1626,7 +1627,7 @@ async def main():
 
         else:
             while accumulator >= fixed_delta_time:
-                update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active=False)
+                update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active=False, ladders=[])
                 accumulator -= fixed_delta_time
 
             screen.fill((0, 0, 0))
