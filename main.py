@@ -685,7 +685,7 @@ async def terus1(active_players, weather_condition):
 
             subscreens = getSplitscreenLayout(canvas, active_players)
             canvas.fill((0, 0, 0))
-            renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, platforms, camera, death_platforms, artifacts, collected_artifacts, flashlight, volcanoes=None, subscreens=subscreens)
+            renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, platforms, camera, death_platforms, artifacts, collected_artifacts, flashlight, volcanoes=None, subscreens=subscreens, ladders=None)
             counting_string = update_timer(start_timer)
             render_artifact_count(("#56911f"), artifacts_collected)
             render_timer(lil_font, "#32854b", counting_string)
@@ -1026,7 +1026,7 @@ async def scopulosus53(active_players):
                 accumulator -= fixed_delta_time
             subscreens = getSplitscreenLayout(canvas, active_players)
             canvas.fill((0, 0, 0))
-            renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, platforms, camera, death_platforms, artifacts, collected_artifacts, flashlight, volcanoes, subscreens)
+            renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, platforms, camera, death_platforms, artifacts, collected_artifacts, flashlight, volcanoes, subscreens=subscreens, ladders=None)
             counting_string = update_timer(start_timer)
             render_artifact_count(("#56911f"), artifacts_collected)
             render_timer(lil_font, "#32854b", counting_string)
