@@ -1045,6 +1045,8 @@ async def scopulosus53(active_players):
 async def magnus25(active_players):
     
     from ladder import Ladder
+    from hook import Hook
+
     level_name = 'Magnus25'
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 60)
     lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30)
@@ -1070,7 +1072,35 @@ async def magnus25(active_players):
          "button_text": "got it",
          "visible": False
     }]
+
+    ladder_data = [
+
+        {
+            "x-position": 200,
+            "y-position": 2280,
+            "height": 500
+        },
+
+        {
+            "x-position": 300,
+            "y-position": 2280,
+            "height": 500
+        }
+    ]
+
+    hook_data = [
+        
+        {
+            "x-position": 600,
+            "y-position": 2400,
+            "length": 350,
+            "angle": 45,
+            "speed": 4
+        }
+    ]
     
+    hooks = [Hook(data["x-position"], data["y-position"], data["length"], data["angle"], data["speed"], None) for data in hook_data]
+    ladders = [Ladder(data["x-position"], data["y-position"], data["height"]) for data in ladder_data]
     popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in popup_data]
 
     print_need_artifacts = font.render("you need more artifacts", True, text_color)
@@ -1090,7 +1120,6 @@ async def magnus25(active_players):
     RELOAD = Button(image=pygame.image.load("Buttons/reload_button.png").convert_alpha(), pos=(85, 43), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
     PAUSE = Button(image=pygame.image.load("Buttons/pause_button.png").convert_alpha(), pos=(30, 35), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color=("White"), hovering_color=("White"))
     flashlight = Flashlight(screen, intensity=100)
-    ladder = Ladder(200, 2280, 500)
 
     while running:
         current_time = pygame.time.get_ticks()
@@ -1220,7 +1249,9 @@ async def magnus25(active_players):
         
         else:
             while accumulator >= fixed_delta_time:
-                update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active, ladders=[ladder])
+                update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active, ladders=ladders, hooks=hooks)
+                for hook in hooks:
+                    hook.update(fixed_delta_time)
                 accumulator -= fixed_delta_time
                 for player in active_players:
                     if player.id == 1:
@@ -1228,7 +1259,7 @@ async def magnus25(active_players):
 
             subscreens = getSplitscreenLayout(canvas, active_players)
             canvas.fill((0, 0, 0))
-            renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, platforms, camera, death_platforms, artifacts, collected_artifacts, flashlight, volcanoes=None, ladders=[ladder], subscreens=subscreens)
+            renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, platforms, camera, death_platforms, artifacts, collected_artifacts, flashlight, volcanoes=None, ladders=ladders, hooks=hooks, subscreens=subscreens)
             counting_string = update_timer(start_timer)
             # screen.blit(bg_image, (0, 0))
             # render_artifacts(artifacts, camera, collected_artifacts)
@@ -1627,7 +1658,7 @@ async def main():
 
         else:
             while accumulator >= fixed_delta_time:
-                update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active=False, ladders=[])
+                update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active=False, ladders=[], hooks=[])
                 accumulator -= fixed_delta_time
 
             screen.fill((0, 0, 0))

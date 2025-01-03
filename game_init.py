@@ -227,10 +227,10 @@ def determine_blitted_controls(p1_controls, p3_controls, p4_controls):
 
     return print_player1_controls, print_player3_controls, print_player4_controls
             
-def update_game_logic(delta_time, active_players, platforms, keys, position, popup_active, ladders):
+def update_game_logic(delta_time, active_players, platforms, keys, position, popup_active, ladders, hooks):
 
     for player in active_players:
-        player.update(delta_time, keys, platforms, position, popup_active, ladders)
+        player.update(delta_time, keys, platforms, position, popup_active, ladders, hooks)
         player.collisions(platforms)
 
     for platform in platforms:
@@ -301,7 +301,7 @@ def is_flashlight_touching_platform(flashlight_beam, platform_rect, flashlight):
     # Check for collision between the beam rectangle and platform rectangle
     return beam_rect.colliderect(platform_rect)
 
-def renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, platforms, camera, death_platforms, artifacts, collected_artifacts, flashlight, volcanoes, ladders, subscreens):
+def renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, platforms, camera, death_platforms, artifacts, collected_artifacts, flashlight, volcanoes, ladders, hooks, subscreens):
     for i, sub in enumerate(subscreens):
         if i < len(active_players):
             player = active_players[i]
@@ -315,6 +315,9 @@ def renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, pl
             if ladders != None:
                 for ladder in ladders:
                     ladder.draw(camera, sub)
+            if hooks != None:
+                for hook in hooks:
+                    hook.draw(camera, sub)
             render_game_objects(platforms, active_players, camera, flashlight, death_platforms, surface=sub)
             render_artifacts(artifacts, camera, collected_artifacts, surface=sub)
 

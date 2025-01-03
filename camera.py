@@ -4,6 +4,7 @@ from Platforms.platform import Platform
 from artifacts import Artifact
 from volcanoes import Volcano
 from ladder import Ladder
+from hook import Hook
 
 class Camera:
     def __init__(self, width, height, window_size, zoom=1.0):
@@ -84,8 +85,31 @@ class Camera:
             rect.width *= self.zoom
             rect.height *= self.zoom
             return rect
-
+        
+        elif isinstance(obj, Hook):
+            rect = obj.hitbox.copy()
+            rect.x = (rect.x - self.camera_rect.x) * self.zoom
+            rect.y = (rect.y - self.camera_rect.y) * self.zoom
+            rect.width *= self.zoom
+            rect.height *= self.zoom
+            return rect
+        
         return obj
+
+    def apply_point(self, point):
+        """
+        Adjusts a single point to be relative to the camera.
+
+        Parameters:
+        point (tuple): The (x, y) coordinates of the point to adjust.
+
+        Returns:
+        tuple: The adjusted (x, y) coordinates relative to the camera and zoom.
+        """
+        return (
+            (point[0] - self.camera_rect.x) * self.zoom,
+            (point[1] - self.camera_rect.y) * self.zoom,
+        )
 
     def update(self, player, num_of_players):
         """

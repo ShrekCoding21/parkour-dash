@@ -1,4 +1,4 @@
-import pygame
+import pygame, math
 
 class Player():
 
@@ -84,9 +84,9 @@ class Player():
             self.start_slide = self.position.x
     
 
-    def handle_controls(self, keys, delta_time, position, popup_active, ladders):
+    def handle_controls(self, keys, delta_time, position, popup_active, ladders, hooks):
         """
-        Handle player controls, including movement, jumping, sliding, and ladder climbing.
+        Handle player controls, including movement, jumping, sliding, ladder climbing, and hook interactions.
 
         Parameters:
         keys (dict): Dictionary of pressed keys.
@@ -94,6 +94,7 @@ class Player():
         position (pygame.Vector2): Player's current position.
         popup_active (bool): Whether a popup is active.
         ladders (list): List of Ladder objects in the game.
+        hooks (list): List of Hook objects in the game.
         """
         if popup_active:
             return
@@ -107,7 +108,7 @@ class Player():
             if self.rect.colliderect(ladder.rect):
                 on_ladder = ladder
                 break
-        
+
         self.on_ladder = on_ladder is not None
 
         if on_ladder:
@@ -116,12 +117,10 @@ class Player():
                 self.velocity.y = -self.speed
                 self.position.y -= self.speed * delta_time
                 self.on_ground = False
-
             elif keys[self.controls['slide']]:
                 self.velocity.y = self.speed
                 self.position.y += self.speed * delta_time
                 self.on_ground = False
-
             else:
                 self.velocity.y = 0
 
@@ -133,14 +132,37 @@ class Player():
             if keys[self.controls['left']]:
                 self.velocity.x = -self.speed
                 self.facing = -1
-
             elif keys[self.controls['right']]:
                 self.velocity.x = self.speed
                 self.facing = 1
 
             return  # Exit to prevent other controls from affecting the player on a ladder
 
-        # Horizontal movement (when not on a ladder)
+        # Check if the player is interacting with a hook
+        attached_to_hook = None
+        for hook in hooks:
+            if self.rect.colliderect(hook.hitbox):
+                attached_to_hook = hook
+                break
+
+        if attached_to_hook:
+            # Attach player to the hook
+            radians = math.radians(attached_to_hook.current_angle)
+            hook_end_x = attached_to_hook.pivot.x + attached_to_hook.length * math.sin(radians)
+            hook_end_y = attached_to_hook.pivot.y + attached_to_hook.length * math.cos(radians)
+
+            self.position.x = hook_end_x
+            self.position.y = hook_end_y
+            self.velocity = pygame.Vector2(0, 0)  # Stop movement temporarily
+
+            # Jump off the hook with momentum
+            if keys[self.controls['jump']]:
+                self.velocity.x = attached_to_hook.length * math.cos(radians) * attached_to_hook.speed * attached_to_hook.direction
+                self.velocity.y = -attached_to_hook.length * math.sin(radians) * attached_to_hook.speed
+            
+            return
+            
+        # Horizontal movement (when not on a ladder or hook)
         if keys[self.controls['left']]:
             self.velocity.x -= ACCELERATION
             self.facing = -1
@@ -148,7 +170,6 @@ class Player():
                 self.is_sliding = False
                 self.width, self.height = 32, 64
                 self.slide_direction = 0
-
         elif keys[self.controls['right']]:
             self.velocity.x += ACCELERATION
             self.facing = 1
@@ -156,7 +177,6 @@ class Player():
                 self.is_sliding = False
                 self.width, self.height = 32, 64
                 self.slide_direction = 0
-
         else:
             if self.on_ground and not self.is_sliding:
                 if self.velocity.x > 0:
@@ -191,8 +211,6 @@ class Player():
                     self.width, self.height = 32, 64
                 if self.under_platform:
                     self.reload(position)
-
-
     
     def detect_headbumps(self, platforms):
         self.under_platform = False
@@ -210,11 +228,11 @@ class Player():
                 self.under_platform = True
                 break
 
-    def update(self, delta_time, keys, platforms, position, popup_active, ladders):
+    def update(self, delta_time, keys, platforms, position, popup_active, ladders, hooks):
         
         if not popup_active:
             self.gravity_and_motion(delta_time)
-            self.handle_controls(keys, delta_time, position, popup_active, ladders)
+            self.handle_controls(keys, delta_time, position, popup_active, ladders, hooks)
             self.detect_headbumps(platforms)
 
             if self.on_platform and self.on_platform.is_moving:
