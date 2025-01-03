@@ -1079,6 +1079,7 @@ async def magnus25(active_players):
     running = True
     fixed_delta_time = 1 / 60
     accumulator = 0
+    previous_time = pygame.time.get_ticks()
     start_timer = pygame.time.get_ticks()
     paused = False
     editing_settings = False
@@ -1090,7 +1091,9 @@ async def magnus25(active_players):
     flashlight = Flashlight(screen, intensity=100)
 
     while running:
-        dt = clock.tick(60) / 1000.0
+        current_time = pygame.time.get_ticks()
+        dt = (current_time - previous_time) / 1000.0
+        previous_time = current_time
         accumulator += dt
         keys = pygame.key.get_pressed()
         MENU_MOUSE_POS = pygame.mouse.get_pos()
