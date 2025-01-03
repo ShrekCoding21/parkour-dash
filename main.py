@@ -1470,8 +1470,8 @@ async def tutorial_level(active_players):
             # Clear the canvas
             canvas.fill((0, 0, 0))  # Fill the canvas with black
 
-            # Render game objects for each active player's view
-            renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, platforms, camera, death_platforms, artifacts, collected_artifacts, flashlight, volcanoes=None, subscreens=subscreens)
+            # Render game objects for each active player's view vow
+            renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, platforms, camera, death_platforms, artifacts, collected_artifacts, flashlight, volcanoes=None, subscreens=subscreens, ladders=None)
 
             counting_string = update_timer(start_timer)
             render_artifact_count(("#56911f"), artifacts_collected)

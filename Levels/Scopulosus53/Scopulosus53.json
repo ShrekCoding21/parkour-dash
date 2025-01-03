@@ -24,7 +24,7 @@
 
         "death-form1": {
             "x-position": 500,
-            "y-position": 3100,
+            "y-position": 3350,
             "width": 3000,
             "height": 10,
             "is_moving": "False",
