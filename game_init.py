@@ -16,6 +16,16 @@ clock = pygame.time.Clock()
 
 pygame.display.set_caption("Parkour Dash")
 
+def centerText(text, position):
+    """
+    Centers given text on the screen
+
+    Args:
+        text (pygame.Surface): Text to center
+        position (tuple): Position to center text at
+    """
+    return text.get_rect(center=position)
+
 def load_platforms(platform_data, level_name):
 
     platforms = []

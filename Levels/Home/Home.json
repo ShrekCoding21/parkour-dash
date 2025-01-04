@@ -58,6 +58,15 @@
             "color": "#ffffff"
         },
 
+        "level-select": {
+            "x-position": 875,
+            "y-position": 530,
+            "width": 100,
+            "height": 20,
+            "is_moving": "False",
+            "color": "#47a61f"
+        },
+
         "finish-line": {
             "x-position": 1111,
             "y-position": 2240,

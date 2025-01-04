@@ -24,6 +24,7 @@ from Buttons.buttons import Button
 from game_init import (
     getArtifacts,
     render_artifacts,
+    centerText,
     render_artifact_count,
     load_platforms,
     introduce_controls,
@@ -58,9 +59,6 @@ screen = pygame.display.set_mode(window_size)
 clock = pygame.time.Clock()
 
 pygame.display.set_caption("Parkour Dash")
-
-if sys.platform == "emscripten":    
-    platform.document.body.style.background = "#050a36"
 
 screen.fill("#020626")
 loading_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
@@ -443,7 +441,95 @@ async def level_completed(screen, level_name, text_color, window_size, popup_tex
         pygame.display.flip()
         await asyncio.sleep(0)
 
-async def terus1(active_players, weather_condition):
+async def levelSelect(active_players):
+    
+    bg_image = pygame.image.load("assets/levelSelect/stars_bg.png").convert_alpha()
+    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
+    lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30)
+    button_image = pygame.image.load("Buttons/tutorial_button.png").convert_alpha()
+
+    level1 = pygame.image.load("assets/levelSelect/Terus1.png").convert_alpha()
+    level1_text = font.render("1. Terus1", True, ("#116da6"))
+
+    level2 = pygame.image.load("assets/levelSelect/Scopulosus53.png").convert_alpha()
+    level2_text = font.render("2. scopulosus53", True, ("#cc6c33"))
+
+    level3 = pygame.image.load("assets/levelSelect/Magnus25.png").convert_alpha()
+    level3_text = font.render("3. Magnus25", True, ("#1d806b"))
+
+    level_images = [level1, level2, level3]
+    level_texts = [level1_text, level2_text, level3_text]
+    LEVELS = [terus1, scopulosus53, magnus25]
+    
+    HOME = Button(image=button_image, pos=(125, 48), text_input="home", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+    PLAY = Button(image=button_image, pos=(335, 48), text_input="play", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 35), base_color="#167fc9", hovering_color="#F59071")
+    buttons = [HOME, PLAY]
+
+    button_surface = pygame.Surface((430, 75))
+    button_surface.set_alpha(128)
+    button_surface.fill((0, 0, 0))
+
+    select = pygame.image.load("assets/gameControls/keyboard_enter.png").convert_alpha()
+    left_normal = pygame.image.load("assets/gameControls/keyboard_arrow_left.png").convert_alpha()
+    left_outline = pygame.image.load("assets/gameControls/keyboard_arrow_left_outline.png").convert_alpha()
+    right_normal = pygame.image.load("assets/gameControls/keyboard_arrow_right.png").convert_alpha()
+    right_outline = pygame.image.load("assets/gameControls/keyboard_arrow_right_outline.png").convert_alpha()
+
+    current_level = 0
+    running = True
+
+    while running:
+        
+        screen.blit(bg_image, (0, 0))
+
+        level_img = level_images[current_level]
+        level_text = level_texts[current_level]
+
+        screen.blit(level_img, (0, 0))
+        screen.blit(level_text, centerText(level_text, (500, 130)))
+        screen.blit(button_surface, (15, 10))
+
+        keys = pygame.key.get_pressed()
+        left = left_outline if keys[pygame.K_LEFT] else left_normal
+        right = right_outline if keys[pygame.K_RIGHT] else right_normal
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                    if current_level > 0:
+                        current_level -= 1
+                elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                    if current_level < len(level_images) - 1:
+                        current_level += 1
+                elif event.key == pygame.K_RETURN:
+                    await LEVELS[current_level](active_players)
+                    running = False
+                elif event.key == pygame.K_h or event.key == pygame.K_ESCAPE:
+                    running = False
+            
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if HOME.checkForInput(pygame.mouse.get_pos()):
+                    running = False
+                elif PLAY.checkForInput(pygame.mouse.get_pos()):
+                    await LEVELS[current_level](active_players)
+                    running = False
+
+        screen.blit(left, (10, 635))
+        screen.blit(right, (70, 635))
+        screen.blit(select, (140, 635))
+        for button in buttons:
+            button.changeColor(pygame.mouse.get_pos())
+            button.update(screen)
+        
+        pygame.display.flip()
+        clock.tick(60)
+        await asyncio.sleep(0)
+
+async def terus1(active_players):
 
     from level_init import terusPlatformsInit
 
@@ -456,7 +542,6 @@ async def terus1(active_players, weather_condition):
 
     num_of_players = len(active_players)
     show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)   
-    print(f"weather condition: {weather_condition}")
     show_slide, show_slide2, show_checkpoint1_reached, show_checkpoint2_reached, brighten_scene, artifacts = terusPlatformsInit(platforms, level_name)
 
     popup_data = [
@@ -1365,8 +1450,6 @@ async def tutorial_level(active_players):
             popup_index += 1
 
         for player in active_players:
-            if player.id == 1 and player.on_platform:
-                current_platform = player.on_platform.name
 
             blit_jumpslide = player.on_platform == intro_to_jumpslide
 
@@ -1536,12 +1619,14 @@ async def main():
     level_name = 'Home'
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 60)
     lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25)
+    lilest_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 20)
     text_color = "#71d6f5"
 
     num_of_players = 1
     show_controls, bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
 
     show_settings = next((platform for platform in platforms if platform.name == 'settings'), None)
+    show_level_select = next((platform for platform in platforms if platform.name == 'level-select'), None)
 
     artifact_image1 = pygame.image.load("Levels/Terus1/assets/artifact1.png")
     artifact_data = [
@@ -1551,6 +1636,7 @@ async def main():
     artifacts = pygame.sprite.Group(Artifact(data["image"], data["position"], data["name"]) for data in artifact_data)
 
     title_screen_text = mainTextInit(font, lil_font, text_color, window_size)
+    level_select_text = lilest_font.render("level select", True, text_color)
 
     running = True
     fixed_delta_time = 1 / 60
@@ -1559,7 +1645,7 @@ async def main():
     paused = False
     editing_settings = False
     reload_players = False
-    platforms_used = []
+    blit_enter = False
     flashlight = Flashlight(screen, intensity=100)
     RELOAD = Button(image=pygame.image.load("Buttons/reload_button.png").convert_alpha(), pos=(85, 43), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
     PAUSE = Button(image=pygame.image.load("Buttons/pause_button.png").convert_alpha(), pos=(30, 35), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="White", hovering_color="White")
@@ -1573,12 +1659,8 @@ async def main():
         MENU_MOUSE_POS = pygame.mouse.get_pos()
 
         for player in active_players:
-            if player.id == 1:
-                if player.on_platform:
-                    current_platform = player.on_platform.name
-                    if current_platform not in platforms_used:
-                        platforms_used.append(current_platform)
-                # print(player.position)
+
+            blit_enter = player.on_platform == show_level_select
 
             if player.position.y > level_height + 100:
                 player.reload(OG_spawn_point)
@@ -1591,6 +1673,17 @@ async def main():
                 else:
                     player.reload(spawn_point)
                     reload_players = False
+            
+            if player.on_platform == show_level_select:
+
+                for event in pygame.event.get():
+
+                    if event.type == pygame.QUIT:
+                        running = False
+
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_l or event.key == pygame.K_RETURN:
+                            await levelSelect(active_players)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -1607,14 +1700,8 @@ async def main():
 
             elif event.type == pygame.KEYDOWN:
 
-                if event.key == pygame.K_1:
-                    await terus1(active_players, weather_condition)
-                
-                if event.key == pygame.K_2:
-                    await scopulosus53(active_players)
-                
-                if event.key == pygame.K_3:
-                    await magnus25(active_players)
+                if event.key == pygame.K_l:
+                    await levelSelect(active_players)
 
                 if event.key == pygame.K_r:
                     reload_map(active_players, platforms, spawn_point, artifacts)
@@ -1666,6 +1753,10 @@ async def main():
             screen.blit(title_screen_text, (0, 0))
             render_game_objects(platforms, active_players, camera, flashlight, death_platforms=[], surface=screen)
             display_controls(len(active_players), show_controls, introduced_controls_state, print_player1_controls, print_player3_controls, print_player4_controls)
+            
+            if blit_enter:
+                screen.blit(pygame.image.load("assets/gameControls/keyboard_enter.png").convert_alpha(), (760, 647))
+                screen.blit(level_select_text, (815, 670))
 
             for button in [RELOAD, PAUSE]:
                 button.changeColor(pygame.mouse.get_pos())
