@@ -116,9 +116,25 @@
             "is_moving": "False",
             "color": "#94e0a8"
         },
+        "homeless-shelter3": {
+            "x-position": 5675,
+            "y-position": 980,
+            "width": 150,
+            "height": 20,
+            "is_moving": "False",
+            "color": "red"
+        },
+        "artifact-platform3": {
+            "x-position": 5675,
+            "y-position": 981,
+            "width": 150,
+            "height": 20,
+            "is_moving": "False",
+            "color": "red"
+        },
         "base-platform12": {
             "x-position": 5850,
-            "y-position": 1700,
+            "y-position": 2000,
             "width": 250,
             "height": 40,
             "is_moving": "False",
