@@ -1161,13 +1161,13 @@ async def magnus25(active_players):
 
     popup_data = [
 
-        {"name": "popup1",
-        "screen": screen,
-        "text": "this is a popup",
-        "theme_color": text_color,
-        "button_text": "ok",
-        "visible": True
-    },
+    #     {"name": "popup1",
+    #     "screen": screen,
+    #     "text": "this is a popup",
+    #     "theme_color": text_color,
+    #     "button_text": "ok",
+    #     "visible": False
+    # },
     
         {"name": "popup2",
          "screen": screen,
@@ -1180,26 +1180,64 @@ async def magnus25(active_players):
     ladder_data = [
 
         {
-            "x-position": 200,
-            "y-position": 2280,
-            "height": 500
+            "x-position": 1900,
+            "y-position": 155,
+            "height": 150,
         },
 
+ {
+            "x-position": 2110,
+            "y-position": 155,  
+            "height": 150,
+        },
         {
-            "x-position": 300,
-            "y-position": 2280,
-            "height": 500
+            "x-position": 3990,
+            "y-position": 140,  
+            "height": 460,  
+        },
+        {
+            "x-position": 4500,
+            "y-position": 140,
+            "height": 160,
         }
     ]
 
     hook_data = [
         
         {
-            "x-position": 600,
-            "y-position": 2400,
+            "x-position": 1450,
+            "y-position": 50,
+            "length": 250,
+            "angle": 45,
+            "speed": 4
+        },
+                {
+            "x-position": 2655,
+            "y-position": -25,
             "length": 350,
             "angle": 45,
             "speed": 4
+        },
+        {
+        "x-position": 4950,
+        "y-position": 50,
+        "length": 300,
+        "angle": 45,
+        "speed": 5
+        },
+        {
+        "x-position": 5850,
+        "y-position": 50,
+        "length": 300,
+        "angle": 45,
+        "speed": 4
+        },
+        {
+        "x-position": 6350,
+        "y-position": 1450,
+        "length": 300,
+        "angle": 45,
+        "speed": 4
         }
     ]
     
@@ -1217,7 +1255,7 @@ async def magnus25(active_players):
     print_need_artifacts = font.render("you need more artifacts", True, text_color)
     need_artifacts_rect = print_need_artifacts.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
 
-    artifacts = [] # THIS IS TEMPORARY
+    artifacts = getArtifacts(platforms, level_name)
     running = True
     fixed_delta_time = 1 / 60
     accumulator = 0
@@ -1352,7 +1390,7 @@ async def magnus25(active_players):
                 editing_settings = False
 
         elif level_complete:
-            if artifacts_collected >= 0:
+            if artifacts_collected == 1:
                 action = await level_completed(screen, level_name, text_color, window_size, popup_text="Hello. Nothing here, yet :)", time_finished=time.time())
                 if action == "level restart":
                     bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
@@ -1390,9 +1428,8 @@ async def magnus25(active_players):
             canvas.fill((0, 0, 0))
             renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, platforms, camera, death_platforms, artifacts, collected_artifacts, flashlight, volcanoes=None, ladders=ladders, hooks=hooks, subscreens=subscreens)
             counting_string = update_timer(start_timer)
-            # render_artifacts(artifacts, camera, collected_artifacts)
-            # render_artifact_count(("#56911f"), artifacts_collected)
-            storm.draw(screen)
+            render_artifacts(artifacts, camera, collected_artifacts, surface=canvas)
+            render_artifact_count(("#56911f"), artifacts_collected)
             render_timer(lil_font, "#32854b", counting_string)
 
             for popup in popups:
