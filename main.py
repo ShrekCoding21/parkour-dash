@@ -1850,14 +1850,27 @@ async def main():
 asyncio.run(main())
 
 # Debugging and profiling code
+
 # import pstats, cProfile
+
+# with open(("Players/player_controls.json"), 'r') as key_map:
+#     keys_data = json.load(key_map)
+
+# player1_controls = keys_data['controls']['players']['player1']
+# player2_controls = keys_data['controls']['players']['player2']
+# player3_controls = keys_data['controls']['players']['player3']
+# player4_controls = keys_data['controls']['players']['player4']
+
+# players = {
+#     "player1": Player(player_id=1, position=(64, 64), controls=player1_controls, color=("#9EBA01"))
+#     }
 
 # if __name__ == "__main__":
 #     # Use cProfile to profile the main function
 #     profiler = cProfile.Profile()
 #     profiler.enable()
 
-#     asyncio.run(main())
+#     asyncio.run(training(players))
 
 #     profiler.disable()
 #     profiler.print_stats(sort="cumtime")
