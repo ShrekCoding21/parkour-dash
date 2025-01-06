@@ -29,6 +29,25 @@
             "is_moving": "False",
             "color": "#B7410E"
         },
+
+        "homeless-shelter1": {
+            "x-position": 1500,
+            "y-position": 270,
+            "width": 130,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#ffffff"
+        },
+
+        "homeless-shelter2": {
+            "x-position": 1700,
+            "y-position": 270,
+            "width": 130,
+            "height": 30,
+            "is_moving": "False",
+            "color": "#ffffff" 
+        },
+
         "checkpoint1": {
             "x-position": 4450,
             "y-position": 1550,

@@ -1,7 +1,9 @@
 import pygame
 
 class Platform:
-    __slots__ = ['name', 'position', 'start_position', 'is_moving', 'movement_range', 'speed', 'animation_frames', 'current_frame', 'frame_count', 'direction', 'start_direction', 'previous_direction', 'image_path', 'color', 'dimensions', 'velocity', 'image']
+    __slots__ = ['name', 'position', 'start_position', 'is_moving', 'movement_range', 'speed', 'animation_frames', 
+                 'current_frame', 'frame_count', 'direction', 'start_direction', 'previous_direction', 'image_path', 
+                 'color', 'dimensions', 'velocity', 'image']
 
     _image_cache = {}
 
@@ -22,8 +24,12 @@ class Platform:
         self.color = color
         self.dimensions = dimensions
         self.velocity = pygame.Vector2(0, 0)
-        
         self.image = self.load_image(image_path)
+
+    @property
+    def rect(self):
+        """Returns the platform's rectangle based on its position and dimensions."""
+        return pygame.Rect(self.position.x, self.position.y, self.dimensions[0], self.dimensions[1])
 
     def load_image(self, image_path):
         if not image_path:

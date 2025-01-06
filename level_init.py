@@ -44,7 +44,7 @@ def mainTextInit(font, lil_font, text_color, window_size):
     # Render text
     print_welcome1 = font.render("welcome to", True, text_color)
     print_welcome2 = font.render("project AstRA", True, text_color)
-    show_tutorial_level1 = lil_font.render("jump here for tutorial", True, text_color)
+    show_tutorial_level1 = lil_font.render("jump here for training", True, text_color)
     show_tutorial_level2 = lil_font.render("↓", True, text_color)
     show_settings1 = lil_font.render("← settings", True, text_color)
     highlight_game_controls1 = lil_font.render("these could be useful→", True, text_color)

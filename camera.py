@@ -2,9 +2,9 @@ import pygame
 from Players.player import Player
 from Platforms.platform import Platform
 from artifacts import Artifact
-from volcanoes import Volcano
-from ladder import Ladder
-from hook import Hook
+from Levels.Scopulosus53.volcanoes import Volcano
+from Levels.Magnus25.ladder import Ladder
+from Levels.Magnus25.hook import Hook
 
 class Camera:
     def __init__(self, width, height, window_size, zoom=1.0):
