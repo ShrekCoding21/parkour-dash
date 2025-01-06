@@ -28,6 +28,14 @@
             "is_moving": "False",
             "color": "#94e0a8"
         },
+        "homeless-shelter1":     {
+            "x-position": 1935,
+            "y-position": 130,
+            "width": 150,
+            "height": 20,
+            "is_moving": "False",
+            "color": "red"
+        },
         "artifact-platform1": {
             "x-position": 1910,
             "y-position": 150,
@@ -59,6 +67,22 @@
             "height": 500,
             "is_moving": "False",
             "color": "#94e0a8"
+        },
+        "homeless-shelter2":     {
+            "x-position": 4050,
+            "y-position": 120,
+            "width": 200,
+            "height": 20,
+            "is_moving": "False",
+            "color": "red"
+        },
+        "artifact-platform2":     {
+            "x-position": 4050,
+            "y-position": 130,
+            "width": 200,
+            "height": 200,
+            "is_moving": "False",
+            "color": "red"
         },
         "base-platform8": {
             "x-position": 4500,
