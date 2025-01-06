@@ -1199,6 +1199,11 @@ async def magnus25(active_players):
             "x-position": 4500,
             "y-position": 140,
             "height": 160,
+        },
+        {
+            "x-position": 6090,
+            "y-position": 1500,
+            "height": 500,
         }
     ]
 
@@ -1390,7 +1395,7 @@ async def magnus25(active_players):
                 editing_settings = False
 
         elif level_complete:
-            if artifacts_collected == 2:
+            if artifacts_collected == 3:
                 action = await level_completed(screen, level_name, text_color, window_size, popup_text="Hello. Nothing here, yet :)", time_finished=time.time())
                 if action == "level restart":
                     bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
