@@ -387,7 +387,7 @@ def getSplitscreenLayout(canvas, active_players):
 def render_game_objects(platforms, active_players, camera, flashlight, death_platforms, surface):
     """
     Renders game objects on a specific surface, respecting camera and flashlight settings.
-    Implements GPU acceleration for optimization.
+    Implements culling and GPU acceleration for optimization.
     """
     # If the flashlight is on, draw the beam first relative to the subscreen
     if flashlight.on:
@@ -404,6 +404,10 @@ def render_game_objects(platforms, active_players, camera, flashlight, death_pla
 
     for platform in platforms:
         platform_rect = camera.apply(platform)
+
+        # Culling: Skip rendering if the platform is outside the camera view
+        if not surface.get_rect().colliderect(platform_rect):
+            continue
 
         # Create a temporary surface for platform rendering
         platform_surface = pygame.Surface((platform_rect.width, platform_rect.height), pygame.SRCALPHA)
@@ -441,6 +445,10 @@ def render_game_objects(platforms, active_players, camera, flashlight, death_pla
     # Render players
     for player in active_players:
         player_rect = camera.apply(player)
+
+        # Culling: Skip rendering if the player is outside the camera view
+        if not surface.get_rect().colliderect(player_rect):
+            continue
 
         scaled_rect = pygame.Rect(
             player_rect.x,

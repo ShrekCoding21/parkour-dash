@@ -520,12 +520,6 @@ async def levelSelect(active_players):
                     if current_level < len(level_images) - 1:
                         current_level += 1
                 elif event.key == pygame.K_RETURN:
-                    screen.fill("#020626")
-                    loading_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
-                    loading_text = loading_font.render("Loading...", True, ("#71d6f5"))
-                    loading_rect = loading_text.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
-                    screen.blit(loading_text, loading_rect)
-                    pygame.display.update()
                     output = await LEVELS[current_level](active_players)
                     if output == False:
                         running = output
@@ -536,12 +530,6 @@ async def levelSelect(active_players):
                 if HOME.checkForInput(pygame.mouse.get_pos()):
                     running = False
                 elif PLAY.checkForInput(pygame.mouse.get_pos()):
-                    screen.fill("#020626")
-                    loading_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
-                    loading_text = loading_font.render("Loading...", True, ("#71d6f5"))
-                    loading_rect = loading_text.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
-                    screen.blit(loading_text, loading_rect)
-                    pygame.display.update()
                     output = await LEVELS[current_level](active_players)
                     if output == False:
                         running = output
@@ -564,6 +552,13 @@ async def levelSelect(active_players):
         await asyncio.sleep(0)
 
 async def terus1(active_players):
+
+    screen.fill("#020626")
+    loading_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
+    loading_text = loading_font.render("Loading...", True, ("#71d6f5"))
+    loading_rect = loading_text.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
+    screen.blit(loading_text, loading_rect)
+    pygame.display.update()
 
     from level_init import terusPlatformsInit
 
@@ -828,6 +823,13 @@ async def terus1(active_players):
 
 async def scopulosus53(active_players):
     
+    screen.fill("#020626")
+    loading_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
+    loading_text = loading_font.render("Loading...", True, ("#71d6f5"))
+    loading_rect = loading_text.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
+    screen.blit(loading_text, loading_rect)
+    pygame.display.update()
+
     from Levels.Scopulosus53.volcanoes import Volcano
     from level_init import scopulosusPlatformsInit
 
@@ -1159,6 +1161,13 @@ async def scopulosus53(active_players):
 
 async def magnus25(active_players):
     
+    screen.fill("#020626")
+    loading_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
+    loading_text = loading_font.render("Loading...", True, ("#71d6f5"))
+    loading_rect = loading_text.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
+    screen.blit(loading_text, loading_rect)
+    pygame.display.update()
+    
     from Levels.Magnus25.ladder import Ladder
     from Levels.Magnus25.hook import Hook
     from Levels.Magnus25.storm import Storm
@@ -1468,6 +1477,13 @@ async def magnus25(active_players):
 
 async def training(active_players):
 
+    screen.fill("#020626")
+    loading_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
+    loading_text = loading_font.render("Loading...", True, ("#71d6f5"))
+    loading_rect = loading_text.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
+    screen.blit(loading_text, loading_rect)
+    pygame.display.update()
+    
     from level_init import tutorialPlatformsInit
 
     level_name = 'Training'
