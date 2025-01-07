@@ -60,6 +60,9 @@ clock = pygame.time.Clock()
 
 pygame.display.set_caption("Parkour Dash")
 
+if sys.platform == "emscripten":    
+    platform.document.body.style.background = "#1d2d4b"
+
 screen.fill("#020626")
 loading_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
 loading_text = loading_font.render("Loading...", True, ("#71d6f5"))
@@ -517,6 +520,12 @@ async def levelSelect(active_players):
                     if current_level < len(level_images) - 1:
                         current_level += 1
                 elif event.key == pygame.K_RETURN:
+                    screen.fill("#020626")
+                    loading_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
+                    loading_text = loading_font.render("Loading...", True, ("#71d6f5"))
+                    loading_rect = loading_text.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
+                    screen.blit(loading_text, loading_rect)
+                    pygame.display.update()
                     output = await LEVELS[current_level](active_players)
                     if output == False:
                         running = output
@@ -527,6 +536,12 @@ async def levelSelect(active_players):
                 if HOME.checkForInput(pygame.mouse.get_pos()):
                     running = False
                 elif PLAY.checkForInput(pygame.mouse.get_pos()):
+                    screen.fill("#020626")
+                    loading_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
+                    loading_text = loading_font.render("Loading...", True, ("#71d6f5"))
+                    loading_rect = loading_text.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
+                    screen.blit(loading_text, loading_rect)
+                    pygame.display.update()
                     output = await LEVELS[current_level](active_players)
                     if output == False:
                         running = output
