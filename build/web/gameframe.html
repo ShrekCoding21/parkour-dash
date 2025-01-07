@@ -265,6 +265,19 @@ config = {
     <link rel="icon" type="image/png" href="favicon.png" sizes="16x16">
 
     <style>
+        body {
+            overflow: hidden;
+            border-style: none;
+            border-width: 0px;
+            border-color: transparent;
+            background-color: transparent; 
+        }
+        :root {
+            border-style: none;
+            border-width: 0px;
+            border-color: transparent;
+            background-color: transparent; 
+        }
         #status {
             display: inline-block;
             vertical-align: top;
@@ -280,10 +293,28 @@ config = {
         }
 
         div.emscripten { text-align: center; }
-        div.emscripten_border { border: 1px solid black; }
-        div.thick_border { border: 4px solid black; }
+        div.emscripten_border { 
+            border-style: none;
+            border-width: 0px;
+            border-color: transparent;
+            background-color: transparent; 
+         }
+        div.thick_border {
+            border-style: none;
+            border-width: 0px;
+            border-color: transparent;
+            background-color: transparent;  
+            }
 
         /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+        canvas {
+            image-rendering: optimizeSpeed;             /* Older versions of FF */
+            image-rendering: -moz-crisp-edges;          /* FF 6.0+ */
+            image-rendering: -webkit-optimize-contrast; /* Safari */
+            image-rendering: -o-crisp-edges;            /* OS X & Windows Opera (12.02 - 12.16) */
+            image-rendering: pixelated;                 /* Awesome future-browsers */
+            -ms-interpolation-mode: nearest-neighbor;   /* IE */
+        }
         /* average size of droid screen 470dp x 320dp  */
         canvas.emscripten {
             border: 0px none;
@@ -306,7 +337,7 @@ config = {
             font-family: arial;
             margin: 0;
             padding: none;
-            background-color:powderblue;
+            background-color: #1d2d4b;
         }
 
         .topright{
@@ -330,15 +361,10 @@ config = {
         .trinfo{
            position:relative;
            right:0px;
-           border: 1px solid black;
+           border-style: none;
+           border-width: 0px;
         }
 
-        .framed{
-           position:relative;
-           top:150px;
-           right:10px;
-           border: 1px solid black;
-        }
     </style>
 
     <script src="https://pygame-web.github.io/archives/0.9//browserfs.min.js"></script>
