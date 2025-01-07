@@ -1185,21 +1185,24 @@ async def magnus25(active_players):
             "height": 150,
         },
 
- {
+        {
             "x-position": 2110,
             "y-position": 155,  
             "height": 150,
         },
+
         {
             "x-position": 3990,
             "y-position": 140,  
             "height": 460,  
         },
+
         {
             "x-position": 4500,
             "y-position": 140,
             "height": 160,
         },
+        
         {
             "x-position": 6290,
             "y-position": 1500,
@@ -1216,13 +1219,15 @@ async def magnus25(active_players):
             "angle": 45,
             "speed": 4
         },
-                {
+        
+        {
             "x-position": 2655,
             "y-position": -25,
             "length": 350,
             "angle": 45,
             "speed": 4
         },
+
         {
         "x-position": 4950,
         "y-position": 50,
@@ -1230,6 +1235,7 @@ async def magnus25(active_players):
         "angle": 45,
         "speed": 5
         },
+
         {
         "x-position": 5850,
         "y-position": 50,
@@ -1237,6 +1243,7 @@ async def magnus25(active_players):
         "angle": 45,
         "speed": 4
         },
+
         {
         "x-position": 6550,
         "y-position": 1450,
