@@ -1201,7 +1201,7 @@ async def magnus25(active_players):
             "height": 160,
         },
         {
-            "x-position": 6090,
+            "x-position": 6290,
             "y-position": 1500,
             "height": 500,
         }
@@ -1238,7 +1238,7 @@ async def magnus25(active_players):
         "speed": 4
         },
         {
-        "x-position": 6350,
+        "x-position": 6550,
         "y-position": 1450,
         "length": 300,
         "angle": 45,
