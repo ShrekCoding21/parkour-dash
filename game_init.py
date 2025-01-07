@@ -419,10 +419,7 @@ def render_game_objects(platforms, active_players, camera, flashlight, death_pla
             if platform in death_platforms:
                 platform_color = (0, 0, 0, 0)  # Transparent for death platforms
             else:
-                if flashlight.enabled:
-                    platform_color = (0, 0, 0)  # Black if flashlight is on
-                else:
-                    platform_color = platform.color  # Default platform color
+                platform_color = platform.color  # Default platform color
 
             # Draw the platform color if no image is rendered
             if platform_color:
@@ -435,14 +432,8 @@ def render_game_objects(platforms, active_players, camera, flashlight, death_pla
                 if is_hit:
                     # Create masks for the flashlight beam and platform
                     mask = pygame.mask.from_surface(flashlight.rotated_beam)
-                    platform_mask = pygame.mask.from_surface(platform_surface)
-
-                    # Get the intersection of the masks
-                    intersection = mask.to_surface()
-
                     # Apply a darker blending to the platform surface
                     darkened_color = (255 * 0.5, 255 * 0.5, 255 * 0.5)  # Darker version of the platform color
-                    platform_surface.blit(intersection, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
                     platform_surface.fill(darkened_color, special_flags=pygame.BLEND_RGBA_MULT)
 
         # Draw the platform on the platforms surface

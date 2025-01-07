@@ -1691,7 +1691,6 @@ async def training(active_players):
         await asyncio.sleep(0)
 
 async def main():
-
     from level_init import mainTextInit
 
     current_weather = await game_init()
@@ -1745,7 +1744,6 @@ async def main():
         MENU_MOUSE_POS = pygame.mouse.get_pos()
 
         for player in active_players:
-
             blit_enter = player.on_platform == show_level_select
 
             if player.position.y > level_height + 100:
@@ -1759,14 +1757,11 @@ async def main():
                 else:
                     player.reload(spawn_point)
                     reload_players = False
-            
+
             if player.on_platform == show_level_select:
-
                 for event in pygame.event.get():
-
                     if event.type == pygame.QUIT:
                         running = False
-
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_l or event.key == pygame.K_RETURN:
                             await levelSelect(active_players)
@@ -1785,7 +1780,6 @@ async def main():
                     paused = True
 
             elif event.type == pygame.KEYDOWN:
-
                 if event.key == pygame.K_l:
                     await levelSelect(active_players)
 
@@ -1796,14 +1790,6 @@ async def main():
                 if event.key == pygame.K_p:
                     time_paused = time.time()
                     paused = True
-
-                elif paused:
-                    if event.key == pygame.K_u or not pause_menu(screen, level_name, window_size, time_paused):
-                        paused = False
-                    elif event.key == pygame.K_r:
-                        reload_map(active_players, platforms, spawn_point, artifacts)
-                        paused = False
-                        text_color = "#71d6f5"
 
         if paused:
             action = await pause_menu(screen, level_name, window_size, time_paused)
@@ -1839,7 +1825,7 @@ async def main():
             screen.blit(title_screen_text, (0, 0))
             render_game_objects(platforms, active_players, camera, flashlight, death_platforms=[], surface=screen)
             display_controls(len(active_players), introduced_controls_state, print_player1_controls, print_player3_controls, print_player4_controls)
-            
+
             if blit_enter:
                 screen.blit(pygame.image.load("assets/gameControls/keyboard_enter.png").convert_alpha(), (760, 647))
                 screen.blit(level_select_text, (815, 670))
@@ -1878,7 +1864,7 @@ asyncio.run(main())
 #     profiler = cProfile.Profile()
 #     profiler.enable()
 
-#     asyncio.run(training(players))
+#     asyncio.run(main())
 
 #     profiler.disable()
 #     profiler.print_stats(sort="cumtime")
