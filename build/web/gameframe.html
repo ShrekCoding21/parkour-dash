@@ -152,7 +152,7 @@ async def custom_site():
 
 
     # now make a prompt
-    fnt = pygame.sysfont.SysFont("freesans",  uy(80) )
+    fnt = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 60)
 
     def ui_callback(pkg, error=None):
         nonlocal fnt
@@ -168,17 +168,16 @@ async def custom_site():
     if not platform.window.MM.UME:
 
         # now make a prompt
-        fnt = pygame.sysfont.SysFont("freesans",  uy(80) )
-        prompt = fnt.render("Ready to start !", True, "blue")
+        fnt = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 55)
+        prompt = fnt.render("click to begin!", True, "blue")
         pg_bar(track.len)
-        screen.blit(prompt, ( marginx+ ux(80), marginy - uy(10) ) )
+        screen.blit(prompt, ( marginx+ ux(10), marginy - uy(10) ) )
         compose()
         print("""
         * Waiting for media user engagement : please click/touch page *
     """)
         while not platform.window.MM.UME:
             await asyncio.sleep(.1)
-
     # cleanup
     screen.fill( (0,0,0,0) )
     pygame.display.flip()
@@ -265,13 +264,17 @@ config = {
     <link rel="icon" type="image/png" href="favicon.png" sizes="16x16">
 
     <style>
+        :root {
+            overflow: hidden;
+            background-color: #1d2d4b;
+        }
         #status {
             display: inline-block;
             vertical-align: top;
             margin-top: 20px;
             margin-left: 30px;
             font-weight: bold;
-            color: rgb(120, 120, 120);
+            color: #1d2d4b;
         }
 
         #progress {
@@ -306,7 +309,7 @@ config = {
             font-family: arial;
             margin: 0;
             padding: none;
-            background-color:powderblue;
+            background-color: #1d2d4b;
         }
 
         .topright{
@@ -394,7 +397,7 @@ height="1px"
 width="470px" height="90%"
 allowtransparency="true"
 style="z-index: 10;"
-style="background: #FFFFFF;"
+style="background: #1d2d4b;"
 frameborder="1"
                 allowfullscreen="true"
                 webkitallowfullscreen="true"
