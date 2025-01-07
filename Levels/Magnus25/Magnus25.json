@@ -133,9 +133,9 @@
             "color": "red"
         },
         "base-platform12": {
-            "x-position": 6050,
+            "x-position": 5950,
             "y-position": 2000,
-            "width": 250,
+            "width": 350,
             "height": 40,
             "is_moving": "False",
             "color": "#94e0a8"
