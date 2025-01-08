@@ -60,6 +60,9 @@ clock = pygame.time.Clock()
 
 pygame.display.set_caption("Parkour Dash")
 
+if sys.platform == "emscripten":    
+    platform.document.body.style.background = "#1d2d4b"
+
 screen.fill("#020626")
 loading_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
 loading_text = loading_font.render("Loading...", True, ("#71d6f5"))
@@ -371,7 +374,7 @@ async def pause_menu(screen, level_name, window_size, time_paused):
         pygame.display.flip()
         await asyncio.sleep(0)
 
-async def level_completed(screen, level_name, text_color, window_size, popup_text, time_finished):
+async def level_completed(screen, level_name, text_color, window_size, popup_text, time_finished, total_time):
     
     blur_duration = 0
     max_blur_radius = 10
@@ -379,11 +382,13 @@ async def level_completed(screen, level_name, text_color, window_size, popup_tex
     pil_image = Image.frombytes("RGBA", screen.get_size(), screen_surface)
 
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 55)
+    lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
     button_image = pygame.image.load("Buttons/tutorial_button.png").convert_alpha()
 
-    printtext = font.render(f"{level_name} complete!", True, ("#71d6f5"))
+    printtext = font.render(f"{level_name} complete!", True, text_color)
+    printtime = lil_font.render(f"Time: {total_time}", True, text_color)
     text_rect = printtext.get_rect(center=(window_size[0] // 2, window_size[1] // 2 - 200))
-    base_color = "#167fc9"
+    time_rect = printtime.get_rect(center=(window_size[0] // 2, 500))
     hovering_color = "#F59071"
 
     artifact_information = Popup(name="artifact_info", screen=screen, text=popup_text, theme_color=text_color, button_text="cool", visible=False)
@@ -392,10 +397,10 @@ async def level_completed(screen, level_name, text_color, window_size, popup_tex
 
     artifact_information.font_size, artifact_information.max_line_length = 23, 40
 
-    RESTART_LEVEL = Button(image=button_image, pos=(395, 295), text_input="restart", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 35), base_color=base_color, hovering_color=hovering_color)
-    ARTIFACT_INFO = Button(image=button_image, pos=(605, 295), text_input="artifact info", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 18), base_color=base_color, hovering_color=hovering_color)
-    LEVEL_SELECT = Button(image=button_image, pos=(395, 365), text_input="level select", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 20), base_color=base_color, hovering_color=hovering_color)
-    MAIN_MENU = Button(image=button_image, pos=(605, 365), text_input="home", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color=base_color, hovering_color=hovering_color)
+    RESTART_LEVEL = Button(image=button_image, pos=(395, 295), text_input="restart", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 35), base_color=text_color, hovering_color=hovering_color)
+    ARTIFACT_INFO = Button(image=button_image, pos=(605, 295), text_input="artifact info", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 18), base_color=text_color, hovering_color=hovering_color)
+    LEVEL_SELECT = Button(image=button_image, pos=(395, 365), text_input="level select", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 20), base_color=text_color, hovering_color=hovering_color)
+    MAIN_MENU = Button(image=button_image, pos=(605, 365), text_input="home", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color=text_color, hovering_color=hovering_color)
     buttons = [RESTART_LEVEL, ARTIFACT_INFO, LEVEL_SELECT, MAIN_MENU]
 
     while True:
@@ -441,6 +446,7 @@ async def level_completed(screen, level_name, text_color, window_size, popup_tex
         
         if time_elapsed >= blur_duration:
             screen.blit(printtext, text_rect)
+            screen.blit(printtime, time_rect)
             
             for button in buttons:
                 button.changeColor(pygame.mouse.get_pos())
@@ -547,12 +553,19 @@ async def levelSelect(active_players):
 
 async def terus1(active_players):
 
+    screen.fill("#020626")
+    loading_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
+    loading_text = loading_font.render("Loading...", True, ("#71d6f5"))
+    loading_rect = loading_text.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
+    screen.blit(loading_text, loading_rect)
+    pygame.display.update()
+
     from level_init import terusPlatformsInit
 
     level_name = 'Terus1'
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 60)
     lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30)
-    text_color = ("#0c4701")
+    text_color = ("#116da6")
     magnetite_information = await load_json_file(f"Levels/{level_name}/artifact_info.json")
     post_mission_briefing = magnetite_information['magnetite-info']['after-level-info']
 
@@ -653,7 +666,6 @@ async def terus1(active_players):
             if player.on_platform == finish_line:
                 
                 level_complete = True
-                text_color = player.color
                 checkpoint_increment = 0
                 spawn_point = OG_spawn_point
 
@@ -688,7 +700,6 @@ async def terus1(active_players):
                 if RELOAD.checkForInput(MENU_MOUSE_POS):
                     reload_map(active_players, platforms, spawn_point, artifacts)
                     level_complete = False
-                    text_color = ("#71d6f5")
                     if spawn_point == OG_spawn_point or not next_checkpoints:
                         start_timer = pygame.time.get_ticks()
 
@@ -704,7 +715,6 @@ async def terus1(active_players):
                 if event.key == pygame.K_r:
                     reload_map(active_players, platforms, spawn_point, artifacts)  
                     level_complete = False
-                    text_color = ("#71d6f5")
                     flashlight.enabled = True
                     if spawn_point == OG_spawn_point or not next_checkpoints:
                         start_timer = pygame.time.get_ticks()
@@ -756,7 +766,7 @@ async def terus1(active_players):
 
         elif level_complete:
             if artifacts_collected == 3:
-                action = await level_completed(screen, level_name, text_color, window_size, post_mission_briefing, time_finished=time.time())
+                action = await level_completed(screen, level_name, text_color, window_size, post_mission_briefing, time_finished=time.time(), total_time=counting_string)
 
                 if action == "level restart":
                     bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
@@ -813,13 +823,20 @@ async def terus1(active_players):
 
 async def scopulosus53(active_players):
     
+    screen.fill("#020626")
+    loading_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
+    loading_text = loading_font.render("Loading...", True, ("#71d6f5"))
+    loading_rect = loading_text.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
+    screen.blit(loading_text, loading_rect)
+    pygame.display.update()
+
     from Levels.Scopulosus53.volcanoes import Volcano
     from level_init import scopulosusPlatformsInit
 
     level_name = 'Scopulosus53'
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 60)
     lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30)
-    text_color = ("#0c4701")
+    text_color = ("#f70c0c")
     num_of_players = len(active_players)
     bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)   
     introduce_volcano, introduce_deathcano, one_way, artifacts = scopulosusPlatformsInit(level_name, platforms)
@@ -996,7 +1013,6 @@ async def scopulosus53(active_players):
             if player.on_platform == finish_line:
                 
                 level_complete = True
-                text_color = player.color
                 checkpoint_increment = 0
                 spawn_point = OG_spawn_point
             
@@ -1055,7 +1071,6 @@ async def scopulosus53(active_players):
                 if RELOAD.checkForInput(MENU_MOUSE_POS):
                     reload_map(active_players, platforms, spawn_point, artifacts)
                     level_complete = False
-                    text_color = ("#71d6f5")
                     if spawn_point == OG_spawn_point or not next_checkpoints:
                         start_timer = pygame.time.get_ticks()
 
@@ -1067,7 +1082,6 @@ async def scopulosus53(active_players):
                 if event.key == pygame.K_r:
                     reload_map(active_players, platforms, spawn_point, artifacts)
                     level_complete = False
-                    text_color = ("#71d6f5")
                     if spawn_point == OG_spawn_point or not next_checkpoints:
                         start_timer = pygame.time.get_ticks()
 
@@ -1106,7 +1120,7 @@ async def scopulosus53(active_players):
 
         elif level_complete:
             if artifacts_collected == 3:
-                action = await level_completed(screen, level_name, text_color, window_size, post_mission_briefing, time_finished=time.time())
+                action = await level_completed(screen, level_name, text_color, window_size, post_mission_briefing, time_finished=time.time(), total_time=counting_string)
                 if action == "level restart":
                     bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
                     start_timer = pygame.time.get_ticks()
@@ -1147,6 +1161,13 @@ async def scopulosus53(active_players):
 
 async def magnus25(active_players):
     
+    screen.fill("#020626")
+    loading_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
+    loading_text = loading_font.render("Loading...", True, ("#71d6f5"))
+    loading_rect = loading_text.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
+    screen.blit(loading_text, loading_rect)
+    pygame.display.update()
+    
     from Levels.Magnus25.ladder import Ladder
     from Levels.Magnus25.hook import Hook
     from Levels.Magnus25.storm import Storm
@@ -1154,20 +1175,20 @@ async def magnus25(active_players):
     level_name = 'Magnus25'
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 60)
     lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30)
-    text_color = ("#0c4701")
+    text_color = ("#1d806b")
 
     num_of_players = len(active_players)
     bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)   
 
     popup_data = [
 
-        {"name": "popup1",
-        "screen": screen,
-        "text": "this is a popup",
-        "theme_color": text_color,
-        "button_text": "ok",
-        "visible": True
-    },
+    #     {"name": "popup1",
+    #     "screen": screen,
+    #     "text": "this is a popup",
+    #     "theme_color": text_color,
+    #     "button_text": "ok",
+    #     "visible": False
+    # },
     
         {"name": "popup2",
          "screen": screen,
@@ -1180,26 +1201,76 @@ async def magnus25(active_players):
     ladder_data = [
 
         {
-            "x-position": 200,
-            "y-position": 2280,
-            "height": 500
+            "x-position": 1900,
+            "y-position": 155,
+            "height": 150,
         },
 
         {
-            "x-position": 300,
-            "y-position": 2280,
-            "height": 500
+            "x-position": 2110,
+            "y-position": 155,  
+            "height": 150,
+        },
+
+        {
+            "x-position": 3990,
+            "y-position": 140,  
+            "height": 460,  
+        },
+
+        {
+            "x-position": 4500,
+            "y-position": 140,
+            "height": 160,
+        },
+
+        {
+            "x-position": 6290,
+            "y-position": 1500,
+            "height": 500,
         }
     ]
 
     hook_data = [
         
         {
-            "x-position": 600,
-            "y-position": 2400,
+            "x-position": 1450,
+            "y-position": 50,
+            "length": 250,
+            "angle": 45,
+            "speed": 4
+        },
+        
+        {
+            "x-position": 2655,
+            "y-position": -25,
             "length": 350,
             "angle": 45,
             "speed": 4
+        },
+
+        {
+            "x-position": 4950,
+            "y-position": 50,
+            "length": 300,
+            "angle": 45,
+            "speed": 5
+        },
+
+        {
+            "x-position": 5850,
+            "y-position": 50,
+            "length": 300,
+            "angle": 45,
+            "speed": 4
+        },
+
+        {
+        "x-position": 6540,
+        "y-position": 1300,
+        "length": 300,
+        "angle": 45,
+        "speed": 4
         }
     ]
     
@@ -1217,7 +1288,7 @@ async def magnus25(active_players):
     print_need_artifacts = font.render("you need more artifacts", True, text_color)
     need_artifacts_rect = print_need_artifacts.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
 
-    artifacts = [] # THIS IS TEMPORARY
+    artifacts = getArtifacts(platforms, level_name)
     running = True
     fixed_delta_time = 1 / 60
     accumulator = 0
@@ -1258,7 +1329,6 @@ async def magnus25(active_players):
             if player.on_platform == finish_line:
                 
                 level_complete = True
-                text_color = player.color
                 checkpoint_increment = 0
                 spawn_point = OG_spawn_point
             
@@ -1295,7 +1365,6 @@ async def magnus25(active_players):
                 if RELOAD.checkForInput(MENU_MOUSE_POS):
                     reload_map(active_players, platforms, spawn_point, artifacts)
                     level_complete = False
-                    text_color = ("#71d6f5")
                     if spawn_point == OG_spawn_point or not next_checkpoints:
                         start_timer = pygame.time.get_ticks()
 
@@ -1307,7 +1376,6 @@ async def magnus25(active_players):
                 if event.key == pygame.K_r:
                     reload_map(active_players, platforms, spawn_point, artifacts)
                     level_complete = False
-                    text_color = ("#71d6f5")
                     if spawn_point == OG_spawn_point or not next_checkpoints:
                         start_timer = pygame.time.get_ticks()
 
@@ -1352,8 +1420,8 @@ async def magnus25(active_players):
                 editing_settings = False
 
         elif level_complete:
-            if artifacts_collected >= 0:
-                action = await level_completed(screen, level_name, text_color, window_size, popup_text="Hello. Nothing here, yet :)", time_finished=time.time())
+            if artifacts_collected == 3:
+                action = await level_completed(screen, level_name, text_color, window_size, popup_text="Hello. Nothing here, yet :)", time_finished=time.time(), total_time=counting_string)
                 if action == "level restart":
                     bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
                     start_timer = pygame.time.get_ticks()
@@ -1390,10 +1458,11 @@ async def magnus25(active_players):
             canvas.fill((0, 0, 0))
             renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, platforms, camera, death_platforms, artifacts, collected_artifacts, flashlight, volcanoes=None, ladders=ladders, hooks=hooks, subscreens=subscreens)
             counting_string = update_timer(start_timer)
-            # render_artifacts(artifacts, camera, collected_artifacts)
-            # render_artifact_count(("#56911f"), artifacts_collected)
+            render_artifacts(artifacts, camera, collected_artifacts, surface=canvas)
             storm.draw(screen)
+            render_artifact_count(("#56911f"), artifacts_collected)
             render_timer(lil_font, "#32854b", counting_string)
+
 
             for popup in popups:
                 popup.update()
@@ -1408,6 +1477,13 @@ async def magnus25(active_players):
 
 async def training(active_players):
 
+    screen.fill("#020626")
+    loading_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
+    loading_text = loading_font.render("Loading...", True, ("#71d6f5"))
+    loading_rect = loading_text.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
+    screen.blit(loading_text, loading_rect)
+    pygame.display.update()
+    
     from level_init import tutorialPlatformsInit
 
     level_name = 'Training'
@@ -1502,7 +1578,6 @@ async def training(active_players):
             if player.on_platform == finish_line:
                 
                 level_complete = True
-                text_color = player.color
                 checkpoint_increment = 0
                 spawn_point = OG_spawn_point
 
@@ -1543,7 +1618,6 @@ async def training(active_players):
                 if RELOAD.checkForInput(MENU_MOUSE_POS):
                     reload_map(active_players, platforms, spawn_point, artifacts)
                     level_complete = False
-                    text_color = ("#71d6f5")
                     if spawn_point == OG_spawn_point or not next_checkpoints:
                         start_timer = pygame.time.get_ticks()
 
@@ -1555,7 +1629,6 @@ async def training(active_players):
                 if event.key == pygame.K_r:
                     reload_map(active_players, platforms, spawn_point, artifacts)
                     level_complete = False
-                    text_color = ("#71d6f5")
                     if spawn_point == OG_spawn_point or not next_checkpoints:
                         start_timer = pygame.time.get_ticks()
 
@@ -1599,7 +1672,7 @@ async def training(active_players):
 
         elif level_complete:
             if artifacts_collected == 3:
-                action = await level_completed(screen, level_name, text_color, window_size, popup_text="Hello. Nothing here, yet :)", time_finished=time.time())
+                action = await level_completed(screen, level_name, text_color, window_size, popup_text="Hello. Nothing here, yet :)", time_finished=time.time(), total_time=counting_string)
                 if action == "level restart":
                     bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
                     intro_to_jumping, intro_to_sliding, intro_to_jumpslide, artifacts = tutorialPlatformsInit(platforms, level_name)
@@ -1649,7 +1722,6 @@ async def training(active_players):
         await asyncio.sleep(0)
 
 async def main():
-
     from level_init import mainTextInit
 
     current_weather = await game_init()
@@ -1703,7 +1775,6 @@ async def main():
         MENU_MOUSE_POS = pygame.mouse.get_pos()
 
         for player in active_players:
-
             blit_enter = player.on_platform == show_level_select
 
             if player.position.y > level_height + 100:
@@ -1717,14 +1788,11 @@ async def main():
                 else:
                     player.reload(spawn_point)
                     reload_players = False
-            
+
             if player.on_platform == show_level_select:
-
                 for event in pygame.event.get():
-
                     if event.type == pygame.QUIT:
                         running = False
-
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_l or event.key == pygame.K_RETURN:
                             await levelSelect(active_players)
@@ -1743,7 +1811,6 @@ async def main():
                     paused = True
 
             elif event.type == pygame.KEYDOWN:
-
                 if event.key == pygame.K_l:
                     await levelSelect(active_players)
 
@@ -1754,14 +1821,6 @@ async def main():
                 if event.key == pygame.K_p:
                     time_paused = time.time()
                     paused = True
-
-                elif paused:
-                    if event.key == pygame.K_u or not pause_menu(screen, level_name, window_size, time_paused):
-                        paused = False
-                    elif event.key == pygame.K_r:
-                        reload_map(active_players, platforms, spawn_point, artifacts)
-                        paused = False
-                        text_color = "#71d6f5"
 
         if paused:
             action = await pause_menu(screen, level_name, window_size, time_paused)
@@ -1797,7 +1856,7 @@ async def main():
             screen.blit(title_screen_text, (0, 0))
             render_game_objects(platforms, active_players, camera, flashlight, death_platforms=[], surface=screen)
             display_controls(len(active_players), introduced_controls_state, print_player1_controls, print_player3_controls, print_player4_controls)
-            
+
             if blit_enter:
                 screen.blit(pygame.image.load("assets/gameControls/keyboard_enter.png").convert_alpha(), (760, 647))
                 screen.blit(level_select_text, (815, 670))
@@ -1816,7 +1875,20 @@ async def main():
 asyncio.run(main())
 
 # Debugging and profiling code
+
 # import pstats, cProfile
+
+# with open(("Players/player_controls.json"), 'r') as key_map:
+#     keys_data = json.load(key_map)
+
+# player1_controls = keys_data['controls']['players']['player1']
+# player2_controls = keys_data['controls']['players']['player2']
+# player3_controls = keys_data['controls']['players']['player3']
+# player4_controls = keys_data['controls']['players']['player4']
+
+# players = {
+#     "player1": Player(player_id=1, position=(64, 64), controls=player1_controls, color=("#9EBA01"))
+#     }
 
 # if __name__ == "__main__":
 #     # Use cProfile to profile the main function

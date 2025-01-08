@@ -12,7 +12,7 @@ class Player():
         self.on_platform = None
         self.on_ladder = False
         self.under_platform = False
-        self.jump_strength = 600
+        self.jump_strength = 625
         self.speed = 200
         self.acceleration = 5000
         self.deceleration = 10000

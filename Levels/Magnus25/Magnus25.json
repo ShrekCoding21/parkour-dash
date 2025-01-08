@@ -7,59 +7,175 @@
         "starting-platform": {
             "x-position": 730,
             "y-position": 300,
-            "width": 400,
+            "width": 100,
             "height": 30,
             "is_moving": "False",
             "color": "#B7410E"
         },
+        "base-platform1": {
+            "x-position": 730,
+            "y-position": 300,
+            "width": 550,
+            "height": 40,
+            "is_moving": "False",
+            "color": "#94e0a8"
+        },
+        "base-platform2": {
+            "x-position": 1610,
+            "y-position": 300,
+            "width": 600,
+            "height": 40,
+            "is_moving": "False",
+            "color": "#94e0a8"
+        },
+        "homeless-shelter1":     {
+            "x-position": 1935,
+            "y-position": 130,
+            "width": 150,
+            "height": 20,
+            "is_moving": "False",
+            "color": "red"
+        },
+        "artifact-platform1": {
+            "x-position": 1910,
+            "y-position": 150,
+            "width": 200,
+            "height": 150,
+            "is_moving": "False",
+            "color": "#94e0a8"
+        },
+        "base-platform3": {
+            "x-position": 3000,
+            "y-position": 300,
+            "width": 200,
+            "height": 40,
+            "is_moving": "False",
+            "color": "#94e0a8"
+        },
+        "base-platform6": {
+            "x-position": 3350,
+            "y-position": 300,
+            "width": 200,
+            "height": 40,
+            "is_moving": "False",
+            "color": "#94e0a8"
+        },
+        "base-platform7": {
+            "x-position": 4000,
+            "y-position": 140,
+            "width": 500,
+            "height": 500,
+            "is_moving": "False",
+            "color": "#94e0a8"
+        },
+        "homeless-shelter2":     {
+            "x-position": 4050,
+            "y-position": 120,
+            "width": 200,
+            "height": 20,
+            "is_moving": "False",
+            "color": "red"
+        },
+        "artifact-platform2":     {
+            "x-position": 4050,
+            "y-position": 130,
+            "width": 200,
+            "height": 200,
+            "is_moving": "False",
+            "color": "red"
+        },
+        "base-platform8": {
+            "x-position": 4500,
+            "y-position": 300,
+            "width": 200,
+            "height": 40,
+            "is_moving": "False",
+            "color": "#94e0a8"
+        },
+        "base-platform9": {
+            "x-position": 5450,
+            "y-position": 300,
+            "width": 200,
+            "height": 40,
+            "is_moving": "False",
+            "color": "#94e0a8"
+        },
+        "base-platform10": {
+            "x-position": 5650,
+            "y-position": 1000,
+            "width": 300,
+            "height": 40,
+            "is_moving": "False",
+            "color": "#94e0a8"
+        },
+        "base-platform11": {
+            "x-position": 4000,
+            "y-position": 140,
+            "width": 500,
+            "height": 500,
+            "is_moving": "False",
+            "color": "#94e0a8"
+        },
+        "homeless-shelter3": {
+            "x-position": 5750,
+            "y-position": 980,
+            "width": 100,
+            "height": 20,
+            "is_moving": "False",
+            "color": "red"
+        },
+        "artifact-platform3": {
+            "x-position": 5675,
+            "y-position": 981,
+            "width": 150,
+            "height": 20,
+            "is_moving": "False",
+            "color": "red"
+        },
+        "base-platform12": {
+            "x-position": 5950,
+            "y-position": 2000,
+            "width": 350,
+            "height": 40,
+            "is_moving": "False",
+            "color": "#94e0a8"
+        },
         "death-form1": {
-            "x-position": 450,
+            "x-position": 30,
             "y-position": 500,
-            "width": 1000,
+            "width": 3500,
+            "height": 10,
+            "is_moving": "False",
+            "color": "#ffffff"
+        },
+        "death-form2": {
+            "x-position": 3600,
+            "y-position": 800,
+            "width": 1850,
             "height": 10,
             "is_moving": "False",
             "color": "#ffffff"
         },
 
-        "base-platform": {
-            "x-position": 1300,
-            "y-position": 300,
-            "width": 200,
-            "height": 30,
-            "is_moving": "False",
-            "color": "#B7410E"
-        },
-
-        "homeless-shelter1": {
-            "x-position": 1500,
-            "y-position": 270,
-            "width": 130,
-            "height": 30,
-            "is_moving": "False",
-            "color": "#ffffff"
-        },
-
-        "homeless-shelter2": {
-            "x-position": 1700,
-            "y-position": 270,
-            "width": 130,
-            "height": 30,
-            "is_moving": "False",
-            "color": "#ffffff" 
-        },
-
         "checkpoint1": {
-            "x-position": 4450,
-            "y-position": 1550,
-            "width": 150,
-            "height": 30,
+            "x-position": 2110,
+            "y-position": 299,
+            "width": 200,
+            "height": 41,
             "is_moving": "False",
-            "color": "#9ff084"
+            "color": "#94e0a8"
         },
-        
+        "checkpoint2": {
+            "x-position": 3800,
+            "y-position": 600,
+            "width": 200,
+            "height": 40,
+            "is_moving": "False",
+            "color": "#94e0a8"
+        },
         "finish-line": {
-            "x-position": 8560,
-            "y-position": 2920,
+            "x-position": 6800,
+            "y-position": 1700,
             "width": 150,
             "height": 30,
             "is_moving": "False",

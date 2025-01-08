@@ -14,8 +14,9 @@ class Storm:
         """
         self.trigger_distance = trigger_distance
         self.platforms = platforms
-        self.triggered_platforms = []
         self.trigger_platform = None
+        self.disarmed = False
+        self.disarm_distance = 400
         self.font = font
         self.screen_size = screen_size
         self.active = False
@@ -34,35 +35,42 @@ class Storm:
         player (Player): The player object.
         current_time (float): Current time in seconds.
         """
-        # Check distance to trigger the warning phase
-        for platform in self.platforms:
-            player_distance = abs(platform.rect.centerx - player.rect.centerx)
-            if player_distance <= self.trigger_distance and not self.warning and not self.active and platform not in self.triggered_platforms:
-                self.trigger_platform = platform
+
+        if self.disarmed:
+            if abs(self.trigger_platform.rect.centerx - player.rect.centerx) >= self.disarm_distance:
+                self.trigger_platform = None
+                self.disarmed = False
+        
+        else:
+            # Check distance to trigger the warning phase
+            for platform in self.platforms:
+                player_distance = abs(platform.rect.centerx - player.rect.centerx)
+                if player_distance <= self.trigger_distance and not self.warning and not self.active:
+                    self.trigger_platform = platform
+                    print(self.trigger_platform)
+                    self.warning = True
+                    self.warning_start_time = current_time
+
+            # Activate the storm after the warning phase
+            if self.warning and not self.active:
+                if current_time - self.warning_start_time >= 2.5:
+                    self.critical_warning = True
+                if current_time - self.warning_start_time >= 5:  # Warning lasts for 5 seconds
+                    self.active = True
+                    self.storm_start_time = current_time
+
+            # End the storm after its duration
+            if self.active and current_time - self.storm_start_time >= self.storm_duration:
+                self.disarmed = True
+                self.reset()
+
+            # Check if the player is on the platform during the storm
+            if self.active and not player.on_platform == self.trigger_platform:
                 print(self.trigger_platform)
-                self.warning = True
-                self.warning_start_time = current_time
-
-        # Activate the storm after the warning phase
-        if self.warning and not self.active:
-            if current_time - self.warning_start_time >= 2.5:
-                self.critical_warning = True
-            if current_time - self.warning_start_time >= 5:  # Warning lasts for 5 seconds
-                self.active = True
-                self.storm_start_time = current_time
-
-        # End the storm after its duration
-        if self.active and current_time - self.storm_start_time >= self.storm_duration:
-            self.triggered_platforms.append(self.trigger_platform)
-            self.reset()
-
-        # Check if the player is on the platform during the storm
-        if self.active and not player.on_platform == self.trigger_platform:
-            print(self.trigger_platform)
-            print(player.on_platform)
-            print("Player failed to seek shelter!")
-            player.reload(spawnpoint)
-            self.reset()
+                print(player.on_platform)
+                print("Player failed to seek shelter!")
+                player.reload(spawnpoint)
+                self.reset()
 
     def reset(self):
         """Resets the storm state."""
@@ -72,17 +80,6 @@ class Storm:
         self.storm_start_time = None
         self.storm_duration = random.uniform(5, 10)
         self.warning_start_time = None
-        self.trigger_platform = None
-
-    def reload(self):
-        self.active = False
-        self.warning = False
-        self.critical_warning = False
-        self.storm_start_time = None
-        self.storm_duration = random.uniform(5, 10)
-        self.warning_start_time = None
-        self.trigger_platform = None
-        self.triggered_platforms = []
 
     def draw(self, surface):
         """

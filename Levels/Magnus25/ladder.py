@@ -14,7 +14,7 @@ class Ladder:
         self.x = x
         self.y = y
         self.height = height
-        self.width = 50  # Default width of the ladder
+        self.width = 10  # Default width of the ladder
         self.image = pygame.image.load("Levels/Magnus25/assets/ladder.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)

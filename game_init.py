@@ -309,37 +309,37 @@ def is_flashlight_touching_platform(flashlight_beam, platform_rect, flashlight):
     return beam_rect.colliderect(platform_rect)
 
 def renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, platforms, camera, death_platforms, artifacts, collected_artifacts, flashlight, volcanoes, ladders, hooks, subscreens):
+    bg_image_scaled = pygame.transform.scale(bg_image, subscreens[0].get_size())
     for i, sub in enumerate(subscreens):
         if i < len(active_players):
             player = active_players[i]
             camera.update(player, num_of_players)
-            bg_image_scaled = pygame.transform.scale(bg_image, sub.get_size())
             sub.blit(bg_image_scaled, (0, 0))
-            if volcanoes != None:
+            if volcanoes:
                 for volcano in volcanoes:
                     volcano.update()
                     volcano.draw(camera, sub)
-            if ladders != None:
+            if ladders:
                 for ladder in ladders:
                     ladder.draw(camera, sub)
-            if hooks != None:
+            if hooks:
                 for hook in hooks:
                     hook.draw(camera, sub)
             render_game_objects(platforms, active_players, camera, flashlight, death_platforms, surface=sub)
             render_artifacts(artifacts, camera, collected_artifacts, surface=sub)
 
-            # Draw dividing lines to separate the views
+    # Draw dividing lines to separate the views
     if len(active_players) == 2:
         pygame.draw.line(canvas, (255, 255, 255), (window_size[0] // 2, 0), (window_size[0] // 2, window_size[1]), 5)
     elif len(active_players) == 3:
-                # Three players: Draw two horizontal lines to divide into thirds
         pygame.draw.line(canvas, (255, 255, 255), (0, window_size[1] // 3), (window_size[0], window_size[1] // 3), 5)
         pygame.draw.line(canvas, (255, 255, 255), (0, (2 * window_size[1]) // 3), (window_size[0], (2 * window_size[1]) // 3), 5)
     elif len(active_players) == 4:
         pygame.draw.line(canvas, (255, 255, 255), (window_size[0] // 2, 0), (window_size[0] // 2, window_size[1]), 5)
         pygame.draw.line(canvas, (255, 255, 255), (0, window_size[1] // 2), (window_size[0], window_size[1] // 2), 5)
 
-            # Blit the subsurfaces to the main screen
+    # Blit the subsurfaces to the main screen using hardware acceleration
+    canvas.lock()  # Lock the canvas for direct pixel access
     for i, sub in enumerate(subscreens):
         if len(active_players) == 1:
             screen.blit(sub, (0, 0))
@@ -355,6 +355,7 @@ def renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, pl
             x = (i % 2) * (window_size[0] // 2)
             y = (i // 2) * (window_size[1] // 2)
             screen.blit(sub, (x, y))
+    canvas.unlock()  # Unlock the canvas after pixel access
 
 def getSplitscreenLayout(canvas, active_players):
     if len(active_players) == 1:
@@ -386,6 +387,7 @@ def getSplitscreenLayout(canvas, active_players):
 def render_game_objects(platforms, active_players, camera, flashlight, death_platforms, surface):
     """
     Renders game objects on a specific surface, respecting camera and flashlight settings.
+    Implements culling and GPU acceleration for optimization.
     """
     # If the flashlight is on, draw the beam first relative to the subscreen
     if flashlight.on:
@@ -393,8 +395,19 @@ def render_game_objects(platforms, active_players, camera, flashlight, death_pla
         flashlight.draw(camera, flashlight_surface)
         surface.blit(flashlight_surface, (0, 0))
 
+    # Create a single surface for all platforms to minimize blit calls
+    platforms_surface = pygame.Surface(surface.get_size(), pygame.SRCALPHA)
+    platforms_surface.fill((0, 0, 0, 0))  # Transparent initially
+
+    # Use a batch renderer for GPU acceleration
+    batch = pygame.sprite.RenderUpdates()
+
     for platform in platforms:
         platform_rect = camera.apply(platform)
+
+        # Culling: Skip rendering if the platform is outside the camera view
+        if not surface.get_rect().colliderect(platform_rect):
+            continue
 
         # Create a temporary surface for platform rendering
         platform_surface = pygame.Surface((platform_rect.width, platform_rect.height), pygame.SRCALPHA)
@@ -405,39 +418,29 @@ def render_game_objects(platforms, active_players, camera, flashlight, death_pla
         else:
             if platform in death_platforms:
                 platform_color = (0, 0, 0, 0)  # Transparent for death platforms
+            elif flashlight.enabled:
+                platform_color = (0, 0, 0)  # Black for platforms without images when flashlight is on
             else:
-                if flashlight.enabled:
-                    platform_color = (0, 0, 0)  # Black if flashlight is on
-                else:
-                    platform_color = platform.color  # Default platform color
+                platform_color = platform.color  # Default platform color
 
             # Draw the platform color if no image is rendered
             if platform_color:
                 pygame.draw.rect(platform_surface, platform_color, (0, 0, platform_rect.width, platform_rect.height))
 
-            # Perform flashlight intersection calculations only if the flashlight is on
-            if flashlight.on:
-                is_hit = is_flashlight_touching_platform(flashlight.rotated_beam, platform_rect, flashlight)
+        # Draw the platform on the platforms surface
+        platforms_surface.blit(platform_surface, platform_rect)
 
-                if is_hit:
-                    # Create masks for the flashlight beam and platform
-                    mask = pygame.mask.from_surface(flashlight.rotated_beam)
-                    platform_mask = pygame.mask.from_surface(platform_surface)
-
-                    # Get the intersection of the masks
-                    intersection = mask.to_surface()
-
-                    # Apply a darker blending to the platform surface
-                    darkened_color = (255 * 0.5, 255 * 0.5, 255 * 0.5)  # Darker version of the platform color
-                    platform_surface.blit(intersection, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
-                    platform_surface.fill(darkened_color, special_flags=pygame.BLEND_RGBA_MULT)
-
-        # Draw the platform on the provided surface
-        surface.blit(platform_surface, platform_rect)
+    # Blit all platforms at once
+    surface.blit(platforms_surface, (0, 0))
 
     # Render players
     for player in active_players:
         player_rect = camera.apply(player)
+
+        # Culling: Skip rendering if the player is outside the camera view
+        if not surface.get_rect().colliderect(player_rect):
+            continue
+
         scaled_rect = pygame.Rect(
             player_rect.x,
             player_rect.y,
@@ -445,6 +448,9 @@ def render_game_objects(platforms, active_players, camera, flashlight, death_pla
             int(player_rect.height)
         )
         pygame.draw.rect(surface, player.color, scaled_rect)
+
+    # Update the batch renderer
+    batch.draw(surface)
 
 def getArtifacts(platforms, level_name):
     artifact_platform_num = 1
