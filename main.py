@@ -836,7 +836,7 @@ async def scopulosus53(active_players):
     level_name = 'Scopulosus53'
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 60)
     lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30)
-    text_color = ("#cc6c33")
+    text_color = ("#f70c0c")
     num_of_players = len(active_players)
     bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)   
     introduce_volcano, introduce_deathcano, one_way, artifacts = scopulosusPlatformsInit(level_name, platforms)
@@ -1250,24 +1250,24 @@ async def magnus25(active_players):
         },
 
         {
-        "x-position": 4950,
-        "y-position": 50,
-        "length": 300,
-        "angle": 45,
-        "speed": 5
+            "x-position": 4950,
+            "y-position": 50,
+            "length": 300,
+            "angle": 45,
+            "speed": 5
         },
 
         {
-        "x-position": 5850,
-        "y-position": 50,
-        "length": 300,
-        "angle": 45,
-        "speed": 4
+            "x-position": 5850,
+            "y-position": 50,
+            "length": 300,
+            "angle": 45,
+            "speed": 4
         },
 
         {
-        "x-position": 6540,
-        "y-position": 1300,
+        "x-position": 6550,
+        "y-position": 1450,
         "length": 300,
         "angle": 45,
         "speed": 4
