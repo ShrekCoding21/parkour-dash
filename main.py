@@ -1266,8 +1266,8 @@ async def magnus25(active_players):
         },
 
         {
-        "x-position": 6550,
-        "y-position": 1450,
+        "x-position": 6540,
+        "y-position": 1300,
         "length": 300,
         "angle": 45,
         "speed": 4
