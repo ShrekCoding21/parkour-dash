@@ -23,7 +23,7 @@ class Popup:
         self.theme_color = theme_color
         self.button_text = button_text
         self._font_size = font_size
-        self.font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', self._font_size)  # Font for the popup text
+        self.font = pygame.font.Font('fonts/pixelated.ttf', self._font_size)  # Font for the popup text
         self.max_line_length = max_line_length  # Maximum character length per line
         # Create the button
         self.button = Button(image=None, pos=(self.screen.get_width() // 2, self.screen.get_height() // 2 + 165),
@@ -60,7 +60,7 @@ class Popup:
         
         # Apply Gaussian blur using PIL
         image_pil = Image.frombytes('RGBA', background_surface.get_size(), pygame.image.tostring(background_surface, 'RGBA'))
-        blurred_image_pil = image_pil.filter(ImageFilter.GaussianBlur(10))  # Adjust the blur intensity
+        blurred_image_pil = image_pil.filter(ImageFilter.GaussianBlur(6))  # Adjust the blur intensity
         background_surface = pygame.image.fromstring(blurred_image_pil.tobytes(), blurred_image_pil.size, 'RGBA')
 
         # Blit the blurred background surface

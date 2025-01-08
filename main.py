@@ -64,8 +64,8 @@ if sys.platform == "emscripten":
     platform.document.body.style.background = "#1d2d4b"
 
 screen.fill("#020626")
-loading_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
-loading_text = loading_font.render("Loading...", True, ("#71d6f5"))
+loading_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 50)
+loading_text = loading_font.render("loading...", True, ("#71d6f5"))
 loading_rect = loading_text.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
 screen.blit(loading_text, loading_rect)
 pygame.display.update()
@@ -1488,7 +1488,7 @@ async def training(active_players):
 
     level_name = 'Training'
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 60)
-    lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25)
+    lil_font = pygame.font.Font('fonts/pixelated.ttf', 35)
     text_color = ("#71d6f5")
 
     num_of_players = len(active_players)
@@ -1734,8 +1734,8 @@ async def main():
 
     level_name = 'Home'
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 60)
-    lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25)
-    lilest_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 20)
+    lil_font = pygame.font.Font('fonts/pixelated.ttf', 30)
+    lilest_font = pygame.font.Font('fonts/pixelated.ttf', 20)
     text_color = "#71d6f5"
 
     num_of_players = 1
