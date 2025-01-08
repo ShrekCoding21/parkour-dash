@@ -64,8 +64,8 @@ if sys.platform == "emscripten":
     platform.document.body.style.background = "#1d2d4b"
 
 screen.fill("#020626")
-loading_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
-loading_text = loading_font.render("Loading...", True, ("#71d6f5"))
+loading_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 50)
+loading_text = loading_font.render("loading...", True, ("#71d6f5"))
 loading_rect = loading_text.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
 screen.blit(loading_text, loading_rect)
 pygame.display.update()
@@ -1266,11 +1266,11 @@ async def magnus25(active_players):
         },
 
         {
-            "x-position": 6550,
-            "y-position": 1450,
-            "length": 300,
-            "angle": 45,
-            "speed": 4
+        "x-position": 6540,
+        "y-position": 1300,
+        "length": 300,
+        "angle": 45,
+        "speed": 4
         }
     ]
     
@@ -1421,7 +1421,7 @@ async def magnus25(active_players):
 
         elif level_complete:
             if artifacts_collected == 3:
-                action = await level_completed(screen, level_name, text_color, window_size, popup_text="Hello. Nothing here, yet :)", time_finished=time.time())
+                action = await level_completed(screen, level_name, text_color, window_size, popup_text="Hello. Nothing here, yet :)", time_finished=time.time(), total_time=counting_string)
                 if action == "level restart":
                     bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
                     start_timer = pygame.time.get_ticks()
@@ -1488,7 +1488,7 @@ async def training(active_players):
 
     level_name = 'Training'
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 60)
-    lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25)
+    lil_font = pygame.font.Font('fonts/pixelated.ttf', 35)
     text_color = ("#71d6f5")
 
     num_of_players = len(active_players)
@@ -1734,8 +1734,8 @@ async def main():
 
     level_name = 'Home'
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 60)
-    lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25)
-    lilest_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 20)
+    lil_font = pygame.font.Font('fonts/pixelated.ttf', 30)
+    lilest_font = pygame.font.Font('fonts/pixelated.ttf', 20)
     text_color = "#71d6f5"
 
     num_of_players = 1

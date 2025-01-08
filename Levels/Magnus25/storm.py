@@ -23,7 +23,7 @@ class Storm:
         self.warning = False
         self.critical_warning = False
         self.storm_start_time = None
-        self.storm_duration = random.uniform(5, 10)
+        self.storm_duration = random.uniform(3, 5)
         self.player_last_checkpoint = None
         self.warning_start_time = None
 
@@ -65,7 +65,7 @@ class Storm:
                 self.reset()
 
             # Check if the player is on the platform during the storm
-            if self.active and not player.on_platform == self.trigger_platform:
+            if self.active and not player.on_platform == self.trigger_platform or abs(platform.rect.centerx - player.rect.centerx) < self.disarm_distance:
                 print(self.trigger_platform)
                 print(player.on_platform)
                 print("Player failed to seek shelter!")
