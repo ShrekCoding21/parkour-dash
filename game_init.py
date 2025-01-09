@@ -75,7 +75,7 @@ def load_platforms(platform_data, level_name):
 
 def introduce_controls(blit_jumpslide):
 
-    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30)
+    font = pygame.font.Font('fonts/pixelated.ttf', 40)
 
     print_jumpslide_tutorial1 = font.render("press jump and slide keys", True, ("#00f7f7"))
     print_jumpslide_tutorial2 = font.render("together to leap", True, ("#00f7f7"))
@@ -112,13 +112,13 @@ def display_controls(num_of_players, introduced_controls_state, print_player1_co
     None
     """
     
-    font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25)
+    font = pygame.font.Font('fonts/pixelated.ttf', 25)
     
     full_p1_controls = print_player1_controls
     full_p2_controls = [
-            '←: left',
-            '→: right',
-            '↑: jump',
+            '‹: left',
+            '›: right',
+            '^: jump',
             '↓: slide'
         ]
     full_p3_controls = print_player3_controls
