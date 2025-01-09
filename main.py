@@ -577,7 +577,7 @@ async def terus1(active_players):
 
         {"name": "introduce_flashlight",
         "screen": screen,
-        "text": "press 'f' to use the flashlight. only one player has access to the flashlight",
+        "text": "Press 'f' to use the flashlight. Keep in mind that only one player can use the flashlight.",
         "theme_color": text_color,
         "button_text": "ok",
         "visible": True
@@ -585,7 +585,7 @@ async def terus1(active_players):
     
         {"name": "flashlight_broken",
          "screen": screen,
-         "text": "it looks like the flashlight is facing external interference! better hurry...",
+         "text": "It looks like the flashlight is facing external interference! Better hurry...",
          "theme_color": text_color,
          "button_text": "got it",
          "visible": False
@@ -849,7 +849,7 @@ async def scopulosus53(active_players):
          "screen": screen,
          "text": "This is a volcano.",
          "theme_color": text_color,
-         "button_text": "next",
+         "button_text": "Next",
          "visible": False
     },
     
@@ -857,7 +857,7 @@ async def scopulosus53(active_players):
          "screen": screen,
          "text": "They can be dangerous, but can also be used to your advantage.",
          "theme_color": text_color,
-         "button_text": "next",
+         "button_text": "Next",
          "visible": False
     },
 
@@ -865,7 +865,7 @@ async def scopulosus53(active_players):
          "screen": screen,
          "text": "Use the steam to reach higher platforms.",
          "theme_color": text_color,
-         "button_text": "i'll try it",
+         "button_text": "I'll try it",
          "visible": False
     }
     
@@ -1192,7 +1192,7 @@ async def magnus25(active_players):
     
         {"name": "popup2",
          "screen": screen,
-         "text": "this is another popup",
+         "text": "This is another popup",
          "theme_color": text_color,
          "button_text": "got it",
          "visible": False
@@ -1506,25 +1506,25 @@ async def training(active_players):
 
         {"name": "welcome",
         "screen": screen,
-        "text": "welcome to training",
+        "text": "Welcome to training!",
         "theme_color": text_color,
-        "button_text": "next",
+        "button_text": "Next",
         "visible": True
     },
     
         {"name": "purpose",
          "screen": screen,
-         "text": "here, you will learn the basics required to go out on missions",
+         "text": "Here, you will learn the basics required to go out on missions",
          "theme_color": text_color,
-         "button_text": "next",
+         "button_text": "Next",
          "visible": False
     },
 
         {"name": "get_started",
          "screen": screen,
-         "text": "to get started, walk forward",
+         "text": "To get started, walk forward",
          "theme_color": text_color,
-         "button_text": "got it",
+         "button_text": "Got it",
          "visible": False
     }]
     

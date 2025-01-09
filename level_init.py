@@ -46,7 +46,7 @@ def mainTextInit(font, lil_font, text_color, window_size):
     print_welcome2 = font.render("project AstRA", True, text_color)
     show_tutorial_level1 = lil_font.render("Jump to train!", True, text_color)
     show_settings1 = lil_font.render("‹ Settings", True, text_color)
-    highlight_game_controls1 = lil_font.render("Useful Shortcuts ←", True, text_color)
+    highlight_game_controls1 = lil_font.render("Useful Shortcuts >", True, text_color)
 
     # Define positions
     text_group_surface.blit(print_welcome1, print_welcome1.get_rect(center=(500, 155)))
