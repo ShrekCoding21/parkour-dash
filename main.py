@@ -227,7 +227,7 @@ async def settings_menu(screen, window_size, time_entered_settings):
     button_image = pygame.image.load("Buttons/tutorial_button.png").convert_alpha()
     small_button = pygame.image.load("Buttons/lilbutton.png").convert_alpha()
 
-    EXIT_SETTINGS = Button(image=button_image, pos=(500, 500), text_input="exit", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+    EXIT_SETTINGS = Button(image=button_image, pos=(500, 500), text_input="Exit", font=pygame.font.Font('fonts/pixelated.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
     ONE_PLAYER = Button(image=small_button, pos=(470, 250), text_input="1p", font=pygame.font.Font('fonts/pixelated.ttf', 25), base_color="#167fc9", hovering_color="#F59071")
     TWO_PLAYER = Button(image=small_button, pos=(550, 250), text_input="2p", font=pygame.font.Font('fonts/pixelated.ttf', 25), base_color="#167fc9", hovering_color="#F59071")
     THREE_PLAYER = Button(image=small_button, pos=(630, 250), text_input="3p", font=pygame.font.Font('fonts/pixelated.ttf', 25), base_color="#167fc9", hovering_color="#F59071")
@@ -1361,7 +1361,7 @@ async def magnus25(active_players):
                 for popup in popups:
                     if popup.name == "bunkerintro":
                         popup.visible = True
-                introduced_bunker = True
+                introduced_bunker = True   
 
             for artifact in artifacts:
                 if player.rect.colliderect(artifact.rect) and not artifact.collected and artifact not in collected_artifacts:

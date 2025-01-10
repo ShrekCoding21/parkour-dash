@@ -20,6 +20,14 @@
             "is_moving": "False",
             "color": "#94e0a8"
         },
+        "base-platform13": {
+            "x-position": 1200,
+            "y-position": 300,
+            "width": 80,
+            "height": 40,
+            "is_moving": "False",
+            "color": "#94e0a8"
+        },
         "base-platform2": {
             "x-position": 1610,
             "y-position": 300,
@@ -68,6 +76,7 @@
             "is_moving": "False",
             "color": "#94e0a8"
         },
+    
         "homeless-shelter2":     {
             "x-position": 4050,
             "y-position": 120,
