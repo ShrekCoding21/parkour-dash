@@ -1769,6 +1769,47 @@ async def main():
         {"image": artifact_image1, "position": (900, 1480), "name": "Golden Idol"},
         {"image": artifact_image1, "position": (500, 450), "name": "Ancient Vase"}
     ]
+
+    game_info = [
+
+        {
+            "name": "intro1",
+            "screen": screen,
+            "text": "",
+            "theme_color": text_color,
+            "button_text": "Next",
+            "visible": True
+        },
+
+        {
+            "name": "intro2",
+            "screen": screen,
+            "text": "",
+            "theme_color": text_color,
+            "button_text": "Next",
+            "visible": False
+        },
+
+        {
+            "name": "intro3",
+            "screen": screen,
+            "text": "",
+            "theme_color": text_color,
+            "button_text": "Next",
+            "visible": False
+        },
+
+        {
+            "name": "intro4",
+            "screen": screen,
+            "text": "",
+            "theme_color": text_color,
+            "button_text": "Next",
+            "visible": False
+        }
+    ]
+
+    popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in game_info]
     artifacts = pygame.sprite.Group(Artifact(data["image"], data["position"], data["name"]) for data in artifact_data)
 
     title_screen_text = mainTextInit(font, lil_font, text_color, window_size)
@@ -1777,6 +1818,8 @@ async def main():
     running = True
     fixed_delta_time = 1 / 60
     accumulator = 0
+    popup_index = 0
+    collected_artifacts = []
     previous_time = pygame.time.get_ticks()
     paused = False
     editing_settings = False
@@ -1793,6 +1836,17 @@ async def main():
         accumulator += dt
         keys = pygame.key.get_pressed()
         MENU_MOUSE_POS = pygame.mouse.get_pos()
+
+        for popup in popups:
+            if popup.visible:
+                popup_active = True
+                break
+            else:
+                popup_active = False
+
+        if not popups[popup_index].visible and popup_index + 1 < len(game_info):
+            popups[popup_index + 1].visible = True
+            popup_index += 1
 
         for player in active_players:
             blit_enter = player.on_platform == show_level_select
@@ -1821,7 +1875,10 @@ async def main():
             if event.type == pygame.QUIT:
                 running = False
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            for popup in popups:
+                popup.handle_event(event)
+
+            if event.type == pygame.MOUSEBUTTONDOWN and not popup_active:
                 if RELOAD.checkForInput(MENU_MOUSE_POS):
                     reload_map(active_players, platforms, spawn_point, artifacts)
                     text_color = "#71d6f5"
@@ -1830,7 +1887,7 @@ async def main():
                     time_paused = time.time()
                     paused = True
 
-            elif event.type == pygame.KEYDOWN:
+            elif event.type == pygame.KEYDOWN and not popup_active:
                 if event.key == pygame.K_l:
                     await levelSelect(active_players)
 
@@ -1868,7 +1925,7 @@ async def main():
 
         else:
             while accumulator >= fixed_delta_time:
-                update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active=False, ladders=[], hooks=[])
+                update_game_logic(fixed_delta_time, active_players, platforms, keys, spawn_point, popup_active, ladders=[], hooks=[])
                 accumulator -= fixed_delta_time
 
             screen.fill((0, 0, 0))
@@ -1884,6 +1941,9 @@ async def main():
             for button in [RELOAD, PAUSE]:
                 button.changeColor(pygame.mouse.get_pos())
                 button.update(screen)
+            
+            for popup in popups:
+                popup.update()
 
             pygame.display.flip()
 
