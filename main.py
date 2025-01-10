@@ -1163,7 +1163,7 @@ async def magnus25(active_players):
     
     screen.fill("#020626")
     loading_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
-    loading_text = loading_font.render("Loading...", True, ("#71d6f5"))
+    loading_text = loading_font.render("loading...", True, ("#71d6f5"))
     loading_rect = loading_text.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
     screen.blit(loading_text, loading_rect)
     pygame.display.update()
