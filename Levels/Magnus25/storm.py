@@ -71,8 +71,6 @@ class Storm:
                 print("Player failed to seek shelter!")
                 player.reload(spawnpoint)
                 self.reset()
-        
-        print(self.active)
 
     def reset(self):
         """Resets the storm state."""
