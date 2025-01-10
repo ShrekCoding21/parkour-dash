@@ -116,10 +116,10 @@ def display_controls(num_of_players, introduced_controls_state, print_player1_co
     
     full_p1_controls = print_player1_controls
     full_p2_controls = [
-            '‹: Left',
-            '›: Right',
-            '↑: Jump',
-            '↓: Slide'
+            'Left: ‹',
+            'Right: ›',
+            'Jump: ↑',
+            'Slide: ↓'
         ]
     full_p3_controls = print_player3_controls
     full_p4_controls = print_player4_controls
@@ -168,7 +168,7 @@ def display_controls(num_of_players, introduced_controls_state, print_player1_co
             p4_controls = full_p4_controls
     
     general_controls = [
-        'P: game pause',
+        'P: Game pause',
         'R: Respawn'
         ]
 

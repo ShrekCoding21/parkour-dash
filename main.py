@@ -304,20 +304,20 @@ async def pause_menu(screen, level_name, window_size, time_paused):
     printtext = font.render("Paused", True, ("#71d6f5"))
     text_rect = printtext.get_rect(center=(window_size[0] // 2, window_size[1] // 2 - 200))
 
-    RESUME_BUTTON = Button(image=button_image, pos=(500, 260), text_input="resume", font=pygame.font.Font('fonts/pixelated.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
-    RESTART_LEVEL = Button(image=button_image, pos=(500, 330), text_input="restart", font=pygame.font.Font('fonts/pixelated.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+    RESUME_BUTTON = Button(image=button_image, pos=(500, 260), text_input="Resume", font=pygame.font.Font('fonts/pixelated.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+    RESTART_LEVEL = Button(image=button_image, pos=(500, 330), text_input="Restart", font=pygame.font.Font('fonts/pixelated.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
 
     if level_name in ["Home", "Training"]:
         
-        SETTINGS = Button(image=button_image, pos=(500, 400), text_input="settings", font=pygame.font.Font('fonts/pixelated.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
-        MAIN_MENU = Button(image=button_image, pos=(500, 470), text_input="home", font=pygame.font.Font('fonts/pixelated.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+        SETTINGS = Button(image=button_image, pos=(500, 400), text_input="Settings", font=pygame.font.Font('fonts/pixelated.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+        MAIN_MENU = Button(image=button_image, pos=(500, 470), text_input="Home", font=pygame.font.Font('fonts/pixelated.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
         buttons = [RESUME_BUTTON, RESTART_LEVEL, SETTINGS, MAIN_MENU]
     
     else:
 
-        SETTINGS = Button(image=button_image, pos=(500, 400), text_input="settings", font=pygame.font.Font('fonts/pixelated.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
-        MAIN_MENU = Button(image=button_image, pos=(500, 540), text_input="home", font=pygame.font.Font('fonts/pixelated.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
-        LEVEL_SELECTION = Button(image=button_image, pos=(500, 470), text_input="level select", font=pygame.font.Font('fonts/pixelated.ttf', 30), base_color="#167fc9", hovering_color="#F59071")
+        SETTINGS = Button(image=button_image, pos=(500, 400), text_input="Settings", font=pygame.font.Font('fonts/pixelated.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+        MAIN_MENU = Button(image=button_image, pos=(500, 540), text_input="Home", font=pygame.font.Font('fonts/pixelated.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+        LEVEL_SELECTION = Button(image=button_image, pos=(500, 470), text_input="Level select", font=pygame.font.Font('fonts/pixelated.ttf', 30), base_color="#167fc9", hovering_color="#F59071")
         buttons = [RESUME_BUTTON, RESTART_LEVEL, SETTINGS, LEVEL_SELECTION, MAIN_MENU]
 
     while True:
@@ -1286,6 +1286,8 @@ async def magnus25(active_players):
     storm_activators = []
     for platform in platforms:
         if platform.name == f"homeless-shelter{increment_num}":
+            if increment_num == 1:
+                introduceBunker = platform
             storm_activators.append(platform)
             increment_num += 1
 
@@ -1304,6 +1306,7 @@ async def magnus25(active_players):
     start_timer = pygame.time.get_ticks()
     paused = False
     editing_settings = False
+    introduced_bunker = False
     artifacts_collected = 0
     collected_artifacts = []
     level_complete = False
@@ -1354,10 +1357,11 @@ async def magnus25(active_players):
                     checkpoint_increment += 1
                     next_checkpoint = next_checkpoints[checkpoint_increment]
 
-            if player.on_platform == "homeless_shelter1":
+            if player.on_platform == introduceBunker and not introduced_bunker:
                 for popup in popups:
                     if popup.name == "bunkerintro":
                         popup.visible = True
+                introduced_bunker = True
 
             for artifact in artifacts:
                 if player.rect.colliderect(artifact.rect) and not artifact.collected and artifact not in collected_artifacts:
@@ -1410,11 +1414,12 @@ async def magnus25(active_players):
                 storm_activators = []
                 for platform in platforms:
                     if platform.name == f"homeless-shelter{increment_num}":
+                        if increment_num == 1:
+                            introduceBunker = platform
                         storm_activators.append(platform)
                         increment_num += 1
-                        if platform.name == "homeless-shelter1":
-                            bunkerintro = "homeless-shelter1"
                 storm = Storm(trigger_distance=150, platforms=storm_activators, font=font, screen_size=(1000, 700))
+                introduced_bunker = False
                 paused = False
             elif action == "go to level select":
                 running = False
@@ -1767,7 +1772,7 @@ async def main():
     artifacts = pygame.sprite.Group(Artifact(data["image"], data["position"], data["name"]) for data in artifact_data)
 
     title_screen_text = mainTextInit(font, lil_font, text_color, window_size)
-    level_select_text = lilest_font.render("level select", True, text_color)
+    level_select_text = lilest_font.render("Level select", True, text_color)
 
     running = True
     fixed_delta_time = 1 / 60

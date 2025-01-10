@@ -44,24 +44,24 @@
     "players": {
 
         "player1": {
-            "left": "a",
-            "right": "d",
-            "jump": "w",
-            "slide": "s"
+            "Left": "a",
+            "Right": "d",
+            "Jump": "w",
+            "Slide": "s"
         },
 
         "player3": {
-            "left": "g",
-            "right": "j",
-            "jump": "y",
-            "slide": "h"
+            "Left": "g",
+            "Right": "j",
+            "Jump": "y",
+            "Slide": "h"
         },
 
         "player4": {
-            "left": "k",
-            "right": ";",
-            "jump": "o",
-            "slide": "l"
+            "Left": "k",
+            "Right": ";",
+            "Jump": "o",
+            "Slide": "l"
         }
 
     }     
