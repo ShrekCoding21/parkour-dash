@@ -16,7 +16,7 @@ class Storm:
         self.platforms = platforms
         self.trigger_platform = None
         self.disarmed = False
-        self.disarm_distance = 400
+        self.disarm_distance = 350
         self.font = pygame.font.Font('fonts/pixelated.ttf', 50)
         self.screen_size = screen_size
         self.active = False
@@ -47,7 +47,7 @@ class Storm:
                 player_distance = abs(platform.rect.centerx - player.rect.centerx)
                 if player_distance <= self.trigger_distance and not self.warning and not self.active:
                     self.trigger_platform = platform
-                    print(self.trigger_platform)
+                    print("storm warning by: ", self.trigger_platform)
                     self.warning = True
                     self.warning_start_time = current_time
 
@@ -65,12 +65,14 @@ class Storm:
                 self.reset()
 
             # Check if the player is on the platform during the storm
-            if self.active and not player.on_platform == self.trigger_platform or abs(platform.rect.centerx - player.rect.centerx) < self.disarm_distance:
+            if self.active and (player.on_platform != self.trigger_platform or abs(self.trigger_platform.rect.centerx - player.rect.centerx) >= self.disarm_distance):
                 print(self.trigger_platform)
                 print(player.on_platform)
                 print("Player failed to seek shelter!")
                 player.reload(spawnpoint)
                 self.reset()
+        
+        print(self.active)
 
     def reset(self):
         """Resets the storm state."""
