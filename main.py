@@ -1196,8 +1196,16 @@ async def magnus25(active_players):
          "theme_color": text_color,
          "button_text": "got it",
          "visible": False
-    }]
-
+    },
+    
+        {"name": "bunkerintro",
+        "screen": screen,
+        "text": "On this planet, there are many sandstorms that come with the planet being abandoned. You must find shelter in the bunkers to survive.",
+        "theme_color": text_color,
+        "button_text": "got it",
+        "visible": False
+    }
+    ]
     ladder_data = [
 
         {
@@ -1346,6 +1354,11 @@ async def magnus25(active_players):
                     checkpoint_increment += 1
                     next_checkpoint = next_checkpoints[checkpoint_increment]
 
+            if player.on_platform == "homeless_shelter1":
+                for popup in popups:
+                    if popup.name == "bunkerintro":
+                        popup.visible = True
+
             for artifact in artifacts:
                 if player.rect.colliderect(artifact.rect) and not artifact.collected and artifact not in collected_artifacts:
                     artifact.collect()
@@ -1399,6 +1412,8 @@ async def magnus25(active_players):
                     if platform.name == f"homeless-shelter{increment_num}":
                         storm_activators.append(platform)
                         increment_num += 1
+                        if platform.name == "homeless-shelter1":
+                            bunkerintro = "homeless-shelter1"
                 storm = Storm(trigger_distance=150, platforms=storm_activators, font=font, screen_size=(1000, 700))
                 paused = False
             elif action == "go to level select":
