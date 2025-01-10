@@ -112,13 +112,13 @@ def display_controls(num_of_players, introduced_controls_state, print_player1_co
     None
     """
     
-    font = pygame.font.Font('fonts/pixelated.ttf', 25)
+    font = pygame.font.Font('fonts/pixelated2.ttf', 15)
     
     full_p1_controls = print_player1_controls
     full_p2_controls = [
             '‹: Left',
             '›: Right',
-            '^: Jump',
+            '↑: Jump',
             '↓: Slide'
         ]
     full_p3_controls = print_player3_controls
@@ -168,12 +168,11 @@ def display_controls(num_of_players, introduced_controls_state, print_player1_co
             p4_controls = full_p4_controls
     
     general_controls = [
-        'p: game pause',
-        'esc: game unpause',
-        'r: game reload'
+        'P: game pause',
+        'R: Respawn'
         ]
 
-    x_position = 20
+    x_position = 30
     vertical_displacement = 150
     
     for p1_control in p1_controls:
@@ -190,7 +189,7 @@ def display_controls(num_of_players, introduced_controls_state, print_player1_co
             screen.blit(print_p2_controls, p2_control_rect)
             vertical_displacement += 30
 
-    x_position = 990
+    x_position = 965
     vertical_displacement = 10
 
     for general_control in general_controls:
@@ -199,7 +198,7 @@ def display_controls(num_of_players, introduced_controls_state, print_player1_co
         screen.blit(print_general_controls, general_control_rect)
         vertical_displacement += 30
 
-    vertical_displacement = 450
+    vertical_displacement = 150
 
     if num_of_players > 2:
 

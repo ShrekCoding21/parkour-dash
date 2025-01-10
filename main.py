@@ -218,20 +218,20 @@ async def newPlayerCount(new_num_of_players ,active_players, level_name):
 async def settings_menu(screen, window_size, time_entered_settings):
 
     blur_duration = 0
-    max_blur_radius = 10
+    max_blur_radius = 6
     screen_surface = pygame.image.tobytes(screen, "RGBA")
     pil_image = Image.frombytes("RGBA", screen.get_size(), screen_surface)
 
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 55)
-    lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 35)
+    lil_font = pygame.font.Font('fonts/pixelated.ttf', 35)
     button_image = pygame.image.load("Buttons/tutorial_button.png").convert_alpha()
     small_button = pygame.image.load("Buttons/lilbutton.png").convert_alpha()
 
     EXIT_SETTINGS = Button(image=button_image, pos=(500, 500), text_input="exit", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
-    ONE_PLAYER = Button(image=small_button, pos=(470, 250), text_input="1p", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25), base_color="#167fc9", hovering_color="#F59071")
-    TWO_PLAYER = Button(image=small_button, pos=(550, 250), text_input="2p", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25), base_color="#167fc9", hovering_color="#F59071")
-    THREE_PLAYER = Button(image=small_button, pos=(630, 250), text_input="3p", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25), base_color="#167fc9", hovering_color="#F59071")
-    FOUR_PLAYER = Button(image=small_button, pos=(710, 250), text_input="4p", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 25), base_color="#167fc9", hovering_color="#F59071")
+    ONE_PLAYER = Button(image=small_button, pos=(470, 250), text_input="1p", font=pygame.font.Font('fonts/pixelated.ttf', 25), base_color="#167fc9", hovering_color="#F59071")
+    TWO_PLAYER = Button(image=small_button, pos=(550, 250), text_input="2p", font=pygame.font.Font('fonts/pixelated.ttf', 25), base_color="#167fc9", hovering_color="#F59071")
+    THREE_PLAYER = Button(image=small_button, pos=(630, 250), text_input="3p", font=pygame.font.Font('fonts/pixelated.ttf', 25), base_color="#167fc9", hovering_color="#F59071")
+    FOUR_PLAYER = Button(image=small_button, pos=(710, 250), text_input="4p", font=pygame.font.Font('fonts/pixelated.ttf', 25), base_color="#167fc9", hovering_color="#F59071")
 
     buttons = [EXIT_SETTINGS, ONE_PLAYER, TWO_PLAYER, THREE_PLAYER, FOUR_PLAYER]
 
@@ -304,20 +304,20 @@ async def pause_menu(screen, level_name, window_size, time_paused):
     printtext = font.render("Paused", True, ("#71d6f5"))
     text_rect = printtext.get_rect(center=(window_size[0] // 2, window_size[1] // 2 - 200))
 
-    RESUME_BUTTON = Button(image=button_image, pos=(500, 260), text_input="resume", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
-    RESTART_LEVEL = Button(image=button_image, pos=(500, 330), text_input="restart", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 35), base_color="#167fc9", hovering_color="#F59071")
+    RESUME_BUTTON = Button(image=button_image, pos=(500, 260), text_input="resume", font=pygame.font.Font('fonts/pixelated.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+    RESTART_LEVEL = Button(image=button_image, pos=(500, 330), text_input="restart", font=pygame.font.Font('fonts/pixelated.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
 
     if level_name in ["Home", "Training"]:
         
-        SETTINGS = Button(image=button_image, pos=(500, 400), text_input="settings", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30), base_color="#167fc9", hovering_color="#F59071")
-        MAIN_MENU = Button(image=button_image, pos=(500, 470), text_input="home", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+        SETTINGS = Button(image=button_image, pos=(500, 400), text_input="settings", font=pygame.font.Font('fonts/pixelated.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+        MAIN_MENU = Button(image=button_image, pos=(500, 470), text_input="home", font=pygame.font.Font('fonts/pixelated.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
         buttons = [RESUME_BUTTON, RESTART_LEVEL, SETTINGS, MAIN_MENU]
     
     else:
 
-        SETTINGS = Button(image=button_image, pos=(500, 400), text_input="settings", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30), base_color="#167fc9", hovering_color="#F59071")
-        MAIN_MENU = Button(image=button_image, pos=(500, 540), text_input="home", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
-        LEVEL_SELECTION = Button(image=button_image, pos=(500, 470), text_input="level select", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 20), base_color="#167fc9", hovering_color="#F59071")
+        SETTINGS = Button(image=button_image, pos=(500, 400), text_input="settings", font=pygame.font.Font('fonts/pixelated.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+        MAIN_MENU = Button(image=button_image, pos=(500, 540), text_input="home", font=pygame.font.Font('fonts/pixelated.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+        LEVEL_SELECTION = Button(image=button_image, pos=(500, 470), text_input="level select", font=pygame.font.Font('fonts/pixelated.ttf', 30), base_color="#167fc9", hovering_color="#F59071")
         buttons = [RESUME_BUTTON, RESTART_LEVEL, SETTINGS, LEVEL_SELECTION, MAIN_MENU]
 
     while True:
@@ -382,7 +382,7 @@ async def level_completed(screen, level_name, text_color, window_size, popup_tex
     pil_image = Image.frombytes("RGBA", screen.get_size(), screen_surface)
 
     font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 55)
-    lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
+    lil_font = pygame.font.Font('fonts/pixelated.ttf', 40)
     button_image = pygame.image.load("Buttons/tutorial_button.png").convert_alpha()
 
     printtext = font.render(f"{level_name} complete!", True, text_color)
@@ -397,10 +397,10 @@ async def level_completed(screen, level_name, text_color, window_size, popup_tex
 
     artifact_information.font_size, artifact_information.max_line_length = 23, 40
 
-    RESTART_LEVEL = Button(image=button_image, pos=(395, 295), text_input="restart", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 35), base_color=text_color, hovering_color=hovering_color)
-    ARTIFACT_INFO = Button(image=button_image, pos=(605, 295), text_input="artifact info", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 18), base_color=text_color, hovering_color=hovering_color)
-    LEVEL_SELECT = Button(image=button_image, pos=(395, 365), text_input="level select", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 20), base_color=text_color, hovering_color=hovering_color)
-    MAIN_MENU = Button(image=button_image, pos=(605, 365), text_input="home", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color=text_color, hovering_color=hovering_color)
+    RESTART_LEVEL = Button(image=button_image, pos=(395, 295), text_input="restart", font=pygame.font.Font('fonts/pixelated.ttf', 25), base_color=text_color, hovering_color=hovering_color)
+    ARTIFACT_INFO = Button(image=button_image, pos=(605, 295), text_input="artifact info", font=pygame.font.Font('fonts/pixelated.ttf', 25), base_color=text_color, hovering_color=hovering_color)
+    LEVEL_SELECT = Button(image=button_image, pos=(395, 365), text_input="level select", font=pygame.font.Font('fonts/pixelated.ttf', 25), base_color=text_color, hovering_color=hovering_color)
+    MAIN_MENU = Button(image=button_image, pos=(605, 365), text_input="home", font=pygame.font.Font('fonts/pixelated.ttf', 40), base_color=text_color, hovering_color=hovering_color)
     buttons = [RESTART_LEVEL, ARTIFACT_INFO, LEVEL_SELECT, MAIN_MENU]
 
     while True:
@@ -1479,7 +1479,7 @@ async def training(active_players):
 
     screen.fill("#020626")
     loading_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40)
-    loading_text = loading_font.render("Loading...", True, ("#71d6f5"))
+    loading_text = loading_font.render("loading...", True, ("#71d6f5"))
     loading_rect = loading_text.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
     screen.blit(loading_text, loading_rect)
     pygame.display.update()

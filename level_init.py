@@ -51,6 +51,6 @@ def mainTextInit(font, lil_font, text_color, window_size):
     text_group_surface.blit(print_welcome2, print_welcome2.get_rect(center=(500, 155)))
     text_group_surface.blit(show_tutorial_level1, show_tutorial_level1.get_rect(center=(500, 525)))
     text_group_surface.blit(show_settings1, show_settings1.get_rect(center=(100, 475)))
-    text_group_surface.blit(highlight_game_controls1, highlight_game_controls1.get_rect(center=(520, 50)))
+    text_group_surface.blit(highlight_game_controls1, highlight_game_controls1.get_rect(center=(590, 30)))
 
     return text_group_surface

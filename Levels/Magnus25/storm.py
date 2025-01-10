@@ -17,7 +17,7 @@ class Storm:
         self.trigger_platform = None
         self.disarmed = False
         self.disarm_distance = 400
-        self.font = font
+        self.font = pygame.font.Font('fonts/pixelated.ttf', 50)
         self.screen_size = screen_size
         self.active = False
         self.warning = False
@@ -78,7 +78,7 @@ class Storm:
         self.warning = False
         self.critical_warning = False
         self.storm_start_time = None
-        self.storm_duration = random.uniform(5, 10)
+        self.storm_duration = random.uniform(3, 7)
         self.warning_start_time = None
 
     def draw(self, surface):
@@ -100,7 +100,7 @@ class Storm:
             surface.blit(overlay, (0, 0))
 
             # Display the warning message
-            warning_text = self.font.render("Get Inside!", True, (255, 255, 255))
+            warning_text = self.font.render("Get Inside!", True, (255, 69, 0))
             surface.blit(
                 warning_text,
                 (self.screen_size[0] // 2 - warning_text.get_width() // 2, 50)
