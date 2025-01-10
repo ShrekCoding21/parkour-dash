@@ -1207,6 +1207,15 @@ async def magnus25(active_players):
         "theme_color": text_color,
         "button_text": "got it",
         "visible": False
+    },
+
+    {
+        "name": "hookIntro",
+        "screen": screen,
+        "text": "",
+        "theme_color": text_color,
+        "button_text": "ashwath is gay",
+        "visible": False
     }
     ]
     ladder_data = [
@@ -1294,6 +1303,10 @@ async def magnus25(active_players):
             storm_activators.append(platform)
             increment_num += 1
 
+        elif platform.name == "base-platform13":
+            introduceHook = platform
+            print(introduceHook.position)
+
     hooks = [Hook(data["x-position"], data["y-position"], data["length"], data["angle"], data["speed"], None) for data in hook_data]
     ladders = [Ladder(data["x-position"], data["y-position"], data["height"]) for data in ladder_data]
     popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in intro_popups + platform_popups]
@@ -1310,6 +1323,7 @@ async def magnus25(active_players):
     paused = False
     editing_settings = False
     introduced_bunker = False
+    introduced_hook = False
     artifacts_collected = 0
     collected_artifacts = []
     popup_index = 0
@@ -1341,6 +1355,7 @@ async def magnus25(active_players):
 
         for player in active_players:
 
+            print(player.position)
             storm.update(player, spawn_point, current_time=time.time())
 
             if player.position.y > level_height + 100:
@@ -1370,7 +1385,13 @@ async def magnus25(active_players):
                 for popup in popups:
                     if popup.name == "bunkerintro":
                         popup.visible = True
-                introduced_bunker = True   
+                introduced_bunker = True
+            
+            elif player.on_platform == introduceHook and not introduced_hook:
+                for popup in popups:
+                    if popup.name == "hookIntro":
+                        popup.visible = True
+                introduced_hook = True
 
             for artifact in artifacts:
                 if player.rect.colliderect(artifact.rect) and not artifact.collected and artifact not in collected_artifacts:

@@ -15,7 +15,7 @@
         "base-platform1": {
             "x-position": 730,
             "y-position": 450,
-            "width": 550,
+            "width": 480,
             "height": 40,
             "is_moving": "False",
             "color": "#B7410E"
