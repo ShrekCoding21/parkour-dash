@@ -1180,7 +1180,7 @@ async def magnus25(active_players):
     num_of_players = len(active_players)
     bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)   
 
-    popup_data = [
+    intro_popups = [
 
         {"name": "popup1",
         "screen": screen,
@@ -1196,9 +1196,12 @@ async def magnus25(active_players):
          "theme_color": text_color,
          "button_text": "got it",
          "visible": False
-    },
+    }]
+
+    platform_popups = [
     
-        {"name": "bunkerintro",
+    {
+        "name": "bunkerintro",
         "screen": screen,
         "text": "On this planet, there are many sandstorms that come with the planet being abandoned. You must find shelter in the bunkers to survive.",
         "theme_color": text_color,
@@ -1274,11 +1277,11 @@ async def magnus25(active_players):
         },
 
         {
-        "x-position": 6540,
-        "y-position": 1450,
-        "length": 300,
-        "angle": 45,
-        "speed": 4
+            "x-position": 6540,
+            "y-position": 1450,
+            "length": 300,
+            "angle": 45,
+            "speed": 4
         }
     ]
     
@@ -1293,7 +1296,7 @@ async def magnus25(active_players):
 
     hooks = [Hook(data["x-position"], data["y-position"], data["length"], data["angle"], data["speed"], None) for data in hook_data]
     ladders = [Ladder(data["x-position"], data["y-position"], data["height"]) for data in ladder_data]
-    popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in popup_data]
+    popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in intro_popups + platform_popups]
 
     print_need_artifacts = font.render("you need more artifacts", True, text_color)
     need_artifacts_rect = print_need_artifacts.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
@@ -1309,6 +1312,7 @@ async def magnus25(active_players):
     introduced_bunker = False
     artifacts_collected = 0
     collected_artifacts = []
+    popup_index = 0
     level_complete = False
     RELOAD = Button(image=pygame.image.load("Buttons/reload_button.png").convert_alpha(), pos=(85, 43), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
     PAUSE = Button(image=pygame.image.load("Buttons/pause_button.png").convert_alpha(), pos=(30, 35), text_input=None, font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color=("White"), hovering_color=("White"))
@@ -1329,6 +1333,11 @@ async def magnus25(active_players):
                 break
             else:
                 popup_active = False
+
+        if not popups[popup_index].visible and popup_index + 1 < len(intro_popups):
+            print(len(popups))
+            popups[popup_index + 1].visible = True
+            popup_index += 1
 
         for player in active_players:
 
@@ -1407,7 +1416,7 @@ async def magnus25(active_players):
             elif action == "level restart":
                 bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
                 start_timer = pygame.time.get_ticks()
-                popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in popup_data]
+                popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in intro_popups + platform_popups]
                 artifacts_collected = 0
                 collected_artifacts = []
                 increment_num = 1
@@ -1445,7 +1454,7 @@ async def magnus25(active_players):
                 if action == "level restart":
                     bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
                     start_timer = pygame.time.get_ticks()
-                    popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in popup_data]
+                    popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in intro_popups + platform_popups]
                     artifacts_collected = 0
                     collected_artifacts = []
                     level_complete = False
