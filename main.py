@@ -1192,10 +1192,10 @@ async def magnus25(active_players):
     
         {"name": "popup2",
          "screen": screen,
-         "text": "This is another popup.",
+         "text": " We have records of Aerogel falling down here. It is a very light and strong material. It is used in the construction of spaceships.",
          "theme_color": text_color,
          "button_text": "got it",
-         "visible": True
+         "visible": False
     },
     
         {"name": "bunkerintro",
