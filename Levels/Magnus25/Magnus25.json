@@ -6,7 +6,7 @@
 
         "starting-platform": {
             "x-position": 730,
-            "y-position": 300,
+            "y-position": 450,
             "width": 100,
             "height": 30,
             "is_moving": "False",
@@ -14,31 +14,31 @@
         },
         "base-platform1": {
             "x-position": 730,
-            "y-position": 300,
+            "y-position": 450,
             "width": 550,
             "height": 40,
             "is_moving": "False",
-            "color": "#94e0a8"
+            "color": "#B7410E"
         },
         "base-platform13": {
             "x-position": 1200,
-            "y-position": 300,
+            "y-position": 450,
             "width": 80,
             "height": 40,
             "is_moving": "False",
-            "color": "#94e0a8"
+            "color": "#B7410E"
         },
         "base-platform2": {
             "x-position": 1610,
-            "y-position": 300,
+            "y-position": 450,
             "width": 600,
             "height": 40,
             "is_moving": "False",
-            "color": "#94e0a8"
+            "color": "#B7410E"
         },
         "homeless-shelter1":     {
             "x-position": 1935,
-            "y-position": 130,
+            "y-position": 280,
             "width": 150,
             "height": 20,
             "is_moving": "False",
@@ -46,40 +46,40 @@
         },
         "artifact-platform1": {
             "x-position": 1910,
-            "y-position": 150,
+            "y-position": 300,
             "width": 200,
             "height": 150,
             "is_moving": "False",
-            "color": "#94e0a8"
+            "color": "#B7410E"
         },
         "base-platform3": {
             "x-position": 3000,
-            "y-position": 300,
+            "y-position": 450,
             "width": 200,
             "height": 40,
             "is_moving": "False",
-            "color": "#94e0a8"
+            "color": "#B7410E"
         },
         "base-platform6": {
             "x-position": 3350,
-            "y-position": 300,
+            "y-position": 450,
             "width": 200,
             "height": 40,
             "is_moving": "False",
-            "color": "#94e0a8"
+            "color": "#B7410E"
         },
         "base-platform7": {
             "x-position": 4000,
-            "y-position": 140,
+            "y-position": 290,
             "width": 500,
             "height": 500,
             "is_moving": "False",
-            "color": "#94e0a8"
+            "color": "#B7410E"
         },
     
         "homeless-shelter2":     {
             "x-position": 4050,
-            "y-position": 120,
+            "y-position": 270,
             "width": 200,
             "height": 20,
             "is_moving": "False",
@@ -87,7 +87,7 @@
         },
         "artifact-platform2":     {
             "x-position": 4050,
-            "y-position": 130,
+            "y-position": 280,
             "width": 200,
             "height": 200,
             "is_moving": "False",
@@ -95,39 +95,39 @@
         },
         "base-platform8": {
             "x-position": 4500,
-            "y-position": 300,
+            "y-position": 450,
             "width": 200,
             "height": 40,
             "is_moving": "False",
-            "color": "#94e0a8"
+            "color": "#B7410E"
         },
         "base-platform9": {
             "x-position": 5450,
-            "y-position": 300,
+            "y-position": 450,
             "width": 200,
             "height": 40,
             "is_moving": "False",
-            "color": "#94e0a8"
+            "color": "#B7410E"
         },
         "base-platform10": {
             "x-position": 5650,
-            "y-position": 1000,
+            "y-position": 1150,
             "width": 300,
             "height": 40,
             "is_moving": "False",
-            "color": "#94e0a8"
+            "color": "#B7410E"
         },
         "base-platform11": {
             "x-position": 4000,
-            "y-position": 140,
+            "y-position": 290,
             "width": 500,
             "height": 500,
             "is_moving": "False",
-            "color": "#94e0a8"
+            "color": "#B7410E"
         },
         "homeless-shelter3": {
             "x-position": 5750,
-            "y-position": 980,
+            "y-position": 1130,
             "width": 100,
             "height": 20,
             "is_moving": "False",
@@ -135,7 +135,7 @@
         },
         "artifact-platform3": {
             "x-position": 5675,
-            "y-position": 981,
+            "y-position": 1131,
             "width": 150,
             "height": 20,
             "is_moving": "False",
@@ -143,15 +143,15 @@
         },
         "base-platform12": {
             "x-position": 5950,
-            "y-position": 2000,
+            "y-position": 2150,
             "width": 350,
             "height": 40,
             "is_moving": "False",
-            "color": "#94e0a8"
+            "color": "#B7410E"
         },
         "death-form1": {
             "x-position": 30,
-            "y-position": 500,
+            "y-position": 650,
             "width": 3500,
             "height": 10,
             "is_moving": "False",
@@ -159,7 +159,7 @@
         },
         "death-form2": {
             "x-position": 3600,
-            "y-position": 800,
+            "y-position": 950,
             "width": 1850,
             "height": 10,
             "is_moving": "False",
@@ -168,23 +168,23 @@
 
         "checkpoint1": {
             "x-position": 2110,
-            "y-position": 299,
+            "y-position": 449,
             "width": 200,
             "height": 41,
             "is_moving": "False",
-            "color": "#94e0a8"
+            "color": "#B7410E"
         },
         "checkpoint2": {
             "x-position": 3800,
-            "y-position": 600,
+            "y-position": 750,
             "width": 200,
             "height": 40,
             "is_moving": "False",
-            "color": "#94e0a8"
+            "color": "#B7410E"
         },
         "finish-line": {
             "x-position": 6800,
-            "y-position": 1700,
+            "y-position": 1850,
             "width": 150,
             "height": 30,
             "is_moving": "False",
