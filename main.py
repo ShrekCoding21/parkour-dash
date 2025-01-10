@@ -1184,7 +1184,7 @@ async def magnus25(active_players):
 
         {"name": "popup1",
         "screen": screen,
-        "text": "This is Magnus-25. We have records of Aerogel falling down here. This planet is abandoned as it contains no traces of living organisms, but there are old rusted sectors where something big was built, perhaps a spaceship.",
+        "text": "This is Magnus-25.This planet is abandoned as it contains no traces of living organisms, but there are old rusted sectors where something big was built, perhaps a spaceship.",
         "theme_color": text_color,
         "button_text": "ok",
         "visible": True
