@@ -1192,7 +1192,7 @@ async def magnus25(active_players):
     
         {"name": "popup2",
          "screen": screen,
-         "text": "This is another popup",
+         "text": "This is another popup.",
          "theme_color": text_color,
          "button_text": "got it",
          "visible": False
