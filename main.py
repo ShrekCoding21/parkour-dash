@@ -227,7 +227,7 @@ async def settings_menu(screen, window_size, time_entered_settings):
     button_image = pygame.image.load("Buttons/tutorial_button.png").convert_alpha()
     small_button = pygame.image.load("Buttons/lilbutton.png").convert_alpha()
 
-    EXIT_SETTINGS = Button(image=button_image, pos=(500, 500), text_input="exit", font=pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
+    EXIT_SETTINGS = Button(image=button_image, pos=(500, 500), text_input="Exit", font=pygame.font.Font('fonts/pixelated.ttf', 40), base_color="#167fc9", hovering_color="#F59071")
     ONE_PLAYER = Button(image=small_button, pos=(470, 250), text_input="1p", font=pygame.font.Font('fonts/pixelated.ttf', 25), base_color="#167fc9", hovering_color="#F59071")
     TWO_PLAYER = Button(image=small_button, pos=(550, 250), text_input="2p", font=pygame.font.Font('fonts/pixelated.ttf', 25), base_color="#167fc9", hovering_color="#F59071")
     THREE_PLAYER = Button(image=small_button, pos=(630, 250), text_input="3p", font=pygame.font.Font('fonts/pixelated.ttf', 25), base_color="#167fc9", hovering_color="#F59071")
@@ -1210,31 +1210,31 @@ async def magnus25(active_players):
 
         {
             "x-position": 1900,
-            "y-position": 155,
+            "y-position": 305,
             "height": 150,
         },
 
         {
             "x-position": 2110,
-            "y-position": 155,  
+            "y-position": 305,  
             "height": 150,
         },
 
         {
             "x-position": 3990,
-            "y-position": 140,  
+            "y-position": 290,  
             "height": 460,  
         },
 
         {
             "x-position": 4500,
-            "y-position": 140,
+            "y-position": 290,
             "height": 160,
         },
 
         {
             "x-position": 6290,
-            "y-position": 1500,
+            "y-position": 1650,
             "height": 500,
         }
     ]
@@ -1243,7 +1243,7 @@ async def magnus25(active_players):
         
         {
             "x-position": 1450,
-            "y-position": 50,
+            "y-position": 200,
             "length": 250,
             "angle": 45,
             "speed": 4
@@ -1251,7 +1251,7 @@ async def magnus25(active_players):
         
         {
             "x-position": 2655,
-            "y-position": -25,
+            "y-position": 125,
             "length": 350,
             "angle": 45,
             "speed": 4
@@ -1259,7 +1259,7 @@ async def magnus25(active_players):
 
         {
             "x-position": 4950,
-            "y-position": 50,
+            "y-position": 200,
             "length": 300,
             "angle": 45,
             "speed": 5
@@ -1267,7 +1267,7 @@ async def magnus25(active_players):
 
         {
             "x-position": 5850,
-            "y-position": 50,
+            "y-position": 200,
             "length": 300,
             "angle": 45,
             "speed": 4
@@ -1275,7 +1275,7 @@ async def magnus25(active_players):
 
         {
         "x-position": 6540,
-        "y-position": 1300,
+        "y-position": 1450,
         "length": 300,
         "angle": 45,
         "speed": 4
@@ -1361,7 +1361,7 @@ async def magnus25(active_players):
                 for popup in popups:
                     if popup.name == "bunkerintro":
                         popup.visible = True
-                introduced_bunker = True
+                introduced_bunker = True   
 
             for artifact in artifacts:
                 if player.rect.colliderect(artifact.rect) and not artifact.collected and artifact not in collected_artifacts:
