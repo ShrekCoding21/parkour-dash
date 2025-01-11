@@ -10,7 +10,7 @@
             "width": 100,
             "height": 30,
             "is_moving": "False",
-            "color": "#B7410E"
+            "color": "#217b6f"
         },
         "base-platform1": {
             "x-position": 730,
@@ -18,7 +18,7 @@
             "width": 480,
             "height": 40,
             "is_moving": "False",
-            "color": "#B7410E"
+            "color": "#217b6f"
         },
         "base-platform13": {
             "x-position": 1200,
@@ -26,7 +26,7 @@
             "width": 80,
             "height": 40,
             "is_moving": "False",
-            "color": "#B7410E"
+            "color": "#217b6f"
         },
         "base-platform2": {
             "x-position": 1610,
@@ -34,7 +34,7 @@
             "width": 600,
             "height": 40,
             "is_moving": "False",
-            "color": "#B7410E"
+            "color": "#217b6f"
         },
         "homeless-shelter1":     {
             "x-position": 1935,
@@ -50,7 +50,7 @@
             "width": 200,
             "height": 150,
             "is_moving": "False",
-            "color": "#B7410E"
+            "color": "#217b6f"
         },
         "base-platform3": {
             "x-position": 3000,
@@ -58,7 +58,7 @@
             "width": 200,
             "height": 40,
             "is_moving": "False",
-            "color": "#B7410E"
+            "color": "#217b6f"
         },
         "base-platform6": {
             "x-position": 3350,
@@ -66,7 +66,7 @@
             "width": 200,
             "height": 40,
             "is_moving": "False",
-            "color": "#B7410E"
+            "color": "#217b6f"
         },
         "base-platform7": {
             "x-position": 4000,
@@ -74,7 +74,7 @@
             "width": 500,
             "height": 500,
             "is_moving": "False",
-            "color": "#B7410E"
+            "color": "#217b6f"
         },
     
         "homeless-shelter2":     {
@@ -99,7 +99,7 @@
             "width": 200,
             "height": 40,
             "is_moving": "False",
-            "color": "#B7410E"
+            "color": "#217b6f"
         },
         "base-platform9": {
             "x-position": 5450,
@@ -107,7 +107,7 @@
             "width": 200,
             "height": 40,
             "is_moving": "False",
-            "color": "#B7410E"
+            "color": "#217b6f"
         },
         "base-platform10": {
             "x-position": 5650,
@@ -115,7 +115,7 @@
             "width": 300,
             "height": 40,
             "is_moving": "False",
-            "color": "#B7410E"
+            "color": "#217b6f"
         },
         "base-platform11": {
             "x-position": 4000,
@@ -123,7 +123,7 @@
             "width": 500,
             "height": 500,
             "is_moving": "False",
-            "color": "#B7410E"
+            "color": "#217b6f"
         },
         "homeless-shelter3": {
             "x-position": 5750,
@@ -147,7 +147,7 @@
             "width": 350,
             "height": 40,
             "is_moving": "False",
-            "color": "#B7410E"
+            "color": "#217b6f"
         },
         "death-form1": {
             "x-position": 30,
@@ -172,7 +172,7 @@
             "width": 200,
             "height": 41,
             "is_moving": "False",
-            "color": "#B7410E"
+            "color": "#217b6f"
         },
         "checkpoint2": {
             "x-position": 3800,
@@ -180,7 +180,7 @@
             "width": 200,
             "height": 40,
             "is_moving": "False",
-            "color": "#B7410E"
+            "color": "#217b6f"
         },
         "finish-line": {
             "x-position": 6800,
