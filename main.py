@@ -1791,7 +1791,7 @@ async def main():
         {
             "name": "intro1",
             "screen": screen,
-            "text": "The biggest Nuclear Fusion reactor, powering over 50% of earth, is now meldown critical. We made a machine to fix, but did not have essential materials.",
+            "text": "The biggest Nuclear Fusion reactor, powering over 50% of earth, is now meldown critical. We made a machine to fix the issue, but did not have essential materials.",
             "theme_color": text_color,
             "button_text": "And?",
             "visible": True
