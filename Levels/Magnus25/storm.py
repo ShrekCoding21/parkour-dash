@@ -47,7 +47,6 @@ class Storm:
                 player_distance = abs(platform.rect.centerx - player.rect.centerx)
                 if player_distance <= self.trigger_distance and not self.warning and not self.active:
                     self.trigger_platform = platform
-                    print("storm warning by: ", self.trigger_platform)
                     self.warning = True
                     self.warning_start_time = current_time
 
@@ -66,9 +65,6 @@ class Storm:
 
             # Check if the player is on the platform during the storm
             if self.active and (player.on_platform != self.trigger_platform or abs(self.trigger_platform.rect.centerx - player.rect.centerx) >= self.disarm_distance):
-                print(self.trigger_platform)
-                print(player.on_platform)
-                print("Player failed to seek shelter!")
                 player.reload(spawnpoint)
                 self.reset()
 

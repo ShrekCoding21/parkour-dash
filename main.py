@@ -1347,7 +1347,6 @@ async def magnus25(active_players):
                 popup_active = False
 
         if not popups[popup_index].visible and popup_index + 1 < len(intro_popups):
-            print(len(popups))
             popups[popup_index + 1].visible = True
             popup_index += 1
 
