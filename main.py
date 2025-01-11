@@ -1166,6 +1166,9 @@ async def magnus25(active_players):
     lil_font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', 30)
     text_color = ("#1d806b")
 
+    aerogel_info = await load_json_file(f"Levels/{level_name}/artifact_info.json")
+    post_mission_briefing = aerogel_info["aerogel-info"]["after-level-info"]
+
     num_of_players = len(active_players)
     bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)   
 
@@ -1303,7 +1306,6 @@ async def magnus25(active_players):
 
         elif platform.name == "base-platform13":
             introduceHook = platform
-            print(introduceHook.position)
 
     hooks = [Hook(data["x-position"], data["y-position"], data["length"], data["angle"], data["speed"], None) for data in hook_data]
     ladders = [Ladder(data["x-position"], data["y-position"], data["height"]) for data in ladder_data]
@@ -1464,7 +1466,7 @@ async def magnus25(active_players):
                 editing_settings = False
 
         elif level_complete:
-            action = await level_completed(screen, level_name, text_color, window_size, popup_text="Hello. Nothing here, yet :)", time_finished=time.time(), total_time=counting_string)
+            action = await level_completed(screen, level_name, text_color, window_size, popup_text=post_mission_briefing, time_finished=time.time(), total_time=counting_string)
             if action == "level restart":
                 bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
                 start_timer = pygame.time.get_ticks()
