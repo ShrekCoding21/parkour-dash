@@ -1350,8 +1350,6 @@ async def magnus25(active_players):
             popup_index += 1
 
         for player in active_players:
-
-            print(player.position)
             storm.update(player, spawn_point, current_time=time.time())
 
             if player.position.y > level_height + 100:
