@@ -599,8 +599,6 @@ async def terus1(active_players):
             popup.max_line_length = 50
             popup.font_size = 20
 
-    print_need_artifacts = font.render("you need more artifacts", True, text_color)
-    need_artifacts_rect = print_need_artifacts.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
     print_show_slide = font.render("← slide...", True, text_color)
     print_show_slide2 = font.render("slide... →", True, text_color)
     show_slide_rect = print_show_slide.get_rect(center=(500, 350))
@@ -765,30 +763,26 @@ async def terus1(active_players):
                 editing_settings = False
 
         elif level_complete:
-            if artifacts_collected == 3:
-                action = await level_completed(screen, level_name, text_color, window_size, post_mission_briefing, time_finished=time.time(), total_time=counting_string)
+            action = await level_completed(screen, level_name, text_color, window_size, post_mission_briefing, time_finished=time.time(), total_time=counting_string)
 
-                if action == "level restart":
-                    bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
-                    popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in popup_data]
-                    artifacts_collected = 0
-                    collected_artifacts = []
-                    start_timer = pygame.time.get_ticks()
-                    flashlight_broken = False
-                    flashlight = Flashlight(screen, intensity=100)
-                    flashlight.enabled = True
-                    flashlight.on = False
-                    show_slide, show_slide2, show_checkpoint1_reached, show_checkpoint2_reached, brighten_scene, artifacts = terusPlatformsInit(platforms, level_name)      
-                    level_complete = False
+            if action == "level restart":
+                bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
+                popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in popup_data]
+                artifacts_collected = 0
+                collected_artifacts = []
+                start_timer = pygame.time.get_ticks()
+                flashlight_broken = False
+                flashlight = Flashlight(screen, intensity=100)
+                flashlight.enabled = True
+                flashlight.on = False
+                show_slide, show_slide2, show_checkpoint1_reached, show_checkpoint2_reached, brighten_scene, artifacts = terusPlatformsInit(platforms, level_name)      
+                level_complete = False
 
-                elif action == "go to level select":
-                    running = False
-                
-                elif action == "go to home":
-                    return False
+            elif action == "go to level select":
+                running = False
             
-            else:
-                screen.blit(print_need_artifacts, need_artifacts_rect)
+            elif action == "go to home":
+                return False
 
         else:
             while accumulator >= fixed_delta_time:
@@ -968,8 +962,6 @@ async def scopulosus53(active_players):
     
     popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in volcano_introduction + level_tips]
     volcanoes = [Volcano(data["name"], data["position"], data["steam_height"], data["steam_correction"], screen, data["stretch_size"]) for data in volcano_data]
-    print_need_artifacts = font.render("you need more artifacts", True, text_color)
-    need_artifacts_rect = print_need_artifacts.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
 
     running = True
     fixed_delta_time = 1 / 60
@@ -1119,23 +1111,20 @@ async def scopulosus53(active_players):
                 editing_settings = False
 
         elif level_complete:
-            if artifacts_collected == 3:
-                action = await level_completed(screen, level_name, text_color, window_size, post_mission_briefing, time_finished=time.time(), total_time=counting_string)
-                if action == "level restart":
-                    bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
-                    start_timer = pygame.time.get_ticks()
-                    popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in volcano_introduction + level_tips]
-                    artifacts_collected = 0
-                    collected_artifacts = []
-                    level_complete = False
-                
-                elif action == "go to level select":
-                    running = False
-                
-                elif action == "go to home":
-                    return False
-            else:
-                screen.blit(print_need_artifacts, need_artifacts_rect)
+            action = await level_completed(screen, level_name, text_color, window_size, post_mission_briefing, time_finished=time.time(), total_time=counting_string)
+            if action == "level restart":
+                bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
+                start_timer = pygame.time.get_ticks()
+                popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in volcano_introduction + level_tips]
+                artifacts_collected = 0
+                collected_artifacts = []
+                level_complete = False
+            
+            elif action == "go to level select":
+                running = False
+            
+            elif action == "go to home":
+                return False
         
         else:
             while accumulator >= fixed_delta_time:
@@ -1206,6 +1195,15 @@ async def magnus25(active_players):
         "text": "On this planet, there are many sandstorms that come with the planet being abandoned. You must find shelter in the bunkers to survive.",
         "theme_color": text_color,
         "button_text": "got it",
+        "visible": False
+    },
+
+    {
+        "name": "hookIntro",
+        "screen": screen,
+        "text": "",
+        "theme_color": text_color,
+        "button_text": "ashwath is gay",
         "visible": False
     }
     ]
@@ -1294,12 +1292,14 @@ async def magnus25(active_players):
             storm_activators.append(platform)
             increment_num += 1
 
+        elif platform.name == "base-platform13":
+            introduceHook = platform
+            print(introduceHook.position)
+
     hooks = [Hook(data["x-position"], data["y-position"], data["length"], data["angle"], data["speed"], None) for data in hook_data]
     ladders = [Ladder(data["x-position"], data["y-position"], data["height"]) for data in ladder_data]
     popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in intro_popups + platform_popups]
 
-    print_need_artifacts = font.render("you need more artifacts", True, text_color)
-    need_artifacts_rect = print_need_artifacts.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
 
     artifacts = getArtifacts(platforms, level_name)
     running = True
@@ -1310,6 +1310,7 @@ async def magnus25(active_players):
     paused = False
     editing_settings = False
     introduced_bunker = False
+    introduced_hook = False
     artifacts_collected = 0
     collected_artifacts = []
     popup_index = 0
@@ -1341,6 +1342,7 @@ async def magnus25(active_players):
 
         for player in active_players:
 
+            print(player.position)
             storm.update(player, spawn_point, current_time=time.time())
 
             if player.position.y > level_height + 100:
@@ -1370,7 +1372,13 @@ async def magnus25(active_players):
                 for popup in popups:
                     if popup.name == "bunkerintro":
                         popup.visible = True
-                introduced_bunker = True   
+                introduced_bunker = True
+            
+            elif player.on_platform == introduceHook and not introduced_hook:
+                for popup in popups:
+                    if popup.name == "hookIntro":
+                        popup.visible = True
+                introduced_hook = True
 
             for artifact in artifacts:
                 if player.rect.colliderect(artifact.rect) and not artifact.collected and artifact not in collected_artifacts:
@@ -1449,29 +1457,26 @@ async def magnus25(active_players):
                 editing_settings = False
 
         elif level_complete:
-            if artifacts_collected == 3:
-                action = await level_completed(screen, level_name, text_color, window_size, popup_text="Hello. Nothing here, yet :)", time_finished=time.time(), total_time=counting_string)
-                if action == "level restart":
-                    bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
-                    start_timer = pygame.time.get_ticks()
-                    popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in intro_popups + platform_popups]
-                    artifacts_collected = 0
-                    collected_artifacts = []
-                    level_complete = False
-                    increment_num = 1
-                    storm_activators = []
-                    for platform in platforms:
-                        if platform.name == f"homeless-shelter{increment_num}":
-                            storm_activators.append(platform)
-                            increment_num += 1
-                    storm = Storm(trigger_distance=150, platforms=storm_activators, font=font, screen_size=(1000, 700))
-                elif action == "go to level select":
-                    running = False
-                
-                elif action == "go to home":
-                    return False
-            else:
-                screen.blit(print_need_artifacts, need_artifacts_rect)
+            action = await level_completed(screen, level_name, text_color, window_size, popup_text="Hello. Nothing here, yet :)", time_finished=time.time(), total_time=counting_string)
+            if action == "level restart":
+                bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
+                start_timer = pygame.time.get_ticks()
+                popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in intro_popups + platform_popups]
+                artifacts_collected = 0
+                collected_artifacts = []
+                level_complete = False
+                increment_num = 1
+                storm_activators = []
+                for platform in platforms:
+                    if platform.name == f"homeless-shelter{increment_num}":
+                        storm_activators.append(platform)
+                        increment_num += 1
+                storm = Storm(trigger_distance=150, platforms=storm_activators, font=font, screen_size=(1000, 700))
+            elif action == "go to level select":
+                running = False
+            
+            elif action == "go to home":
+                return False
         
         else:
             while accumulator >= fixed_delta_time:
@@ -1527,9 +1532,6 @@ async def training(active_players):
     for player in active_players:
         player.can_jump, player.can_slide = False, False
         introduced_controls_state["introduced_jumping"], introduced_controls_state["introduced_sliding"] = False, False
-    
-    print_need_artifacts = font.render("you need more artifacts", True, text_color)
-    need_artifacts_rect = print_need_artifacts.get_rect(center=(window_size[0] // 2, window_size[1] // 2))
     
     intitial_popups = [
 
@@ -1700,24 +1702,21 @@ async def training(active_players):
                 editing_settings = False
 
         elif level_complete:
-            if artifacts_collected == 3:
-                action = await level_completed(screen, level_name, text_color, window_size, popup_text="Hello. Nothing here, yet :)", time_finished=time.time(), total_time=counting_string)
-                if action == "level restart":
-                    bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
-                    intro_to_jumping, intro_to_sliding, intro_to_jumpslide, artifacts = tutorialPlatformsInit(platforms, level_name)
-                    start_timer = pygame.time.get_ticks()
-                    popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in intitial_popups]
-                    popup_index, artifacts_collected = 0, 0
-                    collected_artifacts = []
-                    for player in active_players:
-                        player.can_jump, player.can_slide = False, False
-                        introduced_controls_state["introduced_jumping"], introduced_controls_state["introduced_sliding"] = False, False
-                    level_complete = False
-                
-                elif action == "go to home":
-                    return False
-            else:
-                screen.blit(print_need_artifacts, need_artifacts_rect)
+            action = await level_completed(screen, level_name, text_color, window_size, popup_text="Hello. Nothing here, yet :)", time_finished=time.time(), total_time=counting_string)
+            if action == "level restart":
+                bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
+                intro_to_jumping, intro_to_sliding, intro_to_jumpslide, artifacts = tutorialPlatformsInit(platforms, level_name)
+                start_timer = pygame.time.get_ticks()
+                popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in intitial_popups]
+                popup_index, artifacts_collected = 0, 0
+                collected_artifacts = []
+                for player in active_players:
+                    player.can_jump, player.can_slide = False, False
+                    introduced_controls_state["introduced_jumping"], introduced_controls_state["introduced_sliding"] = False, False
+                level_complete = False
+            
+            elif action == "go to home":
+                return False
 
         else:
             while accumulator >= fixed_delta_time:
