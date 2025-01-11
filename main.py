@@ -879,7 +879,7 @@ async def scopulosus53(active_players):
         {
             "name": "one_way_home",
             "screen": screen,
-            "text": "looks like theres only one way to go now →",
+            "text": "Looks like theres only one way to go now →",
             "theme_color": text_color,
             "button_text": "bet",
             "visible": False
