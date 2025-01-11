@@ -472,7 +472,7 @@ async def levelSelect(active_players):
     level2_text = font.render("2. scopulosus53", True, ("#cc6c33"))
 
     level3 = pygame.image.load("assets/levelSelect/Magnus25.png").convert_alpha()
-    level3_text = font.render("3. Magnus25 (in progress)", True, ("#1d806b"))
+    level3_text = font.render("3. Magnus25", True, ("#1d806b"))
 
     level_images = [level1, level2, level3]
     level_texts = [level1_text, level2_text, level3_text]
