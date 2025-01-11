@@ -620,7 +620,7 @@ async def terus1(active_players):
     RELOAD = Button(image=pygame.image.load("Buttons/reload_button.png").convert_alpha(), pos=(85, 43), text_input=None, font=lil_font, base_color="#167fc9", hovering_color="#F59071")
     PAUSE = Button(image=pygame.image.load("Buttons/pause_button.png").convert_alpha(), pos=(30, 35), text_input=None, font=lil_font, base_color=("White"), hovering_color=("White"))
     flashlight = Flashlight(screen, intensity=100)
-    flashlight.enabled = False
+    flashlight.enabled = True
     scene_brightened = False
 
     while running:
