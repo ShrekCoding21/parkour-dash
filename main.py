@@ -1175,7 +1175,7 @@ async def magnus25(active_players):
         "screen": screen,
         "text": "This is Magnus-25.This planet is abandoned as it contains no traces of living organisms, but there are old rusted sectors where something big was built, perhaps a spaceship.",
         "theme_color": text_color,
-        "button_text": "ok",
+        "button_text": "Uh huh",
         "visible": True
     },
     
@@ -1183,9 +1183,18 @@ async def magnus25(active_players):
          "screen": screen,
          "text": " We have records of Aerogel falling down here. It is a very light and strong material. It is used in the construction of spaceships.",
          "theme_color": text_color,
-         "button_text": "got it",
+         "button_text": "Got it",
          "visible": False
-    }]
+    },
+    
+        {"name": "popup3",
+         "screen": screen,
+         "text": "Aerogel is important to our machine as its a very good insulator, important to keep the heat in our machine from destroying other parts of the machine.",
+         "theme_color": text_color,
+         "button_text": "Alright",
+         "visible": False
+        }
+    ]
 
     platform_popups = [
     
@@ -1194,16 +1203,16 @@ async def magnus25(active_players):
         "screen": screen,
         "text": "On this planet, there are many sandstorms that come with the planet being abandoned. You must find shelter in the bunkers to survive.",
         "theme_color": text_color,
-        "button_text": "got it",
+        "button_text": "Got it",
         "visible": False
     },
 
     {
         "name": "hookIntro",
         "screen": screen,
-        "text": "",
+        "text": "These are hooks that can be used to swing across large gaps. You will automatically attach, and jump to get off.",
         "theme_color": text_color,
-        "button_text": "ashwath is gay",
+        "button_text": "Got it",
         "visible": False
     }
     ]
@@ -1783,36 +1792,36 @@ async def main():
         {
             "name": "intro1",
             "screen": screen,
-            "text": "",
+            "text": "The biggest Nuclear Fusion reactor, powering over 50% of earth is now meldown critical. We made a machine to fix, but did not have essential materials.",
             "theme_color": text_color,
-            "button_text": "Next",
+            "button_text": "And?",
             "visible": True
         },
 
         {
             "name": "intro2",
             "screen": screen,
-            "text": "",
+            "text": "We sent out a ship of scientists called the Odyssey. The Odyssey has had an accident and has imploded. This is why we have called you here.",
             "theme_color": text_color,
-            "button_text": "Next",
+            "button_text": "What do we do?",
             "visible": False
         },
 
         {
             "name": "intro3",
             "screen": screen,
-            "text": "",
+            "text": "As part of Project ASTRA, you must travel to the different planets in which the materials have landed and bring them back.",
             "theme_color": text_color,
-            "button_text": "Next",
+            "button_text": "OK",
             "visible": False
         },
 
         {
             "name": "intro4",
             "screen": screen,
-            "text": "",
+            "text": "Be aware that this mission is very dangerous, however we have identified that you are the best candidate for this mission. You are to leave today. Godspeed.",
             "theme_color": text_color,
-            "button_text": "Next",
+            "button_text": "Yes Sir!",
             "visible": False
         }
     ]
