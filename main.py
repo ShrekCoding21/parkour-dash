@@ -1222,7 +1222,7 @@ async def magnus25(active_players):
     {
         "name": "hookIntro",
         "screen": screen,
-        "text": "These are hooks that can be used to swing across large gaps. You will automatically attach, and jump to get off.",
+        "text": "These are hooks that can be used to swing across large gaps. You will automatically attach, and can jump to get off.",
         "theme_color": text_color,
         "button_text": "Got it",
         "visible": False
