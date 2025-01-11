@@ -879,7 +879,7 @@ async def scopulosus53(active_players):
         {
             "name": "one_way_home",
             "screen": screen,
-            "text": "looks like theres only one way to go now →",
+            "text": "Looks like theres only one way to go now →",
             "theme_color": text_color,
             "button_text": "bet",
             "visible": False
@@ -1802,7 +1802,7 @@ async def main():
         {
             "name": "intro1",
             "screen": screen,
-            "text": "The biggest Nuclear Fusion reactor, powering over 50% of earth is now meldown critical. We made a machine to fix, but did not have essential materials.",
+            "text": "The biggest Nuclear Fusion reactor, powering over 50% of earth, is now meldown critical. We made a machine to fix the issue, but did not have essential materials.",
             "theme_color": text_color,
             "button_text": "And?",
             "visible": True
@@ -1820,7 +1820,7 @@ async def main():
         {
             "name": "intro3",
             "screen": screen,
-            "text": "As part of Project ASTRA, you must travel to the different planets in which the materials have landed and bring them back.",
+            "text": "As a part of Project ASTRA, you must travel to the different planets in which the materials have landed and bring them back.",
             "theme_color": text_color,
             "button_text": "OK",
             "visible": False
@@ -1829,7 +1829,7 @@ async def main():
         {
             "name": "intro4",
             "screen": screen,
-            "text": "Be aware that this mission is very dangerous, however we have identified that you are the best candidate for this mission. You are to leave today. Godspeed.",
+            "text": "Be aware that this mission is very dangerous, however, we have identified that you are the best candidate for this mission. You are to leave today. Godspeed.",
             "theme_color": text_color,
             "button_text": "Yes Sir!",
             "visible": False
