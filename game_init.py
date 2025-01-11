@@ -470,7 +470,7 @@ def getArtifacts(platforms, level_name):
         artifact_name = f"Artifact {i + 1}"  # Generate a unique name
         artifact_position = (
             platform.position.x + platform.dimensions[0] // 2 - 50,
-            platform.position.y - 100
+            platform.position.y - 75
         )
         artifacts.add(Artifact(artifact_image1, artifact_position, artifact_name))
     return artifacts

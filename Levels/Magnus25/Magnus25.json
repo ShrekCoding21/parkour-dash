@@ -38,9 +38,9 @@
         },
         "homeless-shelter1":     {
             "x-position": 1935,
-            "y-position": 280,
+            "y-position": 290,
             "width": 150,
-            "height": 20,
+            "height": 10,
             "is_moving": "False",
             "color": "red"
         },
