@@ -1809,7 +1809,7 @@ async def main():
         {
             "name": "intro3",
             "screen": screen,
-            "text": "As part of Project ASTRA, you must travel to the different planets in which the materials have landed and bring them back.",
+            "text": "As a part of Project ASTRA, you must travel to the different planets in which the materials have landed and bring them back.",
             "theme_color": text_color,
             "button_text": "OK",
             "visible": False
@@ -1818,7 +1818,7 @@ async def main():
         {
             "name": "intro4",
             "screen": screen,
-            "text": "Be aware that this mission is very dangerous, however we have identified that you are the best candidate for this mission. You are to leave today. Godspeed.",
+            "text": "Be aware that this mission is very dangerous, however, we have identified that you are the best candidate for this mission. You are to leave today. Godspeed.",
             "theme_color": text_color,
             "button_text": "Yes Sir!",
             "visible": False
