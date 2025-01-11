@@ -1027,7 +1027,8 @@ async def scopulosus53(active_players):
                     if popup.name == "introduce_volcanoes1":
                         popup.visible = True
                 volcano_introduction_sequence = True
-                
+
+            print(volcano_introduction_sequence, popups[popup_index].visible, popup_index + 1 < len(volcano_introduction))  
             if volcano_introduction_sequence and not popups[popup_index].visible and popup_index + 1 < len(volcano_introduction):
                 popups[popup_index + 1].visible = True
                 popup_index += 1
@@ -1087,10 +1088,14 @@ async def scopulosus53(active_players):
                 paused = False
             elif action == "level restart":
                 bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
+                introduce_volcano, introduce_deathcano, one_way, artifacts = scopulosusPlatformsInit(level_name, platforms)
                 start_timer = pygame.time.get_ticks()
                 popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in volcano_introduction + level_tips]
                 artifacts_collected = 0
                 collected_artifacts = []
+                volcano_introduction_sequence, volcano_tips_sequence, near_end= False, False, False
+                popup_index = 0
+
                 paused = False
             elif action == "go to home":
                 return False
@@ -1114,10 +1119,14 @@ async def scopulosus53(active_players):
             action = await level_completed(screen, level_name, text_color, window_size, post_mission_briefing, time_finished=time.time(), total_time=counting_string)
             if action == "level restart":
                 bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
+                introduce_volcano, introduce_deathcano, one_way, artifacts = scopulosusPlatformsInit(level_name, platforms)
                 start_timer = pygame.time.get_ticks()
                 popups = [Popup(data["name"], data["screen"], data["text"], data["theme_color"], data["button_text"], data["visible"]) for data in volcano_introduction + level_tips]
                 artifacts_collected = 0
                 collected_artifacts = []
+                volcano_introduction_sequence, volcano_tips_sequence, near_end= False, False, False
+                popup_index = 0
+
                 level_complete = False
             
             elif action == "go to level select":
@@ -1537,6 +1546,9 @@ async def training(active_players):
     bg_image, checkpoint_increment, reset_positions, spawn_point, platforms, camera, active_players, introduced_controls_state, level_height, OG_spawn_point, death_platforms, next_checkpoints, finish_line, print_player1_controls, print_player3_controls, print_player4_controls, next_checkpoint = await load_level(level_name, num_of_players)
     intro_to_jumping, intro_to_sliding, intro_to_jumpslide, artifacts = tutorialPlatformsInit(platforms, level_name)
 
+    background_darkener = pygame.Surface((window_size[0], window_size[1]), pygame.SRCALPHA)
+    background_darkener.fill((0, 0, 0, 129))
+
     for player in active_players:
         player.can_jump, player.can_slide = False, False
         introduced_controls_state["introduced_jumping"], introduced_controls_state["introduced_sliding"] = False, False
@@ -1739,7 +1751,6 @@ async def training(active_players):
 
             # Render game objects for each active player's view vow
             renderSplitscreenLayout(canvas, active_players, num_of_players, bg_image, platforms, camera, death_platforms, artifacts, collected_artifacts, flashlight, volcanoes=None, subscreens=subscreens, ladders=None, hooks=None)
-
             counting_string = update_timer(start_timer)
             render_artifact_count(("#56911f"), artifacts_collected)
             render_timer(lil_font, "#32854b", counting_string)
@@ -1835,7 +1846,6 @@ async def main():
     fixed_delta_time = 1 / 60
     accumulator = 0
     popup_index = 0
-    collected_artifacts = []
     previous_time = pygame.time.get_ticks()
     paused = False
     editing_settings = False

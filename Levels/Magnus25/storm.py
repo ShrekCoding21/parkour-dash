@@ -96,7 +96,7 @@ class Storm:
             surface.blit(overlay, (0, 0))
 
             # Display the warning message
-            warning_text = self.font.render("Get Inside!", True, (255, 69, 0))
+            warning_text = self.font.render("Stay on the shelter platform!", True, (255, 69, 0))
             surface.blit(
                 warning_text,
                 (self.screen_size[0] // 2 - warning_text.get_width() // 2, 50)
