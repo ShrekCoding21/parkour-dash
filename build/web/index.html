@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astra Studios.</title>
+    <link rel="stylesheet" href="AdvancedWebsite.css">
+    <link rel="icon" type="image/png" href="favicon.png" sizes="16x16">
+   <!--more icon from fonts.google.com-->
+   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=close,menu_open" />
+</head>
+<body>
+
+<div id="blob"></div>
+<div id="blob-blur"></div>
+    <div class="splashscreen">
+        <button id="nav-toggle" type="button" onclick="toggleNav()">
+            <i class="open">             
+                <span class="material-symbols-rounded">
+                menu_open
+                 </span>
+                </i>
+            <i class="close">            
+                <span class="material-symbols-rounded">
+                close
+                 </span>
+                </i>
+          </button>
+<script>
+const toggleNav = () => {
+  document.body.dataset.nav = document.body.dataset.nav === "true" ? "false" : "true";
+}
+</script>
+<nav>
+    <h1 class="navigate">navigate.</h1>
+    <a class="link" href="#Home">Home.</a>
+    <a class="link" href="game.html">project AstRA.</a>
+    <a class="link" href="about.html">About.</a>
+    <a class="link" href="#Changelog">changelog.</a>
+</nav>
+<script>
+    for(const link of document.getElementsByClassName("link")) {
+  link.onmousemove = e => {
+    const decimal = e.clientX / link.offsetWidth;
+    
+    const basePercent = 80,
+          percentRange = 20,
+          adjustablePercent = percentRange * decimal;
+    
+    const lightBluePercent = basePercent + adjustablePercent;
+    
+    link.style.setProperty("--light-blue-percent", `${lightBluePercent}%`);
+  }
+}
+</script>
+<div id="Nav-Blur"></div>
+        <div class="Title">
+<span class="ASTRA">AstRA</span> &emsp;
+<span class="Studios">Studios.</span>
+        </div>
+<div class="Subtext">
+<span class="SubtextWel">Welcome to </span>
+<span class="SubtextMain">
+<span class="SubtextASTRA">AstRA</span>
+<span class="SubtextWel">Studios.</span>
+</span>
+<br>
+<span class="SubtextWel1">Here we make beautifully designed, lore-rich games that tie into real world themes. Try our first game, Project Astra</span>
+</div>
+
+<div class="SplashButton">
+    <ul>
+        <li><a href="game.html">Try Project Astra.</a></li>
+      </ul>
+    </div>
+</div>
+
+<script> 
+const blob = document.getElementById("blob");
+const blobBlur = document.getElementById("blob-blur"); // If you have a blur element
+
+// Function to detect Safari
+function isSafari() {
+  return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+}
+
+window.addEventListener('load', () => { // Ensure DOM is fully loaded
+  if (isSafari()) {
+    blob.style.display = "none"; // Hide the blob in Safari
+    if (blobBlur) {
+      blobBlur.style.display = "none"; // Hide the blur as well
+    }
+  } else {
+    window.onpointermove = (event) => {
+      const { clientX, clientY } = event;
+      blob.animate({
+        left: `${clientX}px`,
+        top: `${clientY}px`
+      }, { duration: 3000, fill: "forwards" });
+    };
+  }
+});
+</script>
+</body>
+</html>
