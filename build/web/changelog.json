@@ -1,0 +1,158 @@
+[
+    {
+      "version": "v0.1.0",
+      "date": "11-11-2024",
+      "by": "Sreekar Ainapurapu",
+      "changes": [
+        {
+          "type": "feature",
+          "description": "Initial version of game. 2 players with basic controls added (jump, move left, move right). This version of the game was made in python primarily using the pygame library."
+        }
+      ]
+    },
+    {
+        "version": "Web v0.1.0",
+        "date": "11-12-2024",
+        "by": "Sreekar Ainapurapu",
+        "changes": [
+            {
+            "type": "feature",
+            "description": "Basic version of website was made. The pygbag module was used to create a web assembly version of the python game that can then we run in the website with a bit of javascript."
+            }
+        ]
+    },
+    {
+        "version": "v0.1.1",
+        "date": "11-13-2024",
+        "by": "Sreekar Ainapurapu",
+        "changes": [
+            {
+            "type": "improvement",
+            "description": "Made the variables in the code more readable and added comments to the code and readme file to allow others to collaborate."
+            }
+        ]
+    },
+    {
+        "version": "v0.1.2",
+        "date": "11-16-2024",
+        "by": "Sreekar Ainapurapu",
+        "changes": [
+            {
+            "type": "feature",
+            "description": "Created a reload function that allows the level to be restarted whenever, not just when the player dies (Karthikeya Volety helped). A class was added to make functional platforms."
+            }
+
+        ]
+    },
+    {
+        "version": "v0.1.3",
+        "date": "11-17-2024",
+        "by": "Sreekar Ainapurapu",
+        "changes": [
+            {
+            "type": "feature",
+            "description": "Added a rudimentary pause menu to the game. This allows the player to restart the whole lever instead of just going back to the last checkpoint."
+            }
+        ]
+    },
+    {
+        "version": "v0.1.4",
+        "date": "11-18-2024",
+        "by": "Sreekar Ainapurapu",
+        "changes": [
+            {
+            "type": "improvement",
+            "description": "Added a simple way to add more platforms. Now platforms can be added with a simple json file, and does not interfere with the game loop. This makes creating future levels much easier and faster."
+            }
+        ]
+    },
+    {
+        "version": "Web v0.1.1",
+        "date": "11-19-2024",
+        "by": "Ashwath Lakshmanaswamy",
+        "changes": [
+            {
+            "type": "improvement",
+            "description": "Website based color palet change. 1st iteration of website was made, including the color scheme and the basic layout of the website."
+            }
+        ]
+    },
+    {
+        "version": "v0.1.4",
+        "date": "11-19-2024",
+        "by": "Sreekar Ainapurapu",
+        "changes": [
+            {
+            "type": "improvement",
+            "description": "Font palet of the game was changes to Major Mono Display, to reflect more of what the game is about."
+            }
+        ]
+    },
+    {
+        "version": "v0.1.5",
+        "date": "11-20-2024",
+        "by": "Sreekar Ainapurapu",
+        "changes": [
+            {
+            "type": "feature",
+            "description": "The moving platform class and starting platform class were added to the game. This allows for moving platforms to be created along with a more reasonable spawn point for the player."
+            },
+            {
+            "type": "improvement",
+            "description": "Updated the game logic for moving platforms to make the platforms, reducing size and code needed for the game, resulting in marginally better runtime this will come in handy in the future when there may be a lot more moving platforms on the same level."
+            }
+        ]
+    },
+    {
+        "version": "v0.2.0",
+        "date": "11-21-2024",
+        "by": "Sreekar Ainapurapu",
+        "changes": [
+            {
+            "type": "feature",
+            "description": "The demo level was completed and added to the game. Along with it, a rudimentary finish line was also added to the game, allowing for the level to be registered as finished. A splashscreen that congratulates the player was not added in this version."
+            },
+            {
+            "type": "improvement",
+            "description": "Player movement logic was updated, allowing for smoother movement and better control of the player. This also led to noticeably less dropped frames on the website."
+            }
+        ]
+    },
+    {
+        "version": "v0.2.1",
+        "date": "11-22-2024",
+        "by": "Sreekar Ainapurapu",
+        "changes": [
+            {
+            "type": "improvement",
+            "description": "Finish line texture was added, making it more intuitive to the player. A list of controls for the players were also added to the game, making the overall playing experience better"
+            },
+            {
+            "type": "bugfix",
+            "description": "Fixed a bug where the moving platforms would get stuck in some places."
+            }
+        ]
+    },
+    {
+        "version": "v0.2.2",
+        "date": "11-24-2024",
+        "by": "Sreekar Ainapurapu",
+        "changes": [
+            {
+            "type": "bugfix",
+            "description": "In certain conditions, players would teleport accross a platform due to a error with how collisions were handled. This was fixed in the version."
+            },
+        ]
+    },
+    {
+        "version": "v0.2.3",
+        "date": "11-25-2024",
+        "by": "Sreekar Ainapurapu",
+        "changes": [
+            {
+            "type": "bugfix",
+            "description": "Collisions for moving platforms were fixed as there were some stuttering glitches and timing glitches."
+            }
+        ]
+    }
+  ]
