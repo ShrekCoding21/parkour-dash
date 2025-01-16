@@ -141,7 +141,7 @@
             {
             "type": "bugfix",
             "description": "In certain conditions, players would teleport accross a platform due to a error with how collisions were handled. This was fixed in the version."
-            },
+            }
         ]
     },
     {
@@ -152,6 +152,72 @@
             {
             "type": "bugfix",
             "description": "Collisions for moving platforms were fixed as there were some stuttering glitches and timing glitches."
+            }
+        ]
+    },
+    {
+        "version": "v0.2.4",
+        "date": "11-26-2024",
+        "by": "Sreekar Ainapurapu",
+        "changes": [
+            {
+            "type": "bugfix",
+            "description": "There was a mathmatical error in calculating and changing velocity of a diagonally moving platform. This was fixed in this version."
+            }
+        ]
+    },
+    {
+        "version": "v0.3.0",
+        "date": "11-27-2024",
+        "by": "Sreekar Ainapurapu",
+        "changes": [
+            {
+            "type": "feature",
+            "description": "Added controls for sliding! Players can now slide through small gaps and under obstacles. The player is much faster, and their momentum is preserved when jumping, creating what may be a fun mechanic. Camera now follows player, making it futureproof for scrolling levels."
+            }
+        ]
+    },
+    {
+        "version": "v0.3.1",
+        "date": "11-29-2024",
+        "by": "Sreekar Ainapurapu",
+        "changes": [
+            {
+            "type": "feature",
+            "description": "Text rendering was added in a better capacity to the game. Player behaviour for the first level (tutorial level) was made. Checkpoints now turn dark green when a player stands on them to signify that they have been activated."
+            }
+        ]
+    },
+    {
+        "version": "v0.4.0",
+        "date": "11-30-2024",
+        "by": "Sreekar Ainapurapu",
+        "changes": [
+            {
+            "type": "feature",
+            "description": "The first actual level was added to the game- The tutorial level. It helps new players learn controls for jumping, sliding, and now even leaping- allowing players to jump further than normal. Death platforms were also added, making the player die when they fall off of a playform."
+            }
+        ]
+    },
+    {
+        "version": "v0.4.1",
+        "date": "12-1-2024",
+        "by": "Sreekar Ainapurapu",
+        "changes": [
+            {
+            "type": "feature",
+            "description": "A timer was added, letting players know how long it takes for them to complete a level."
+            }
+        ]
+    },
+    {
+        "version": "v0.4.2",
+        "date": "12-2-2024",
+        "by": "Sreekar Ainapurapu, Ashwath Lakshmanaswamy",
+        "changes": [
+            {
+            "type": "feature",
+            "description": "The basic game lore was created. The game now allows for intuitive switching between number of players. The game name was created- Project ASTRA."
             }
         ]
     }
