@@ -29,7 +29,7 @@ const toggleNav = () => {
 </script>
 <nav>
     <h1 class="navigate">navigate.</h1>
-    <a class="link" href="home.html">Home.</a>
+    <a class="link" href="index.html">Home.</a>
     <a class="link" href="game.html">project AstRA.</a>
     <a class="link" href="about.html">About.</a>
     <a class="link" href="#Changelog">changelog.</a>
@@ -58,10 +58,49 @@ const toggleNav = () => {
       Here you can find the latest updates and changes to Project <span style="font-family: major mono display;"> AstRA.</span>
   </div>
 </div>
-
+<div id="json-container"></div>
 
 <script> 
+        async function displayJSON() {
+            try {
+                const response = await fetch('changelog.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const jsonData = await response.json();
 
+                const container = document.getElementById('json-container');
+                container.innerHTML = '';
+
+                jsonData.reverse().forEach(entry => {
+                    const entryDiv = document.createElement('div');
+                    entryDiv.classList.add('entry');
+
+                    const versionDiv = document.createElement('div');
+                    versionDiv.classList.add('version');
+                    versionDiv.innerHTML = `<b>${entry.version}</b> - ${entry.date}`; // Use innerHTML for bolding
+
+                    entryDiv.appendChild(versionDiv);
+
+                    const changesList = document.createElement('ul'); // Use a list for better structure
+                    changesList.classList.add('changes');
+                    entry.changes.forEach(change => {
+                        const changeItem = document.createElement('li'); // List item
+                        changeItem.classList.add('change');
+                        changeItem.innerHTML = `<span class="type">- ${change.type}</span><br><br> <span class="desc">${change.description}</span>`; // Use innerHTML
+                        changesList.appendChild(changeItem);
+                    });
+                    entryDiv.appendChild(changesList);
+                    container.appendChild(entryDiv);
+                });
+            } catch (error) {
+                console.error('Error:', error);
+                const container = document.getElementById('json-container');
+                container.textContent = "Error loading data.";
+            }
+        }
+
+        displayJSON();
 </script>
 </body>
 </html>

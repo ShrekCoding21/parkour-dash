@@ -5,18 +5,18 @@
       "by": "Sreekar Ainapurapu",
       "changes": [
         {
-          "type": "feature",
+          "type": "Feature",
           "description": "Initial version of game. 2 players with basic controls added (jump, move left, move right). This version of the game was made in python primarily using the pygame library."
         }
       ]
-    },
+    },  
     {
         "version": "v0.1.1",
         "date": "11-13-2024",
         "by": "Sreekar Ainapurapu",
         "changes": [
             {
-            "type": "improvement",
+            "type": "Improvement",
             "description": "Made the variables in the code more readable and added comments to the code and readme file to allow others to collaborate."
             }
         ]
@@ -27,7 +27,7 @@
         "by": "Sreekar Ainapurapu",
         "changes": [
             {
-            "type": "feature",
+            "type": "Feature",
             "description": "Created a reload function that allows the level to be restarted whenever, not just when the player dies (Karthikeya Volety helped). A class was added to make functional platforms."
             }
 
@@ -39,7 +39,7 @@
         "by": "Sreekar Ainapurapu",
         "changes": [
             {
-            "type": "feature",
+            "type": "Feature",
             "description": "Added a rudimentary pause menu to the game. This allows the player to restart the whole level instead of just going back to the last checkpoint."
             }
         ]
@@ -50,7 +50,7 @@
         "by": "Sreekar Ainapurapu",
         "changes": [
             {
-            "type": "improvement",
+            "type": "Improvement",
             "description": "Added a simple way to add more platforms. Now platforms can be added with a simple json file, and does not interfere with the game loop. This makes creating future levels much easier and faster."
             }
         ]
@@ -61,7 +61,7 @@
         "by": "Sreekar Ainapurapu",
         "changes": [
             {
-            "type": "improvement",
+            "type": "Improvement",
             "description": "Font palet of the game was changes to Major Mono Display, to reflect more of what the game is about."
             }
         ]
@@ -72,11 +72,11 @@
         "by": "Sreekar Ainapurapu",
         "changes": [
             {
-            "type": "feature",
+            "type": "Feature",
             "description": "The moving platform class and starting platform class were added to the game. This allows for moving platforms to be created along with a more reasonable spawn point for the player."
             },
             {
-            "type": "improvement",
+            "type": "Improvement",
             "description": "Updated the game logic for moving platforms to make the platforms, reducing size and code needed for the game, resulting in marginally better runtime this will come in handy in the future when there may be a lot more moving platforms on the same level."
             }
         ]
@@ -87,11 +87,11 @@
         "by": "Sreekar Ainapurapu",
         "changes": [
             {
-            "type": "feature",
+            "type": "Feature",
             "description": "The demo level was completed and added to the game. Along with it, a rudimentary finish line was also added to the game, allowing for the level to be registered as finished. A splashscreen that congratulates the player was not added in this version."
             },
             {
-            "type": "improvement",
+            "type": "Improvement",
             "description": "Player movement logic was updated, allowing for smoother movement and better control of the player. This also led to noticeably less dropped frames on the website."
             }
         ]
@@ -102,11 +102,11 @@
         "by": "Sreekar Ainapurapu",
         "changes": [
             {
-            "type": "improvement",
+            "type": "Improvement",
             "description": "Finish line texture was added, making it more intuitive to the player. A list of controls for the players were also added to the game, making the overall playing experience better"
             },
             {
-            "type": "bugfix",
+            "type": "Bug Fix",
             "description": "Fixed a bug where the moving platforms would get stuck in some places."
             }
         ]
@@ -117,7 +117,7 @@
         "by": "Sreekar Ainapurapu",
         "changes": [
             {
-            "type": "bugfix",
+            "type": "Bug Fix",
             "description": "In certain conditions, players would teleport accross a platform due to a error with how collisions were handled. This was fixed in the version."
             }
         ]
@@ -128,7 +128,7 @@
         "by": "Sreekar Ainapurapu",
         "changes": [
             {
-            "type": "bugfix",
+            "type": "Bug Fix",
             "description": "Collisions for moving platforms were fixed as there were some stuttering glitches and timing glitches."
             }
         ]
@@ -139,7 +139,7 @@
         "by": "Sreekar Ainapurapu",
         "changes": [
             {
-            "type": "bugfix",
+            "type": "Bug Fix",
             "description": "There was a mathmatical error in calculating and changing velocity of a diagonally moving platform. This was fixed in this version."
             }
         ]
@@ -150,7 +150,7 @@
         "by": "Sreekar Ainapurapu",
         "changes": [
             {
-            "type": "feature",
+            "type": "Feature",
             "description": "Added controls for sliding! Players can now slide through small gaps and under obstacles. The player is much faster, and their momentum is preserved when jumping, creating what may be a fun mechanic. Camera now follows player, making it futureproof for scrolling levels."
             }
         ]
@@ -161,7 +161,7 @@
         "by": "Sreekar Ainapurapu",
         "changes": [
             {
-            "type": "feature",
+            "type": "Feature",
             "description": "Text rendering was added in a better capacity to the game. Player behaviour for the first level (tutorial level) was made. Checkpoints now turn dark green when a player stands on them to signify that they have been activated."
             }
         ]
@@ -172,7 +172,7 @@
         "by": "Sreekar Ainapurapu",
         "changes": [
             {
-            "type": "feature",
+            "type": "Feature",
             "description": "The first actual level was added to the game- The tutorial level. It helps new players learn controls for jumping, sliding, and now even leaping- allowing players to jump further than normal. Death platforms were also added, making the player die when they fall off of a playform."
             }
         ]
@@ -183,7 +183,7 @@
         "by": "Sreekar Ainapurapu",
         "changes": [
             {
-            "type": "feature",
+            "type": "Feature",
             "description": "A timer was added, letting players know how long it takes for them to complete a level."
             }
         ]
@@ -194,7 +194,7 @@
         "by": "Sreekar Ainapurapu, Karthikeya Volety, Ashwath Lakshmanaswamy",
         "changes": [
             {
-            "type": "improvement",
+            "type": "Improvement",
             "description": "The basic game lore was created. The game now allows for intuitive switching between number of players. The game name was created- Project ASTRA."
             }
         ]
@@ -205,7 +205,7 @@
         "by": "Sreekar Ainapurapu",
         "changes": [
             {
-            "type": "bugfix",
+            "type": "Bug Fix",
             "description": "Because of the way a platform was made, players could climb up it. Fixed some collision issues with sliding- when your slide stops under a wall, you sometimes clip through to the top of the platform. You now respawn if you do that"
             }
         ]
@@ -216,7 +216,7 @@
         "by": "Sreekar Ainapurapu",
         "changes": [
             {
-            "type": "improvement",
+            "type": "Improvement",
             "description": "Redundancy in code was removed, giving a less stuttery or laggy experience when playing."
             }
         ]
@@ -227,7 +227,7 @@
         "by": "Sreekar Ainapurapu",
         "changes": [
             {
-            "type": "feature",
+            "type": "Feature",
             "description": "The framework for the new pause menu was added to the game. The pause menu will make it easier for accessing settings, home, and level select menus"
             }
         ]
@@ -238,7 +238,7 @@
         "by": "Sreekar Ainapurapu",
         "changes": [
             {
-            "type": "feature",
+            "type": "Feature",
             "description": "The new pause menu was added to the game, excluding some items such as home and level select. When paused the game will blur, and it shows buttons for changing players, restating level, and more."
             }
         ]
@@ -249,7 +249,7 @@
         "by": "Sreekar Ainapurapu",
         "changes": [
             {
-            "type": "bugfix",
+            "type": "Bug Fix",
             "description": "Clicks in the pause menu were not registering on the website. This was fixed in the game code."
             }
         ]
@@ -260,7 +260,7 @@
         "by": "Sreekar Ainapurapu",
         "changes": [
             {
-            "type": "feature",
+            "type": "Feature",
             "description": "There is now a homepage to the game. This homepage is dynamic, with a hole that the player can jump through to get to the tutorial, and a door that players can get use to change settings. The settings menu (also added in this version) only has options to choose how many players are playing. The pause menu was updated to include a home button that takes you to the homepage."
             }
         ]
@@ -271,7 +271,7 @@
         "by": "Sreekar Ainapurapu",
         "changes": [
             {
-            "type": "improvement",
+            "type": "Improvement",
             "description": "Background for the homepage were added to the game. Death platforms are now transparent. Some UI and UX bugs were fixed."
             }
         ]
@@ -282,7 +282,7 @@
         "by": "Sreekar Ainapurapu",
         "changes": [
             {
-            "type": "improvement",
+            "type": "Improvement",
             "description": "The pause menu was updated to include a level select menu. The level select menu was also added to the homepage."
             }
         ]

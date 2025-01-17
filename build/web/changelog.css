@@ -9,53 +9,21 @@
     'opsz' 24
   }
 :root {
+    height: 100%;
     --blue: rgb(61, 90, 254);
     --light-blue: rgb(33,150,243);
-    height: 100%;
-}
-@keyframes Title {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-@keyframes Subtext {
-    from {
-        opacity: 0;
-}
-    to {
-        opacity: 1;
-}
-}
-@keyframes Button {
-0%{
-opacity: 0;
-}
-30%{
-opacity: .0;
-}
-50%{
-opacity: .50;
-}
-75%{
-opacity: .70;
 } 
-100%{
-opacity: 1;
-}
-}
+
 html {
     scroll-behavior: smooth;
 }
 body {
-    margin: 0;
+    margin: 10px;
 background-size: cover;
 background-repeat: no-repeat;
 background-color: #1d2d4b;
 transition: background-color .5s;
-overflow: hidden;
+overflow: auto;
 }
 
 .splashscreen {
@@ -74,12 +42,15 @@ text-shadow: black 3px 1px 13px;
 }
  #Nav-Blur {
     transition: all .3s ease-in-out;
-    position: absolute;
+    position: fixed;
+    position: -webkit-sticky;
     /* -webkit-backdrop-filter: blur(6vmax);
     backdrop-filter: blur(6vmax); */
     overflow: hidden; 
     height: 100vh;
     width: 100%;
+    transform: translate(0px,-10px);
+    z-index: 15;
  }
  .navigate {
     text-shadow: black 3px 1px 17px;
@@ -90,15 +61,16 @@ text-shadow: black 3px 1px 13px;
     color: white;
  }
 nav {
+    position: fixed;
     background-color:#1d2d4b;
     color: Black;
     display: flex;
     flex-direction: column;
-    position: absolute;
+    position: -webkit-sticky;
     top: 0%;
     left: 0%;
     height: 100vh;
-    z-index: 3;
+    z-index: 19;
     width: 0;
     opacity: 0;
     font-family: major mono display;
@@ -216,86 +188,6 @@ body[data-nav="true"] #nav-toggle:hover {
 body[data-nav="true"] #nav-toggle:active {
     transform: translateX(450px) scale(.95);
 }
-.Title {
-    align-items: baseline;
-    animation: Title .7s ease-out;
-}
-.ASTRA {
-    font-family: Major Mono Display;
-    font-size: 100px;
-    margin-right: .25em;
-}
-.Studios {
-    font-family: Poiret One;
-    font-size: 100px;
-    
-}
-.Subtext {
-    animation: Subtext 1s;
-text-align: center;
-font-size: 25px;
-flex-wrap: wrap;
-}
-.SubtextWel, .SubtextWel1 {
-    margin-right: .2em;
-    font-family: Poiret One;
-}
-.SubtextASTRA {
-    margin-right: .2em;
-    font-family: Major Mono Display;
-}
-
-.SplashButton {
-    animation: Button 2s;
-    display: flex;
-    position: absolute;
-    text-align: center;
-    bottom:25%;
-    justify-content: center;
-    text-decoration: none;
-    font-family: Poiret One;
-    font-size: 30px;
-    color: black;
-    transition: background-color .2s ease-in-out;
-    transition: opacity .2s ease-in-out;
-    z-index: 0;
-    display:inline-block;
-}
-
-.SplashButton ul {
-    list-style: none; /* Remove bullet points */
-    margin: 0;
-    padding: 0;
-}
-li a{
-    padding: 10px 20px;
-    text-decoration: none;
-    color: black;
-}
-body[data-nav="true"] .SplashButton {
-    opacity: 0;
-}
-body[data-nav="true"] .SplashButton:hover {
-    opacity: 0;
-}
-
-.SplashButton:hover {
-    background-color: rgba(256, 256, 256, 0.25);
-    border-radius: 7px;
-}
-@keyframes end {
-    from {
-        opacity: 1;
-    }
-    to {
-        opacity: 0;
-    }
-    
-}
-
-body:has(.SplashButton:hover) {
-    background-color: #5e50d4;
-}
 .title {
     z-index: 0;
     font-family: 'Poiret One', cursive;
@@ -311,4 +203,42 @@ body:has(.SplashButton:hover) {
 .title-subtext {
     padding: 15px;
     font-size: 25px;
+}
+#json-container {
+    display: flex;
+    justify-content: center;
+    align-items: left;
+    flex-direction: column;
+    font-family: 'Poiret One', cursive;
+    color: white;
+    list-style: none;
+    width: 50%;
+}
+.entry {
+    border: none;
+    margin-bottom: 10px;
+    padding: 10px;
+    font-family: Poiret One;
+    border-radius: 5px;
+}
+.version {
+    font-size: 40px;
+    font-weight: bold;
+}
+.changes {
+    margin-top: 5px;
+}
+.change {
+    margin-bottom: 5px;
+}
+.type {
+    font-weight: bolder;
+    margin-right: 5px;
+    font-size: 25px;
+}
+.desc {
+    font-size: 20px;
+}
+ul {
+    list-style: none;
 }
