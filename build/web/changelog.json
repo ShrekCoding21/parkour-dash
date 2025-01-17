@@ -11,17 +11,6 @@
       ]
     },
     {
-        "version": "Web v0.1.0",
-        "date": "11-12-2024",
-        "by": "Sreekar Ainapurapu",
-        "changes": [
-            {
-            "type": "feature",
-            "description": "Basic version of website was made. The pygbag module was used to create a web assembly version of the python game that can then we run in the website with a bit of javascript."
-            }
-        ]
-    },
-    {
         "version": "v0.1.1",
         "date": "11-13-2024",
         "by": "Sreekar Ainapurapu",
@@ -63,17 +52,6 @@
             {
             "type": "improvement",
             "description": "Added a simple way to add more platforms. Now platforms can be added with a simple json file, and does not interfere with the game loop. This makes creating future levels much easier and faster."
-            }
-        ]
-    },
-    {
-        "version": "Web v0.1.1",
-        "date": "11-19-2024",
-        "by": "Ashwath Lakshmanaswamy",
-        "changes": [
-            {
-            "type": "improvement",
-            "description": "Website based color palet change. 1st iteration of website was made, including the color scheme and the basic layout of the website."
             }
         ]
     },
@@ -277,17 +255,36 @@
         ]
     },
     {
-        "version": "Web v0.2.0",
-        "date": "12-9-2024",
-        "by": "Ashwath Lakshmanaswamy",
+        "version": "v0.5.0",
+        "date": "12-11-2024",
+        "by": "Sreekar Ainapurapu",
         "changes": [
             {
             "type": "feature",
-            "description": "The new version of the website was made. This version was supposed to include a few splashscreens on website start, one introducing the user to the website, one to introduce the developers of the game, and one to introduce the game itself. This version of the website never made it past introducing developers. This change is still key to the current website."
+            "description": "There is now a homepage to the game. This homepage is dynamic, with a hole that the player can jump through to get to the tutorial, and a door that players can get use to change settings. The settings menu (also added in this version) only has options to choose how many players are playing. The pause menu was updated to include a home button that takes you to the homepage."
             }
         ]
     },
     {
-        
-    }   
+        "version": "v0.5.1",
+        "date": "12-13-2024",
+        "by": "Sreekar Ainapurapu",
+        "changes": [
+            {
+            "type": "improvement",
+            "description": "Background for the homepage were added to the game. Death platforms are now transparent. Some UI and UX bugs were fixed."
+            }
+        ]
+    },
+    {
+        "version": "v0.5.2",
+        "date": "12-14-2024",
+        "by": "Sreekar Ainapurapu",
+        "changes": [
+            {
+            "type": "improvement",
+            "description": "The pause menu was updated to include a level select menu. The level select menu was also added to the homepage."
+            }
+        ]
+    }
   ]

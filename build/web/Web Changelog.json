@@ -1,0 +1,68 @@
+[
+    {
+        "version": "Web v0.1.0",
+        "date": "11-12-2024",
+        "by": "Sreekar Ainapurapu",
+        "changes": [
+            {
+            "type": "feature",
+            "description": "Basic version of website was made. The pygbag module was used to create a web assembly version of the python game that can then we run in the website with a bit of javascript."
+            }
+        ]
+    },
+    {
+        "version": "Web v0.1.1",
+        "date": "11-19-2024",
+        "by": "Ashwath Lakshmanaswamy",
+        "changes": [
+            {
+            "type": "UI improvement",
+            "description": "Website based color palet change. 1st iteration of website was made, including the color scheme and the basic layout of the website."
+            }
+        ]
+    },
+    {
+        "version": "Web v0.2.0",
+        "date": "12-9-2024",
+        "by": "Ashwath Lakshmanaswamy",
+        "changes": [
+            {
+            "type": "addition",
+            "description": "The new version of the website was made. This version was supposed to include a few splashscreens on website start, one introducing the user to the website, one to introduce the developers of the game, and one to introduce the game itself. This version of the website never made it past introducing developers. This change is still key to the current website. This version also never went public."
+            }
+        ]
+    },
+    {
+        "version": "Web v0.1.2",
+        "date": "12-10-2024",
+        "by": "Sreekar Ainapurapu",
+        "changes": [
+            {
+            "type": "UX improvement",
+            "description": "The game was made more accessible in the nav bar."
+            }
+        ]
+    },
+    {
+        "version": "Web v0.2.1",
+        "date": "12-11-2024",
+        "by": "Ashwath Lakshmanaswamy",
+        "changes": [
+            {
+            "type": "addition",
+            "description": "The website now has a splashscreen that links to js innerhtml- even though that is one of the worst ways to implement the animated splashscreen effect. This was later rectified."
+            }
+        ]
+    },
+    {
+        "version": "Web v0.2.2",
+        "date": "12-12-2024",
+        "by": "Ashwath Lakshmanaswamy",
+        "changes": [
+            {
+            "type": "addition",
+            "description": "A basic version of the \"about the devs\" was added to the website, showing info about all of the devs in scrolling \"frame.\" this was later removed in favor of a prettier version."
+            }
+        ]
+    }
+]
