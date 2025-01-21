@@ -1,0 +1,107 @@
+
+{"demo_level": {
+        
+    "level_type": "escape",
+
+    "platforms": {
+
+        "starting-platform": {
+            "x-position": 730,
+            "y-position": 660,
+            "width": 220,
+            "height": 40,
+            "is_moving": "False",
+            "color": "#94e0a8"
+        },
+
+        "moving-platform1": {
+            "x-position": 300,
+            "y-position":660,
+            "width": 180,
+            "height": 35,
+            "is_moving": "True",
+            "speed": 125,
+            "x-direction": 1,
+            "y-direction": 0,
+            "x-movement_range": 120,
+            "y-movement_range": 0,
+            "color": "#80C14E"
+        },
+
+        "moving-platform2": {
+            "x-position": 95,
+            "y-position": 635,
+            "width": 75,
+            "height": 30,
+            "is_moving": "True",
+            "speed": 500,
+            "x-direction": 1,
+            "y-direction": -1,
+            "x-movement_range": 400,
+            "y-movement_range": 220,
+            "color": "#00821e"
+        },
+
+        "transition-platform": {
+            "x-position": 640,
+            "y-position": 400,
+            "width": 290,
+            "height": 45,
+            "is_moving": "False",
+            "color": "#a9db8f"
+        },
+
+        "vertical-platform1": {
+            "x-position": 700,
+            "y-position": 380,
+            "width": 100,
+            "height": 20,
+            "is_moving": "True",
+            "speed": 155,
+            "x-direction": 0,
+            "y-direction": -1,
+            "x-movement_range": 0,
+            "y-movement_range": 190,
+            "color": "#e7ed8e"
+        },
+
+        "parkour-platform1": {
+            "x-position": 530,
+            "y-position": 220,
+            "width": 50,
+            "height": 20,
+            "is_moving": "False",
+            "color": "#459be6"
+        },
+
+        "parkour-platform2": {
+            "x-position": 400,
+            "y-position": 180,
+            "width": 50,
+            "height": 20,
+            "is_moving": "False",
+            "color": "#4550e6"
+        },
+
+        "parkour-platform3": {
+            "x-position": 270,
+            "y-position": 130,
+            "width": 50,
+            "height": 20,
+            "is_moving": "False",
+            "color": "#6b45e6"
+        },
+
+        "finish-line": {
+            "x-position": 30,
+            "y-position": 100,
+            "width": 150,
+            "height": 30,
+            "is_moving": "False",
+            "image_path": "Platforms/finish-line.png",
+            "color": "#ffffff"
+
+        }
+    }
+}
+}

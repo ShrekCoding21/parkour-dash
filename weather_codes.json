@@ -1,0 +1,16 @@
+{"weather-codes": {
+    
+        "clear sky": [0],
+        "partly cloudy": [1, 2],
+        "overcast": [3, 45, 48],
+        "drizzle": [51, 53, 55, 56, 57, 80, 81],
+        "rain": [61, 63, 82],
+        "heavy rain": [65],
+        "snow showers": [85, 86],
+        "light snow": [66, 71, 77],
+        "heavy snow": [67, 73, 75],
+        "thunderstorms": [95, 96, 99]
+      
+      
+}}
+  

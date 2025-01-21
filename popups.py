@@ -40,7 +40,7 @@ class Popup:
     @font_size.setter
     def font_size(self, value):
         self._font_size = value
-        self.font = pygame.font.Font('fonts/MajorMonoDisplay-Regular.ttf', self._font_size)
+        self.font = pygame.font.Font('fonts/pixelated.ttf', self._font_size)
     
     def draw(self):
         """Draw the popup on the screen."""
