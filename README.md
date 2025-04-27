@@ -118,7 +118,7 @@ Example: Making a platform that prints something when u are on it
 
 # *Useful resources*
 
-karthik has a big forehead lololol
+i have a big forehead lololol
 1) Complete python introduction course (very useful): https://www.youtube.com/playlist?list=PLeo1K3hjS3uv5U-Lmlnucd7gqF-3ehIh0
 2) What is asyncio: https://youtu.be/Qb9s3UiMSTA?si=aUc02pHfXq4Ukhqs
 3) How to come up with & create sprites (Adobe Photoshop): https://youtu.be/mBt3UuLJx9Y?si=M1b8WCtHLIM0PtI3
